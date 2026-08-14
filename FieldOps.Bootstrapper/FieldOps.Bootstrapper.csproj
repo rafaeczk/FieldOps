@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.10">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	  <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <ProjectReference Include="..\FieldOps.Modules.Users.Api\FieldOps.Modules.Users.Api.csproj" />
+    <ProjectReference Include="..\FieldOps.Shared.Infrastructure\FieldOps.Shared.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
