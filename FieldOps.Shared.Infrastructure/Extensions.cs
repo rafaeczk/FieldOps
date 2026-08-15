@@ -1,12 +1,16 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using FieldOps.Shared.Abstractions.Contexts;
 using FieldOps.Shared.Abstractions.Time;
 using FieldOps.Shared.Infrastructure.Api;
+using FieldOps.Shared.Infrastructure.Auth;
+using FieldOps.Shared.Infrastructure.Contexts;
 using FieldOps.Shared.Infrastructure.Errors;
 using FieldOps.Shared.Infrastructure.Services;
 using FieldOps.Shared.Infrastructure.Time;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("FieldOps.Bootstrapper")]
@@ -20,11 +24,29 @@ internal static class Extensions
         services.AddSingleton<IClock, Clock>();
         services.AddHostedService<AppInitializer>();
 
+        services.AddScoped<IContext>(sp =>
+        {
+            var httpContext = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
+            return httpContext switch
+            {
+                null => Context.Empty,
+                not null => new Context(httpContext)
+            };
+        });
+
+        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+        services.AddCors();
+
         services.AddControllers()
             .ConfigureApplicationPartManager(manager =>
             {
                 manager.FeatureProviders.Add(new InternalControllerFeatureProvider());
             });
+
+        services.AddAuth();
+
+        services.AddSwaggerGen();
 
         return services;
     }
@@ -32,15 +54,23 @@ internal static class Extensions
     public static WebApplication UseInfrastructure(this WebApplication app)
     {
         app.UseErrorHandling();
-
         app.UseHttpsRedirection();
 
+        app.UseCors();
+
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+
+        app.UseRouting();
+
         app.UseAuthentication();
+        app.UseAuthorization();
 
         app.MapControllers();
         app.MapGet("/", static context => context.Response.WriteAsync("FieldOpsApi"));
-
-        app.UseAuthorization();
 
         return app;
     }

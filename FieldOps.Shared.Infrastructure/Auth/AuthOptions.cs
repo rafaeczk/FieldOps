@@ -7,7 +7,7 @@ public class AuthOptions
     public string IssuerSigningKey { get; set; } = null!;
     public string Authority { get; set; } = null!;
     public string Audience { get; set; } = null!;
-    public string Challenge { get; set; } = "Bearer";
+    public string Challenge { get; set; } = "BearerToken";
     public string MetadataAddress { get; set; } = null!;
     public bool SaveToken { get; set; } = true;
     public bool SaveSigninToken { get; set; }

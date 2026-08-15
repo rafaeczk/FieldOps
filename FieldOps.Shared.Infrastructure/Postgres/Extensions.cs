@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace FieldOps.Shared.Infrastructure.Postgres;
 
-internal static class Extensions
+public static class Extensions
 {
     internal static IServiceCollection AddPostgres(this IServiceCollection services)
     {

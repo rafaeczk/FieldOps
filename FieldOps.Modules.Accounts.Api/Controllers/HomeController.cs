@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace FieldOps.Modules.Users.Api.Controllers;
+namespace FieldOps.Modules.Accounts.Api.Controllers;
 
 internal class HomeController : BaseController
 {

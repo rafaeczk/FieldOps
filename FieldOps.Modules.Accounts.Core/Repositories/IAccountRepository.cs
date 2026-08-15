@@ -1,0 +1,11 @@
+﻿using FieldOps.Modules.Accounts.Core.Entities;
+
+namespace FieldOps.Modules.Accounts.Core.Repositories;
+
+internal interface IAccountRepository
+{
+    Task<Account?> GetAsync(Guid id);
+    Task<Account?> GetAsync(string email);
+    Task AddAsync(Account account);
+    Task UpdateAsync(Account account);
+}

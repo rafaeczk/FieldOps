@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using FieldOps.Shared.Abstractions.Auth;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using FieldOps.Shared.Abstractions.Auth;
 using System.Text;
 
 namespace FieldOps.Shared.Infrastructure.Auth;
@@ -83,6 +83,18 @@ public static class Extensions
                 }
 
                 optionsFactory?.Invoke(o);
+
+                o.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        if (context.Request.Cookies.TryGetValue(options.Challenge, out var token))
+                        {
+                            context.Token = token;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             });
 
         services.AddSingleton(options);

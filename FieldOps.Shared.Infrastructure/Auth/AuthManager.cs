@@ -9,7 +9,7 @@ namespace FieldOps.Shared.Infrastructure.Auth
 {
     public sealed class AuthManager : IAuthManager
     {
-        private static readonly Dictionary<string, IEnumerable<string>> EmptyClaims = new();
+        private static readonly Dictionary<string, IEnumerable<string>> EmptyClaims = [];
         private readonly AuthOptions _options;
         private readonly IClock _clock;
         private readonly SigningCredentials _signingCredentials;
@@ -29,19 +29,19 @@ namespace FieldOps.Shared.Infrastructure.Auth
             _issuer = options.Issuer;
         }
 
-        public JsonWebToken CreateToken(string userId, string role = null!, string audience = null!,
+        public JsonWebToken CreateToken(string accountId, string role = null!, string audience = null!,
             IDictionary<string, IEnumerable<string>> claims = null!)
         {
-            if (string.IsNullOrWhiteSpace(userId))
+            if (string.IsNullOrWhiteSpace(accountId))
             {
-                throw new ArgumentException("User ID claim (subject) cannot be empty.", nameof(userId));
+                throw new ArgumentException("Account ID claim (subject) cannot be empty.", nameof(accountId));
             }
 
             var now = _clock.UtcNow();
             var jwtClaims = new List<Claim>
             {
-                new(JwtRegisteredClaimNames.Sub, userId),
-                new(JwtRegisteredClaimNames.UniqueName, userId),
+                new(JwtRegisteredClaimNames.Sub, accountId),
+                new(JwtRegisteredClaimNames.UniqueName, accountId),
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new(JwtRegisteredClaimNames.Iat, new DateTimeOffset(now).ToUnixTimeMilliseconds().ToString())
             };
@@ -83,7 +83,7 @@ namespace FieldOps.Shared.Infrastructure.Auth
                 AccessToken = token,
                 RefreshToken = string.Empty,
                 Expires = new DateTimeOffset(expires).ToUnixTimeMilliseconds(),
-                Id = userId,
+                Id = accountId,
                 Role = role ?? string.Empty,
                 Claims = claims ?? EmptyClaims
             };

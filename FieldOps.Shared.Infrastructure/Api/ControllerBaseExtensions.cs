@@ -2,10 +2,9 @@
 
 namespace FieldOps.Shared.Infrastructure.Api;
 
-public static class ControllerExtensions
+public static class ControllerBaseExtensions
 {
-    public static ActionResult<T> OkOrNotFound<C, T>(this C controller, T model)
-        where C : ControllerBase
+    public static ActionResult<T> OkOrNotFound<T>(this ControllerBase controller, T? model)
     {
         if (model is null)
         {

@@ -7,7 +7,7 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\FieldOps.Modules.Users.Core\FieldOps.Modules.Users.Core.csproj" />
+		<ProjectReference Include="..\FieldOps.Modules.Accounts.Core\FieldOps.Modules.Accounts.Core.csproj" />
 	</ItemGroup>
 
 </Project>

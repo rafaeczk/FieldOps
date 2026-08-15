@@ -4,9 +4,9 @@
     <Project Path="FieldOps.Bootstrapper/FieldOps.Bootstrapper.csproj" />
   </Folder>
   <Folder Name="/Src/Modules/" />
-  <Folder Name="/Src/Modules/Users/">
-    <Project Path="FieldOps.Modules.Users.Api/FieldOps.Modules.Users.Api.csproj" />
-    <Project Path="FieldOps.Modules.Users.Core/FieldOps.Modules.Users.Core.csproj" />
+  <Folder Name="/Src/Modules/Accounts/">
+    <Project Path="FieldOps.Modules.Accounts.Api/FieldOps.Modules.Accounts.Api.csproj" />
+    <Project Path="FieldOps.Modules.Accounts.Core/FieldOps.Modules.Accounts.Core.csproj" />
   </Folder>
   <Folder Name="/Src/Shared/">
     <Project Path="FieldOps.Shared.Abstractions/FieldOps.Shared.Abstractions.csproj" />
