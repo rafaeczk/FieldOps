@@ -26,5 +26,5 @@ internal class AppInitializer(IServiceProvider serviceProvider, ILogger<AppIniti
         }
     }
 
-    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+    public Task StopAsync(CancellationToken ct) => Task.CompletedTask;
 }

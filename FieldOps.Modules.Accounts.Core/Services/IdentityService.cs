@@ -1,8 +1,10 @@
 ﻿using FieldOps.Modules.Accounts.Core.DTOs;
 using FieldOps.Modules.Accounts.Core.Entities;
+using FieldOps.Modules.Accounts.Core.Events;
 using FieldOps.Modules.Accounts.Core.Exceptions;
 using FieldOps.Modules.Accounts.Core.Repositories;
 using FieldOps.Shared.Abstractions.Auth;
+using FieldOps.Shared.Abstractions.Messaging;
 using FieldOps.Shared.Abstractions.Time;
 using Microsoft.AspNetCore.Identity;
 
@@ -12,11 +14,13 @@ internal class IdentityService(
     IAccountRepository accountRepository, 
     IPasswordHasher<Account> passwordHasher, 
     IAuthManager authManager,
+    IMessageClient moduleClient,
     IClock clock) : IIdentityService
 {
     private readonly IAccountRepository accountRepository = accountRepository;
     private readonly IPasswordHasher<Account> passwordHasher = passwordHasher;
     private readonly IAuthManager authManager = authManager;
+    private readonly IMessageClient moduleClient = moduleClient;
     private readonly IClock clock = clock;
 
     public async Task<AccountDto?> GetAsync(Guid id)
@@ -29,14 +33,14 @@ internal class IdentityService(
         return new(account.Email, account.Role, account.CreatedAt);
     }
 
-    public async Task<JsonWebToken> SignInAsync(SignInDto dto)
+    public async Task<JsonWebToken> SignInAsync(SignInCommand command)
     {
-        var account = await accountRepository.GetAsync(dto.Email);
+        var account = await accountRepository.GetAsync(command.Email);
 
         if (account is null)
             throw new InvalidCredentialsException();
 
-        if (passwordHasher.VerifyHashedPassword(default, account.Hash, dto.Password) == PasswordVerificationResult.Failed)
+        if (passwordHasher.VerifyHashedPassword(default, account.Hash, command.Password) == PasswordVerificationResult.Failed)
             throw new InvalidCredentialsException();
 
         var jwt = authManager.CreateToken(account.Id.ToString(), account.Role);
@@ -44,19 +48,21 @@ internal class IdentityService(
         return jwt;
     }
 
-    public async Task SignUpAsync(SignUpDto dto)
+    public async Task CreateAccount(CreateAccountCommand command)
     {
-        var email = dto.Email.ToLowerInvariant();
+        var email = command.Email.ToLowerInvariant();
 
         var foundAccount = await accountRepository.GetAsync(email);
 
         if (foundAccount is not null)
             throw new EmailInUseException();
 
-        var hash = passwordHasher.HashPassword(default, dto.Password);
+        var hash = passwordHasher.HashPassword(default, command.Password);
 
-        var account = Account.Create(email, hash, "none", clock.UtcNow());
+        var account = Account.Create(command.Id, email, hash, command.Role, clock.UtcNow());
 
         await accountRepository.AddAsync(account);
+
+        await moduleClient.PublishAsync(new AccountCreatedEvent(account.Id, account.Email, account.Role));
     }
 }

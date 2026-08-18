@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FieldOps.Modules.Accounts.Core.DAL;
 
-internal class AccountsDbContext(DbContextOptions<AccountsDbContext> options) : DbContext(options)
+internal class AccountDbContext(DbContextOptions<AccountDbContext> options) : DbContext(options)
 {
     public DbSet<Account> Accounts { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultSchema("users");
+        modelBuilder.HasDefaultSchema("accounts");
         modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
     }
 }

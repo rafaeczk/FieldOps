@@ -16,7 +16,7 @@ internal class AccountController(IIdentityService identityService, IContext cont
     [HttpPost("sign-in")]
     public async Task<ActionResult> SignIn([FromBody] SignInDto dto)
     {
-        var jwt = await identityService.SignInAsync(dto);
+        var jwt = await identityService.SignInAsync(new(dto.Email, dto.Password));
 
         var cookieOptions = new CookieOptions
         {
@@ -29,13 +29,6 @@ internal class AccountController(IIdentityService identityService, IContext cont
         Response.Cookies.Append(authOptions.Challenge, jwt.AccessToken, cookieOptions);
 
         return Ok();
-    }
-
-    [HttpPost("sign-up")]
-    public async Task<ActionResult> SignUp([FromBody] SignUpDto dto)
-    {
-        await identityService.SignUpAsync(dto);
-        return NoContent();
     }
 
     [HttpGet("me")]

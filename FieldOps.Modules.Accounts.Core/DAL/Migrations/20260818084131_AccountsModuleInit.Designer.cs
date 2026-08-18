@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace FieldOps.Modules.Accounts.Core.DAL.Migrations
 {
-    [DbContext(typeof(AccountsDbContext))]
-    [Migration("20260814185131_AccountsModuleInit")]
+    [DbContext(typeof(AccountDbContext))]
+    [Migration("20260818084131_AccountsModuleInit")]
     partial class AccountsModuleInit
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace FieldOps.Modules.Accounts.Core.DAL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("users")
+                .HasDefaultSchema("accounts")
                 .HasAnnotation("ProductVersion", "10.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -47,12 +47,15 @@ namespace FieldOps.Modules.Accounts.Core.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Accounts", "users");
+                    b.ToTable("Accounts", "accounts");
                 });
 #pragma warning restore 612, 618
         }

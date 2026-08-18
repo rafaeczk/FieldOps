@@ -12,18 +12,19 @@ namespace FieldOps.Modules.Accounts.Core.DAL.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
-                name: "users");
+                name: "accounts");
 
             migrationBuilder.CreateTable(
                 name: "Accounts",
-                schema: "users",
+                schema: "accounts",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
                     Hash = table.Column<string>(type: "text", nullable: false),
                     Role = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -32,7 +33,7 @@ namespace FieldOps.Modules.Accounts.Core.DAL.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Accounts_Email",
-                schema: "users",
+                schema: "accounts",
                 table: "Accounts",
                 column: "Email",
                 unique: true);
@@ -43,7 +44,7 @@ namespace FieldOps.Modules.Accounts.Core.DAL.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Accounts",
-                schema: "users");
+                schema: "accounts");
         }
     }
 }

@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FieldOps.Modules.Accounts.Core.DAL.Repositories;
 
-internal class AccountRepository(AccountsDbContext context) : IAccountRepository
+internal class AccountRepository(AccountDbContext context) : IAccountRepository
 {
-    private readonly AccountsDbContext context = context;
+    private readonly AccountDbContext context = context;
 
     public async Task AddAsync(Account account)
     {

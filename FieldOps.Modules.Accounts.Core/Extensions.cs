@@ -1,8 +1,11 @@
 ﻿using FieldOps.Modules.Accounts.Core.DAL;
 using FieldOps.Modules.Accounts.Core.DAL.Repositories;
 using FieldOps.Modules.Accounts.Core.Entities;
+using FieldOps.Modules.Accounts.Core.Events.Foreign.OperatorCreated;
 using FieldOps.Modules.Accounts.Core.Repositories;
 using FieldOps.Modules.Accounts.Core.Services;
+using FieldOps.Shared.Abstractions.Events;
+using FieldOps.Shared.Infrastructure.Messaging;
 using FieldOps.Shared.Infrastructure.Postgres;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,10 +16,18 @@ public static class Extensions
 {
     public static IServiceCollection AddCore(this IServiceCollection services)
     {
-        services.AddPostgres<AccountsDbContext>();
+        services.AddPostgres<AccountDbContext>();
+        services.AddHostedService<AccountInitializer>();
+
         services.AddScoped<IAccountRepository, AccountRepository>();
         services.AddTransient<IIdentityService, IdentityService>();
         services.AddSingleton<IPasswordHasher<Account>, PasswordHasher<Account>>();
+
+        services.AddScoped<IEventHandler<OperatorCreatedEvent>, OperatorCreatedEventHandler>();
+        services.Configure<MessageRegistryOptions>(options =>
+        {
+            options.BroadcastActionEventTypes.Add(typeof(OperatorCreatedEvent));
+        });
 
         return services;
     }
