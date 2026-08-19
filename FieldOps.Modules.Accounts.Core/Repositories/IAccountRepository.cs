@@ -8,4 +8,5 @@ internal interface IAccountRepository
     Task<Account?> GetAsync(string email);
     Task AddAsync(Account account);
     Task UpdateAsync(Account account);
+    Task DeleteAsync(Account account);
 }

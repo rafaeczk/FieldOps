@@ -8,7 +8,9 @@ public interface IIdentityService
 {
     Task<AccountDto?> GetAsync(Guid id);
     Task<JsonWebToken> SignInAsync(SignInCommand dto);
-    Task CreateAccount(CreateAccountCommand dto);
+    Task CreateAccountAsync(CreateAccountCommand dto);
+    Task DeleteAccountAsync(Guid id);
+
 }
 
 public record SignInCommand(string Email, string Password);

@@ -1,4 +1,6 @@
-﻿namespace FieldOps.Modules.Operators.Core.Entities;
+﻿using FieldOps.Shared.Abstractions.Time;
+
+namespace FieldOps.Modules.Operators.Core.Entities;
 
 internal class Operator
 {
@@ -20,5 +22,11 @@ internal class Operator
             CreatedAt = createdAt,
             UpdatedAt = createdAt
         };
+    }
+
+    public void UpdateDetails(string fullName, IClock clock)
+    {
+        FullName = fullName;
+        UpdatedAt = clock.UtcNow();
     }
 }
