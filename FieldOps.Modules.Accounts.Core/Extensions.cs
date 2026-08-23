@@ -3,6 +3,8 @@ using FieldOps.Modules.Accounts.Core.DAL.Repositories;
 using FieldOps.Modules.Accounts.Core.Entities;
 using FieldOps.Modules.Accounts.Core.Events.Foreign.OperatorCreated;
 using FieldOps.Modules.Accounts.Core.Events.Foreign.OperatorDeleted;
+using FieldOps.Modules.Accounts.Core.Events.Foreign.TechnicianCreated;
+using FieldOps.Modules.Accounts.Core.Events.Foreign.TechnicianDeleted;
 using FieldOps.Modules.Accounts.Core.Repositories;
 using FieldOps.Modules.Accounts.Core.Services;
 using FieldOps.Shared.Abstractions.Events;
@@ -26,10 +28,17 @@ public static class Extensions
 
         services.AddScoped<IEventHandler<OperatorCreatedEvent>, OperatorCreatedEventHandler>();
         services.AddScoped<IEventHandler<OperatorDeletedEvent>, OperatorDeletedEventHandler>();
+        services.AddScoped<IEventHandler<TechnicianDeletedEvent>, TechnicianDeletedEventHandler>();
+        services.AddScoped<IEventHandler<TechnicianCreatedEvent>, TechnicianCreatedEventHandler>();
+
         services.Configure<MessageRegistryOptions>(options =>
         {
             options.BroadcastActionEventTypes.Add(typeof(OperatorCreatedEvent));
             options.BroadcastActionEventTypes.Add(typeof(OperatorDeletedEvent));
+            options.BroadcastActionEventTypes.Add(typeof(TechnicianDeletedEvent));
+            options.BroadcastActionEventTypes.Add(typeof(TechnicianCreatedEvent));
+
+
         });
 
         return services;

@@ -6,10 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FieldOps.Modules.Operators.Core.DAL.Repositories;
 
-internal class OperatorRepository(OperatorDbContext context, IClock clock) : IOperatorRepository
+internal class OperatorRepository(OperatorDbContext context) : IOperatorRepository
 {
     private readonly OperatorDbContext context = context;
-    private readonly IClock clock = clock;
 
     public async Task<IReadOnlyList<Operator>> BrowseAsync()
     {
