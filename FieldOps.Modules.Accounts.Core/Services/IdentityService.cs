@@ -48,7 +48,7 @@ internal class IdentityService(
         return jwt;
     }
 
-    public async Task CreateAccount(CreateAccountCommand command)
+    public async Task CreateAccountAsync(CreateAccountCommand command)
     {
         var email = command.Email.ToLowerInvariant();
 
@@ -56,6 +56,7 @@ internal class IdentityService(
 
         if (foundAccount is not null)
             throw new EmailInUseException();
+        
 
         var hash = passwordHasher.HashPassword(default, command.Password);
 
@@ -64,5 +65,17 @@ internal class IdentityService(
         await accountRepository.AddAsync(account);
 
         await moduleClient.PublishAsync(new AccountCreatedEvent(account.Id, account.Email, account.Role));
+    }
+
+    public async Task DeleteAccountAsync(Guid id)
+    {
+        var account = await accountRepository.GetAsync(id);
+
+        if (account is null)
+        {
+            throw new AccountNotFoundException(id);
+        }
+
+        await accountRepository.DeleteAsync(account); 
     }
 }

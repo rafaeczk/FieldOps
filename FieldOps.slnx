@@ -12,6 +12,10 @@
     <Project Path="FieldOps.Modules.Operators.Api/FieldOps.Modules.Operators.Api.csproj" Id="c15d63c8-3b90-40ad-ad99-0a82cce4642e" />
     <Project Path="FieldOps.Modules.Operators.Core/FieldOps.Modules.Operators.Core.csproj" Id="a0c4baed-c9fc-41f4-a439-08418225114d" />
   </Folder>
+  <Folder Name="/Src/Modules/Technicians/" Id="84cbdab3-dbe5-4b34-b90e-d4ab5f7011da">
+    <Project Path="FieldOps.Modules.Technicians.Api/FieldOps.Modules.Technicians.Api.csproj" Id="8a96f6fa-39a7-4b11-8ee0-4cb874b0018f" />
+    <Project Path="FieldOps.Modules.Technicians.Core/FieldOps.Modules.Technicians.Core.csproj" Id="1f669cc8-e47a-4053-a3aa-46725934bc0c" />
+  </Folder>
   <Folder Name="/Src/Shared/">
     <Project Path="FieldOps.Shared.Abstractions/FieldOps.Shared.Abstractions.csproj" />
     <Project Path="FieldOps.Shared.Infrastructure/FieldOps.Shared.Infrastructure.csproj" />

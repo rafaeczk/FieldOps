@@ -14,6 +14,12 @@ internal class AccountRepository(AccountDbContext context) : IAccountRepository
         await context.SaveChangesAsync();
     }
 
+    public async Task DeleteAsync(Account account)
+    {
+        context.Accounts.Remove(account);
+        await context.SaveChangesAsync();
+    }
+
     public async Task<Account?> GetAsync(Guid id)
     {
         return await context.Accounts.SingleOrDefaultAsync(a => a.Id == id);

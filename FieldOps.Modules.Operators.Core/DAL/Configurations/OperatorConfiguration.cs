@@ -1,6 +1,7 @@
 ﻿using FieldOps.Modules.Operators.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Security.Principal;
 
 namespace FieldOps.Modules.Operators.Core.DAL.Configurations;
 
@@ -17,5 +18,6 @@ internal class OperatorConfiguration : IEntityTypeConfiguration<Operator>
         builder.Property(a => a.CreatedAt).IsRequired();
 
         builder.Property(a => a.UpdatedAt).IsRequired();
+       
     }
 }

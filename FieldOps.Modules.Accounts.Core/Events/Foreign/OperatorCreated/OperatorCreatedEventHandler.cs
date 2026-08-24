@@ -10,6 +10,6 @@ internal class OperatorCreatedEventHandler(IIdentityService identity) : IEventHa
 
     public async Task HandleAsync(OperatorCreatedEvent @event)
     {
-        await identity.CreateAccount(new(@event.RequestedAccountId, @event.RequestedEmail, @event.RequestedPassword, new(AccountRole.Operator)));
+        await identity.CreateAccountAsync(new(@event.RequestedAccountId, @event.RequestedEmail, @event.RequestedPassword, new(AccountRole.Operator)));
     }
 }
