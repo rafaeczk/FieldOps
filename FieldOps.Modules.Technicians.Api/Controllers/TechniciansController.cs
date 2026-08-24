@@ -1,7 +1,7 @@
 ﻿using FieldOps.Modules.Technicians.Core.DTOs;
 using FieldOps.Modules.Technicians.Core.Services;
 using FieldOps.Shared.Infrastructure.Api;
-using FieldOps.Shared.Infrastructure.Contexts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FieldOps.Modules.Technicians.Api.Controllers;
@@ -11,6 +11,7 @@ internal class TechniciansController(ITechnicianService service) : BaseControlle
     private readonly ITechnicianService service = service;
 
     [HttpPost]
+    [Authorize(Roles = "ADMIN")]
     public async Task<ActionResult<Guid>> CreateTechnician([FromBody] CreateTechnicianDto dto)
     {
         var technicianId = await service.CreateAsync(dto);
@@ -30,6 +31,7 @@ internal class TechniciansController(ITechnicianService service) : BaseControlle
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "ADMIN")]
     public async Task<ActionResult> DeleteTechnician(Guid id)
     {
         await service.DeleteAsync(id);

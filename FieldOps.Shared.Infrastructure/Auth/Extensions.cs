@@ -100,6 +100,8 @@ public static class Extensions
         services.AddSingleton(options);
         services.AddSingleton(tokenValidationParameters);
 
+        services.AddAuthorization();
+
         return services;
     }
 }

@@ -1,17 +1,16 @@
-﻿    using FieldOps.Modules.Operators.Core.DTOs;
+﻿using FieldOps.Modules.Operators.Core.DTOs;
 using FieldOps.Modules.Operators.Core.Entities;
 using FieldOps.Modules.Operators.Core.Events;
 using FieldOps.Modules.Operators.Core.Exceptions;
 using FieldOps.Modules.Operators.Core.Repositories;
 using FieldOps.Shared.Abstractions.Messaging;
 using FieldOps.Shared.Abstractions.Time;
-using Microsoft.Extensions.Hosting;
 
 namespace FieldOps.Modules.Operators.Core.Services;
 
-internal class OperatorService(IMessageClient moduleClient, IOperatorRepository repository, IClock clock) : IOperatorService
+internal class OperatorService(IMessageClient messageClient, IOperatorRepository repository, IClock clock) : IOperatorService
 {
-    private readonly IMessageClient moduleClient = moduleClient;
+    private readonly IMessageClient messageClient = messageClient;
     private readonly IOperatorRepository repository = repository;
     private readonly IClock clock = clock;
 
@@ -24,7 +23,7 @@ internal class OperatorService(IMessageClient moduleClient, IOperatorRepository 
 
         await repository.CreateAsync(@operator);
 
-        await moduleClient.PublishAsync(new OperatorCreatedEvent(
+        await messageClient.PublishAsync(new OperatorCreatedEvent(
             @operator.Id,
             @operator.FullName,
             @operator.CreatedAt,
@@ -48,8 +47,6 @@ internal class OperatorService(IMessageClient moduleClient, IOperatorRepository 
         return dto;
     }
 
- 
-
     public async Task<IReadOnlyList<OperatorDto>> BrowseAsync()
     {
         var operators =  await repository.BrowseAsync();
@@ -66,7 +63,7 @@ internal class OperatorService(IMessageClient moduleClient, IOperatorRepository 
         }
         var accountId = @operator.AccountId;
         await repository.DeleteAsync(@operator);
-        await moduleClient.PublishAsync(new OperatorDeletedEvent(accountId));
+        await messageClient.PublishAsync(new OperatorDeletedEvent(accountId));
     }
 
     private static T Map<T>(Operator @operator) where T : OperatorDto, new()

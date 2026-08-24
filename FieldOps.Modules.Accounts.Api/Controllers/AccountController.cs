@@ -3,6 +3,7 @@ using FieldOps.Modules.Accounts.Core.Services;
 using FieldOps.Shared.Abstractions.Contexts;
 using FieldOps.Shared.Infrastructure.Api;
 using FieldOps.Shared.Infrastructure.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,6 +33,7 @@ internal class AccountController(IIdentityService identityService, IContext cont
     }
 
     [HttpGet("me")]
+    [Authorize]
     public async Task<ActionResult<AccountDto>> GetMe()
     {
         return this.OkOrNotFound(await identityService.GetAsync(context.Identity.Id));
