@@ -6,6 +6,7 @@
   <Folder Name="/Src/Modules/" />
   <Folder Name="/Src/Modules/Accounts/">
     <Project Path="FieldOps.Modules.Accounts.Api/FieldOps.Modules.Accounts.Api.csproj" />
+    <Project Path="FieldOps.Modules.Accounts.Contracts/FieldOps.Modules.Accounts.Contracts.csproj" Id="6e6c8114-9258-46c5-8dc6-db1e661c400b" />
     <Project Path="FieldOps.Modules.Accounts.Core/FieldOps.Modules.Accounts.Core.csproj" />
   </Folder>
   <Folder Name="/Src/Modules/Operators/">

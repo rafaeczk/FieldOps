@@ -37,10 +37,12 @@ public static class Extensions
             options.BroadcastActionEventTypes.Add(typeof(OperatorDeletedEvent));
             options.BroadcastActionEventTypes.Add(typeof(TechnicianDeletedEvent));
             options.BroadcastActionEventTypes.Add(typeof(TechnicianCreatedEvent));
-
-
         });
+
+        services.AddMediatR(config => config.RegisterServicesFromAssemblyContaining<ModuleMarker>());
 
         return services;
     }
 }
+
+internal class ModuleMarker { }

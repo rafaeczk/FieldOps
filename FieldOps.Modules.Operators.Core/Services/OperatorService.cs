@@ -1,21 +1,27 @@
-﻿using FieldOps.Modules.Operators.Core.DTOs;
+﻿using FieldOps.Modules.Accounts.Contracts;
+using FieldOps.Modules.Operators.Core.DTOs;
 using FieldOps.Modules.Operators.Core.Entities;
 using FieldOps.Modules.Operators.Core.Events;
 using FieldOps.Modules.Operators.Core.Exceptions;
 using FieldOps.Modules.Operators.Core.Repositories;
 using FieldOps.Shared.Abstractions.Messaging;
 using FieldOps.Shared.Abstractions.Time;
+using MediatR;
 
 namespace FieldOps.Modules.Operators.Core.Services;
 
-internal class OperatorService(IMessageClient messageClient, IOperatorRepository repository, IClock clock) : IOperatorService
+internal class OperatorService(IMessageClient messageClient, IOperatorRepository repository, IClock clock, ISender sender) : IOperatorService
 {
     private readonly IMessageClient messageClient = messageClient;
     private readonly IOperatorRepository repository = repository;
     private readonly IClock clock = clock;
+    private readonly ISender sender = sender;
 
     public async Task<Guid> CreateAsync(CreateOperatorDto dto)
     {
+        if (await sender.Send(new CheckAccountEmailTakenQuery(dto.RequestedEmail)))
+            throw new EmailInUseException();
+
         var @operator = Operator.Create(
             Guid.NewGuid(),
             dto.FullName,

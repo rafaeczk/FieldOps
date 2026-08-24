@@ -1,20 +1,21 @@
-﻿using FieldOps.Modules.Technicians.Core.DTOs;
+﻿using FieldOps.Modules.Accounts.Contracts;
+using FieldOps.Modules.Technicians.Core.DTOs;
+using FieldOps.Modules.Technicians.Core.Entities;
 using FieldOps.Modules.Technicians.Core.Events;
 using FieldOps.Modules.Technicians.Core.Exceptions;
-using FieldOps.Modules.Technicians.Core.Entities;
 using FieldOps.Modules.Technicians.Core.Repositories;
-using FieldOps.Modules.Technicians.Core.Services;
 using FieldOps.Shared.Abstractions.Messaging;
 using FieldOps.Shared.Abstractions.Time;
-using Microsoft.Extensions.Hosting;
+using MediatR;
 
 namespace FieldOps.Modules.Technicians.Core.Services;
 
-internal class TechnicianService(IMessageClient moduleClient, ITechnicianRepository repository, IClock clock) : ITechnicianService
+internal class TechnicianService(IMessageClient moduleClient, ITechnicianRepository repository, IClock clock, ISender sender) : ITechnicianService
 {
     private readonly IMessageClient moduleClient = moduleClient;
     private readonly ITechnicianRepository repository = repository;
     private readonly IClock clock = clock;
+    private readonly ISender sender = sender;
 
     public async Task<IReadOnlyList<TechnicianDto>> BrowseAsync()
     {
@@ -24,6 +25,9 @@ internal class TechnicianService(IMessageClient moduleClient, ITechnicianReposit
 
     public async Task<Guid> CreateAsync(CreateTechnicianDto dto)
     {
+        if (await sender.Send(new CheckAccountEmailTakenQuery(dto.RequestedEmail)))
+            throw new EmailInUseException();
+
         var technician = Technician.Create(
            Guid.NewGuid(),
            dto.FullName,
