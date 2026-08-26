@@ -50,13 +50,13 @@ internal class OperatorService(IOperatorRepository repository, IOutboxMessagesRe
             return null;
 
         var dto = Map<OperatorDetalisDto>(@operator);
-       
+
         return dto;
     }
 
     public async Task<IReadOnlyList<OperatorDto>> BrowseAsync()
     {
-        var operators =  await repository.BrowseAsync();
+        var operators = await repository.BrowseAsync();
         return [.. operators.Select(Map<OperatorDto>)];
     }
 

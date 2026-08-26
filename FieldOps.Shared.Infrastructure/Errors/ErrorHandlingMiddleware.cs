@@ -14,7 +14,7 @@ internal class ErrorHandlingMiddleware(ILogger<ErrorHandlingMiddleware> logger, 
         {
             await next(context);
         }
-        catch(Exception exception)
+        catch (Exception exception)
         {
             logger.LogError(exception, exception.Message);
             await HandleError(context, exception);

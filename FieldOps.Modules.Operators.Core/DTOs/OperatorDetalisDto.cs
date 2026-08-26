@@ -2,6 +2,6 @@
 {
     public record OperatorDetalisDto : OperatorDto
     {
-     
+
     }
 }

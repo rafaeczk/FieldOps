@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.111"
+
+      - name: Cache NuGet
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore
+        run: dotnet restore FieldOps.slnx
+
+      - name: Check formatting
+        run: dotnet format FieldOps.slnx --verify-no-changes --no-restore
+
+      - name: Build
+        run: dotnet build FieldOps.slnx --no-restore --configuration Release
+
+      - name: Test
+        run: dotnet test FieldOps.slnx --no-build --configuration Release --verbosity normal
