@@ -1,13 +1,9 @@
 ﻿using FieldOps.Shared.Abstractions.Contexts;
-using FieldOps.Shared.Abstractions.Events;
-using FieldOps.Shared.Abstractions.Messaging;
 using FieldOps.Shared.Abstractions.Time;
 using FieldOps.Shared.Infrastructure.Api;
 using FieldOps.Shared.Infrastructure.Auth;
 using FieldOps.Shared.Infrastructure.Contexts;
 using FieldOps.Shared.Infrastructure.Errors;
-using FieldOps.Shared.Infrastructure.Events;
-using FieldOps.Shared.Infrastructure.Messaging;
 using FieldOps.Shared.Infrastructure.Modules;
 using FieldOps.Shared.Infrastructure.Services;
 using FieldOps.Shared.Infrastructure.Time;
@@ -29,13 +25,7 @@ internal static class Extensions
         services.AddSingleton<IClock, Clock>();
         services.AddHostedService<AppInitializer>();
 
-        services.AddEvents();
-
         services.AddSingleton<IModuleSerializer, JsonModuleSerializer>();
-
-        services.AddOptions<MessageRegistryOptions>();
-        services.AddSingleton<IMessageRegistry, MessageRegistry>();
-        services.AddSingleton<IMessageClient, MessageClient>();
 
         services.AddScoped<IContext>(sp =>
         {

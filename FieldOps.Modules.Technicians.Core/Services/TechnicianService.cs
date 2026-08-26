@@ -1,20 +1,19 @@
-﻿using FieldOps.Modules.Accounts.Contracts;
+﻿using FieldOps.Modules.Accounts.Contracts.Queries;
+using FieldOps.Modules.Technicians.Contracts.Events;
 using FieldOps.Modules.Technicians.Core.DTOs;
 using FieldOps.Modules.Technicians.Core.Entities;
-using FieldOps.Modules.Technicians.Core.Events;
 using FieldOps.Modules.Technicians.Core.Exceptions;
 using FieldOps.Modules.Technicians.Core.Repositories;
-using FieldOps.Shared.Abstractions.Messaging;
 using FieldOps.Shared.Abstractions.Time;
 using MediatR;
 
 namespace FieldOps.Modules.Technicians.Core.Services;
 
-internal class TechnicianService(ITechnicianRepository repository, ITechnicianUnitOfWork unitOfWork, IMessageClient moduleClient, IClock clock, ISender sender) : ITechnicianService
+internal class TechnicianService(ITechnicianRepository repository, IOutboxMessagesRepository outboxRepository, ITechnicianUnitOfWork unitOfWork, IClock clock, ISender sender) : ITechnicianService
 {
     private readonly ITechnicianRepository repository = repository;
+    private readonly IOutboxMessagesRepository outboxRepository = outboxRepository;
     private readonly ITechnicianUnitOfWork unitOfWork = unitOfWork;
-    private readonly IMessageClient moduleClient = moduleClient;
     private readonly IClock clock = clock;
     private readonly ISender sender = sender;
 
@@ -26,7 +25,7 @@ internal class TechnicianService(ITechnicianRepository repository, ITechnicianUn
 
     public async Task<Guid> CreateAsync(CreateTechnicianDto dto)
     {
-        if (await sender.Send(new CheckAccountEmailTakenQuery(dto.RequestedEmail)))
+        if (await sender.Send(new CheckAccountEmailIsTaken(dto.RequestedEmail)))
             throw new EmailInUseException();
 
         var technician = Technician.Create(
@@ -35,15 +34,16 @@ internal class TechnicianService(ITechnicianRepository repository, ITechnicianUn
            clock.UtcNow());
 
         await repository.CreateAsync(technician);
-        await unitOfWork.SaveChangesAsync();
 
-        await moduleClient.PublishAsync(new TechnicianCreatedEvent(
+        await outboxRepository.CreateAsync(new TechnicianCreated(
             technician.Id,
             technician.FullName,
             technician.CreatedAt,
             technician.AccountId,
             dto.RequestedEmail,
             dto.RequestedPassword));
+
+        await unitOfWork.SaveChangesAsync();
 
         return technician.Id;
     }
@@ -56,9 +56,10 @@ internal class TechnicianService(ITechnicianRepository repository, ITechnicianUn
             throw new TechnicianNotFoundException(id);
 
         await repository.DeleteAsync(technician);
-        await unitOfWork.SaveChangesAsync();
 
-        await moduleClient.PublishAsync(new TechnicianDeletedEvent(technician.AccountId));
+        await outboxRepository.CreateAsync(new TechnicianDeleted(technician.AccountId));
+
+        await unitOfWork.SaveChangesAsync();
     }
 
     public async Task<TechnicianDto?> GetByAsync(Guid id)

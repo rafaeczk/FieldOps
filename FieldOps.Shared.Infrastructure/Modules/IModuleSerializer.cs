@@ -1,6 +1,6 @@
 ﻿namespace FieldOps.Shared.Infrastructure.Modules;
 
-internal interface IModuleSerializer
+public interface IModuleSerializer
 {
     byte[] Serialize<T>(T value);
     T Deserialize<T>(byte[] value);

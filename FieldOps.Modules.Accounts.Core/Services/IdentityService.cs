@@ -1,10 +1,9 @@
-﻿using FieldOps.Modules.Accounts.Core.DTOs;
+﻿using FieldOps.Modules.Accounts.Contracts.Events;
+using FieldOps.Modules.Accounts.Core.DTOs;
 using FieldOps.Modules.Accounts.Core.Entities;
-using FieldOps.Modules.Accounts.Core.Events;
 using FieldOps.Modules.Accounts.Core.Exceptions;
 using FieldOps.Modules.Accounts.Core.Repositories;
 using FieldOps.Shared.Abstractions.Auth;
-using FieldOps.Shared.Abstractions.Messaging;
 using FieldOps.Shared.Abstractions.Time;
 using Microsoft.AspNetCore.Identity;
 
@@ -12,15 +11,17 @@ namespace FieldOps.Modules.Accounts.Core.Services;
 
 internal class IdentityService(
     IAccountRepository accountRepository,
-    IPasswordHasher<Account> passwordHasher,
+    IOutboxMessagesRepository outboxRepository,
+    IAccountUnitOfWork unitOfWork,
+    IPasswordHasher<Account> passwordHasher, 
     IAuthManager authManager,
-    IMessageClient moduleClient,
     IClock clock) : IIdentityService
 {
     private readonly IAccountRepository accountRepository = accountRepository;
+    private readonly IOutboxMessagesRepository outboxRepository = outboxRepository;
+    private readonly IAccountUnitOfWork unitOfWork = unitOfWork;
     private readonly IPasswordHasher<Account> passwordHasher = passwordHasher;
     private readonly IAuthManager authManager = authManager;
-    private readonly IMessageClient moduleClient = moduleClient;
     private readonly IClock clock = clock;
 
     public async Task<AccountDto?> GetAsync(Guid id)
@@ -62,9 +63,10 @@ internal class IdentityService(
 
         var account = Account.Create(command.Id, email, hash, command.Role, clock.UtcNow());
 
-        await accountRepository.AddAsync(account);
+        await accountRepository.CreateAsync(account);
+        await outboxRepository.CreateAsync(new AccountCreated(account.Id, account.Email, account.Role));
 
-        await moduleClient.PublishAsync(new AccountCreatedEvent(account.Id, account.Email, account.Role));
+        await unitOfWork.SaveChangesAsync();
     }
 
     public async Task DeleteAccountAsync(Guid id)
@@ -72,10 +74,9 @@ internal class IdentityService(
         var account = await accountRepository.GetAsync(id);
 
         if (account is null)
-        {
             throw new AccountNotFoundException(id);
-        }
 
         await accountRepository.DeleteAsync(account);
+        await unitOfWork.SaveChangesAsync();
     }
 }

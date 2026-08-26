@@ -8,16 +8,14 @@ internal class AccountRepository(AccountDbContext context) : IAccountRepository
 {
     private readonly AccountDbContext context = context;
 
-    public async Task AddAsync(Account account)
+    public async Task CreateAsync(Account account)
     {
         await context.Accounts.AddAsync(account);
-        await context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(Account account)
     {
         context.Accounts.Remove(account);
-        await context.SaveChangesAsync();
     }
 
     public async Task<Account?> GetAsync(Guid id)
@@ -33,6 +31,5 @@ internal class AccountRepository(AccountDbContext context) : IAccountRepository
     public async Task UpdateAsync(Account account)
     {
         context.Accounts.Update(account);
-        await context.SaveChangesAsync();
     }
 }
