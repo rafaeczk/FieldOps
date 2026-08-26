@@ -6,6 +6,7 @@ namespace FieldOps.Modules.Accounts.Core.DAL;
 internal class AccountDbContext(DbContextOptions<AccountDbContext> options) : DbContext(options)
 {
     public DbSet<Account> Accounts { get; set; }
+    public DbSet<OutboxMessage> OutboxMessages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
