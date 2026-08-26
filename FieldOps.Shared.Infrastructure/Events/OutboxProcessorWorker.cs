@@ -8,8 +8,8 @@ using System.Text;
 namespace FieldOps.Shared.Infrastructure.Events;
 
 public class OutboxProcessorWorker<OutboxRepo>(
-    IServiceScopeFactory scopeFactory, 
-    string moduleName, 
+    IServiceScopeFactory scopeFactory,
+    string moduleName,
     Dictionary<string, Type> typeMapping,
     ILogger<OutboxProcessorWorker<OutboxRepo>> logger) : BackgroundService
     where OutboxRepo : IModuleOutboxRepository
@@ -41,7 +41,7 @@ public class OutboxProcessorWorker<OutboxRepo>(
                     if (eventType is null) continue;
 
                     var @event = serializer.Deserialize(
-                        Encoding.UTF8.GetBytes(message.Content), 
+                        Encoding.UTF8.GetBytes(message.Content),
                         eventType);
 
                     await publisher.Publish(@event, ct);
@@ -49,7 +49,7 @@ public class OutboxProcessorWorker<OutboxRepo>(
                     logger.LogDebug("Processed outbox message {MessageId} of type {EventType} in module {ModuleName}.", message.Id, message.Type, moduleName);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 logger.LogError(ex, "An error occurred while processing outbox messages in module {ModuleName}.", moduleName);
             }

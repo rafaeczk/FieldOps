@@ -13,7 +13,7 @@ internal class IdentityService(
     IAccountRepository accountRepository,
     IOutboxMessagesRepository outboxRepository,
     IAccountUnitOfWork unitOfWork,
-    IPasswordHasher<Account> passwordHasher, 
+    IPasswordHasher<Account> passwordHasher,
     IAuthManager authManager,
     IClock clock) : IIdentityService
 {
