@@ -17,6 +17,10 @@
     <Project Path="FieldOps.Modules.Technicians.Api/FieldOps.Modules.Technicians.Api.csproj" />
     <Project Path="FieldOps.Modules.Technicians.Core/FieldOps.Modules.Technicians.Core.csproj" Id="1f669cc8-e47a-4053-a3aa-46725934bc0c" />
   </Folder>
+  <Folder Name="/Src/Modules/WorkOrders/">
+    <Project Path="FieldOps.Modules.WorkOrders.Api/FieldOps.Modules.WorkOrders.Api.csproj" />
+    <Project Path="FieldOps.Modules.WorkOrders.Core/FieldOps.Modules.WorkOrders.Core.csproj" />
+  </Folder>
   <Folder Name="/Src/Shared/">
     <Project Path="FieldOps.Shared.Abstractions/FieldOps.Shared.Abstractions.csproj" />
     <Project Path="FieldOps.Shared.Infrastructure/FieldOps.Shared.Infrastructure.csproj" />
@@ -25,5 +29,6 @@
     <Project Path="FieldOps.Modules.Accounts.Tests/FieldOps.Modules.Accounts.Tests.csproj" />
     <Project Path="FieldOps.Modules.Operators.Tests/FieldOps.Modules.Operators.Tests.csproj" />
     <Project Path="FieldOps.Modules.Technicians.Tests/FieldOps.Modules.Technicians.Tests.csproj" />
+    <Project Path="FieldOps.Modules.WorkOrders.Tests/FieldOps.Modules.WorkOrders.Tests.csproj" />
   </Folder>
 </Solution>
