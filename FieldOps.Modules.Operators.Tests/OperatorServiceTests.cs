@@ -1,11 +1,10 @@
-using FieldOps.Modules.Accounts.Contracts;
+using FieldOps.Modules.Accounts.Contracts.Queries;
+using FieldOps.Modules.Operators.Contracts.Events;
 using FieldOps.Modules.Operators.Core.DTOs;
 using FieldOps.Modules.Operators.Core.Entities;
-using FieldOps.Modules.Operators.Core.Events;
 using FieldOps.Modules.Operators.Core.Exceptions;
 using FieldOps.Modules.Operators.Core.Repositories;
 using FieldOps.Modules.Operators.Core.Services;
-using FieldOps.Shared.Abstractions.Messaging;
 using FieldOps.Shared.Abstractions.Time;
 using MediatR;
 using Moq;
@@ -15,8 +14,8 @@ namespace FieldOps.Modules.Operators.Tests;
 public class OperatorServiceTests
 {
     private readonly Mock<IOperatorRepository> _repositoryMock = new();
+    private readonly Mock<IOutboxMessagesRepository> _outboxRepositoryMock = new();
     private readonly Mock<IOperatorUnitOfWork> _unitOfWorkMock = new();
-    private readonly Mock<IMessageClient> _messageClientMock = new();
     private readonly Mock<IClock> _clockMock = new();
     private readonly Mock<ISender> _senderMock = new();
     private readonly OperatorService _sut;
@@ -25,8 +24,8 @@ public class OperatorServiceTests
     {
         _sut = new OperatorService(
             _repositoryMock.Object,
+            _outboxRepositoryMock.Object,
             _unitOfWorkMock.Object,
-            _messageClientMock.Object,
             _clockMock.Object,
             _senderMock.Object);
     }
@@ -39,7 +38,7 @@ public class OperatorServiceTests
 
         _clockMock.Setup(x => x.UtcNow()).Returns(fixedTime);
         _senderMock
-            .Setup(x => x.Send(It.IsAny<CheckAccountEmailTakenQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.Send(It.IsAny<CheckAccountEmailIsTaken>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
         var result = await _sut.CreateAsync(dto);
@@ -48,7 +47,7 @@ public class OperatorServiceTests
         _repositoryMock.Verify(x => x.CreateAsync(It.Is<Operator>(o =>
             o.FullName == dto.FullName)), Times.Once);
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(), Times.Once);
-        _messageClientMock.Verify(x => x.PublishAsync(It.IsAny<OperatorCreatedEvent>()), Times.Once);
+        _outboxRepositoryMock.Verify(x => x.CreateAsync(It.IsAny<OperatorCreated>()), Times.Once);
     }
 
     [Fact]
@@ -57,7 +56,7 @@ public class OperatorServiceTests
         var dto = new CreateOperatorDto("John Doe", "existing@test.com", "password123");
 
         _senderMock
-            .Setup(x => x.Send(It.IsAny<CheckAccountEmailTakenQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.Send(It.IsAny<CheckAccountEmailIsTaken>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
         await Assert.ThrowsAsync<EmailInUseException>(() => _sut.CreateAsync(dto));
@@ -124,7 +123,7 @@ public class OperatorServiceTests
 
         _repositoryMock.Verify(x => x.DeleteAsync(@operator), Times.Once);
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(), Times.Once);
-        _messageClientMock.Verify(x => x.PublishAsync(It.IsAny<OperatorDeletedEvent>()), Times.Once);
+        _outboxRepositoryMock.Verify(x => x.CreateAsync(It.IsAny<OperatorDeleted>()), Times.Once);
     }
 
     [Fact]

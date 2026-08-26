@@ -1,12 +1,11 @@
+using FieldOps.Modules.Accounts.Contracts.Events;
 using FieldOps.Modules.Accounts.Core.DTOs;
 using FieldOps.Modules.Accounts.Core.Entities;
 using FieldOps.Modules.Accounts.Core.Exceptions;
-using FieldOps.Modules.Accounts.Core.Events;
 using FieldOps.Modules.Accounts.Core.Repositories;
 using FieldOps.Modules.Accounts.Core.Services;
 using FieldOps.Modules.Accounts.Core.ValueObjects;
 using FieldOps.Shared.Abstractions.Auth;
-using FieldOps.Shared.Abstractions.Messaging;
 using FieldOps.Shared.Abstractions.Time;
 using Microsoft.AspNetCore.Identity;
 using Moq;
@@ -16,9 +15,10 @@ namespace FieldOps.Modules.Accounts.Tests;
 public class IdentityServiceTests
 {
     private readonly Mock<IAccountRepository> _accountRepositoryMock = new();
+    private readonly Mock<IOutboxMessagesRepository> _outboxRepositoryMock = new();
+    private readonly Mock<IAccountUnitOfWork> _unitOfWorkMock = new();
     private readonly Mock<IPasswordHasher<Account>> _passwordHasherMock = new();
     private readonly Mock<IAuthManager> _authManagerMock = new();
-    private readonly Mock<IMessageClient> _messageClientMock = new();
     private readonly Mock<IClock> _clockMock = new();
     private readonly IdentityService _sut;
 
@@ -26,9 +26,10 @@ public class IdentityServiceTests
     {
         _sut = new IdentityService(
             _accountRepositoryMock.Object,
+            _outboxRepositoryMock.Object,
+            _unitOfWorkMock.Object,
             _passwordHasherMock.Object,
             _authManagerMock.Object,
-            _messageClientMock.Object,
             _clockMock.Object);
     }
 
@@ -102,12 +103,13 @@ public class IdentityServiceTests
 
         await _sut.CreateAccountAsync(command);
 
-        _accountRepositoryMock.Verify(x => x.AddAsync(It.Is<Account>(a =>
+        _accountRepositoryMock.Verify(x => x.CreateAsync(It.Is<Account>(a =>
             a.Email == command.Email &&
             a.Hash == "hashed-password" &&
             a.Role == command.Role)), Times.Once);
 
-        _messageClientMock.Verify(x => x.PublishAsync(It.IsAny<AccountCreatedEvent>()), Times.Once);
+        _outboxRepositoryMock.Verify(x => x.CreateAsync(It.IsAny<AccountCreated>()), Times.Once);
+        _unitOfWorkMock.Verify(x => x.SaveChangesAsync(), Times.Once);
     }
 
     [Fact]
@@ -137,6 +139,7 @@ public class IdentityServiceTests
         await _sut.DeleteAccountAsync(accountId);
 
         _accountRepositoryMock.Verify(x => x.DeleteAsync(account), Times.Once);
+        _unitOfWorkMock.Verify(x => x.SaveChangesAsync(), Times.Once);
     }
 
     [Fact]
