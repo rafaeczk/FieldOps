@@ -17,7 +17,7 @@ internal sealed class DisabledAuthenticationPolicyEvaluator : IPolicyEvaluator
     }
 
     public Task<PolicyAuthorizationResult> AuthorizeAsync(AuthorizationPolicy policy,
-        AuthenticateResult authenticationResult, HttpContext context, object resource)
+        AuthenticateResult authenticationResult, HttpContext context, object? resource)
     {
         return Task.FromResult(PolicyAuthorizationResult.Success());
     }

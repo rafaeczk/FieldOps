@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CS8981
+
 namespace FieldOps.Modules.Technicians.Core.Migrations
 {
     /// <inheritdoc />
