@@ -11,8 +11,8 @@ using Microsoft.AspNetCore.Identity;
 namespace FieldOps.Modules.Accounts.Core.Services;
 
 internal class IdentityService(
-    IAccountRepository accountRepository, 
-    IPasswordHasher<Account> passwordHasher, 
+    IAccountRepository accountRepository,
+    IPasswordHasher<Account> passwordHasher,
     IAuthManager authManager,
     IMessageClient moduleClient,
     IClock clock) : IIdentityService
@@ -56,7 +56,7 @@ internal class IdentityService(
 
         if (foundAccount is not null)
             throw new EmailInUseException();
-        
+
 
         var hash = passwordHasher.HashPassword(default, command.Password);
 
@@ -76,6 +76,6 @@ internal class IdentityService(
             throw new AccountNotFoundException(id);
         }
 
-        await accountRepository.DeleteAsync(account); 
+        await accountRepository.DeleteAsync(account);
     }
 }
