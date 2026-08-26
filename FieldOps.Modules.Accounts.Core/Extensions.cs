@@ -20,6 +20,8 @@ public static class Extensions
     public static IServiceCollection AddCore(this IServiceCollection services)
     {
         services.AddPostgres<AccountDbContext>();
+        services.AddScoped<IAccountUnitOfWork, AccountUnitOfWork>();
+
         services.AddHostedService<AccountInitializer>();
 
         services.AddScoped<IAccountRepository, AccountRepository>();

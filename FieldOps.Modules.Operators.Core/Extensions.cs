@@ -13,6 +13,8 @@ public static class Extensions
     public static IServiceCollection AddCore(this IServiceCollection services)
     {
         services.AddPostgres<OperatorDbContext>();
+        services.AddScoped<IOperatorUnitOfWork, OperatorUnitOfWork>();
+
         services.AddScoped<IOperatorRepository, OperatorRepository>();
         services.AddScoped<IOperatorService, OperatorService>();
 

@@ -10,17 +10,18 @@ using MediatR;
 
 namespace FieldOps.Modules.Technicians.Core.Services;
 
-internal class TechnicianService(IMessageClient moduleClient, ITechnicianRepository repository, IClock clock, ISender sender) : ITechnicianService
+internal class TechnicianService(ITechnicianRepository repository, ITechnicianUnitOfWork unitOfWork, IMessageClient moduleClient, IClock clock, ISender sender) : ITechnicianService
 {
-    private readonly IMessageClient moduleClient = moduleClient;
     private readonly ITechnicianRepository repository = repository;
+    private readonly ITechnicianUnitOfWork unitOfWork = unitOfWork;
+    private readonly IMessageClient moduleClient = moduleClient;
     private readonly IClock clock = clock;
     private readonly ISender sender = sender;
 
     public async Task<IReadOnlyList<TechnicianDto>> BrowseAsync()
     {
         var technicians = await repository.BrowseAsync();
-        return technicians.Select(Map<TechnicianDto>).ToList();
+        return [.. technicians.Select(Map<TechnicianDto>)];
     }
 
     public async Task<Guid> CreateAsync(CreateTechnicianDto dto)
@@ -34,6 +35,7 @@ internal class TechnicianService(IMessageClient moduleClient, ITechnicianReposit
            clock.UtcNow());
 
         await repository.CreateAsync(technician);
+        await unitOfWork.SaveChangesAsync();
 
         await moduleClient.PublishAsync(new TechnicianCreatedEvent(
             technician.Id,
@@ -51,12 +53,12 @@ internal class TechnicianService(IMessageClient moduleClient, ITechnicianReposit
         var technician = await repository.GetAsync(id);
 
         if (technician is null)
-        {
             throw new TechnicianNotFoundException(id);
-        }
-        var accountId = technician.AccountId;
+
         await repository.DeleteAsync(technician);
-        await moduleClient.PublishAsync(new TechnicianDeletedEvent(accountId));
+        await unitOfWork.SaveChangesAsync();
+
+        await moduleClient.PublishAsync(new TechnicianDeletedEvent(technician.AccountId));
     }
 
     public async Task<TechnicianDto?> GetByAsync(Guid id)

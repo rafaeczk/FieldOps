@@ -1,7 +1,5 @@
-﻿using FieldOps.Modules.Operators.Core.DTOs;
-using FieldOps.Modules.Operators.Core.Entities;
+﻿using FieldOps.Modules.Operators.Core.Entities;
 using FieldOps.Modules.Operators.Core.Repositories;
-using FieldOps.Shared.Abstractions.Time;
 using Microsoft.EntityFrameworkCore;
 
 namespace FieldOps.Modules.Operators.Core.DAL.Repositories;
@@ -18,13 +16,11 @@ internal class OperatorRepository(OperatorDbContext context) : IOperatorReposito
     public async Task CreateAsync(Operator @operator)
     {
         context.Operators.Add(@operator);
-        await context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(Operator @operator)
     {
         context.Operators.Remove(@operator);
-        await context.SaveChangesAsync();
     }
     public async Task<Operator?> GetAsync(Guid id)
     {
