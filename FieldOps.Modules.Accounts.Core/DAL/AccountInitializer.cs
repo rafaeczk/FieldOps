@@ -44,7 +44,7 @@ internal class AccountInitializer(
 
         var admin = Account.Create(
             email,
-            hasher.HashPassword(default, password),
+            hasher.HashPassword(default!, password),
             adminRole,
             clock.UtcNow());
 

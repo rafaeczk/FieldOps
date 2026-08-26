@@ -9,6 +9,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
+#pragma warning disable CS8981
+
 namespace FieldOps.Modules.Technicians.Core.Migrations
 {
     [DbContext(typeof(TechniciansDbContext))]
