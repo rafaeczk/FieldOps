@@ -55,6 +55,31 @@ namespace FieldOps.Modules.Accounts.Core.DAL.Migrations
 
                     b.ToTable("Accounts", "accounts");
                 });
+
+            modelBuilder.Entity("FieldOps.Modules.Accounts.Core.Entities.OutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ProcessedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OutboxMessages", "accounts");
+                });
 #pragma warning restore 612, 618
         }
     }

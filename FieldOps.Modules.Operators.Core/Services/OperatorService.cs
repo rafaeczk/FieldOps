@@ -1,26 +1,25 @@
-﻿using FieldOps.Modules.Accounts.Contracts;
+﻿using FieldOps.Modules.Accounts.Contracts.Queries;
+using FieldOps.Modules.Operators.Contracts.Events;
 using FieldOps.Modules.Operators.Core.DTOs;
 using FieldOps.Modules.Operators.Core.Entities;
-using FieldOps.Modules.Operators.Core.Events;
 using FieldOps.Modules.Operators.Core.Exceptions;
 using FieldOps.Modules.Operators.Core.Repositories;
-using FieldOps.Shared.Abstractions.Messaging;
 using FieldOps.Shared.Abstractions.Time;
 using MediatR;
 
 namespace FieldOps.Modules.Operators.Core.Services;
 
-internal class OperatorService(IOperatorRepository repository, IOperatorUnitOfWork unitOfWork, IMessageClient messageClient, IClock clock, ISender sender) : IOperatorService
+internal class OperatorService(IOperatorRepository repository, IOutboxMessagesRepository outboxRepository, IOperatorUnitOfWork unitOfWork, IClock clock, ISender sender) : IOperatorService
 {
     private readonly IOperatorRepository repository = repository;
+    private readonly IOutboxMessagesRepository outboxRepository = outboxRepository;
     private readonly IOperatorUnitOfWork unitOfWork = unitOfWork;
-    private readonly IMessageClient messageClient = messageClient;
     private readonly IClock clock = clock;
     private readonly ISender sender = sender;
 
     public async Task<Guid> CreateAsync(CreateOperatorDto dto)
     {
-        if (await sender.Send(new CheckAccountEmailTakenQuery(dto.RequestedEmail)))
+        if (await sender.Send(new CheckAccountEmailIsTaken(dto.RequestedEmail)))
             throw new EmailInUseException();
 
         var @operator = Operator.Create(
@@ -30,15 +29,15 @@ internal class OperatorService(IOperatorRepository repository, IOperatorUnitOfWo
 
         await repository.CreateAsync(@operator);
 
-        await unitOfWork.SaveChangesAsync();
-
-        await messageClient.PublishAsync(new OperatorCreatedEvent(
+        await outboxRepository.CreateAsync(new OperatorCreated(
             @operator.Id,
             @operator.FullName,
             @operator.CreatedAt,
             @operator.AccountId,
             dto.RequestedEmail,
             dto.RequestedPassword));
+
+        await unitOfWork.SaveChangesAsync();
 
         return @operator.Id;
     }
@@ -69,9 +68,9 @@ internal class OperatorService(IOperatorRepository repository, IOperatorUnitOfWo
             throw new OperatorNotFoundException(id);
 
         await repository.DeleteAsync(@operator);
-        await unitOfWork.SaveChangesAsync();
+        await outboxRepository.CreateAsync(new OperatorDeleted(@operator.AccountId));
 
-        await messageClient.PublishAsync(new OperatorDeletedEvent(@operator.AccountId));
+        await unitOfWork.SaveChangesAsync();
     }
 
     private static T Map<T>(Operator @operator) where T : OperatorDto, new()
