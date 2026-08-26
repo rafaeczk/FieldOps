@@ -1,0 +1,7 @@
+namespace FieldOps.Modules.WorkOrders.Core.DTOs;
+
+public record CreateWorkOrderDto(
+    string Title,
+    string? Description,
+    string Address,
+    DateTime Deadline);
