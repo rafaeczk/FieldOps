@@ -2,6 +2,7 @@
 using FieldOps.Shared.Abstractions.Time;
 using FieldOps.Shared.Infrastructure.Api;
 using FieldOps.Shared.Infrastructure.Auth;
+using FieldOps.Shared.Infrastructure.S3;
 using FieldOps.Shared.Infrastructure.Contexts;
 using FieldOps.Shared.Infrastructure.Errors;
 using FieldOps.Shared.Infrastructure.Modules;
@@ -36,6 +37,8 @@ internal static class Extensions
                 not null => new Context(httpContext)
             };
         });
+
+        services.AddS3();
 
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
