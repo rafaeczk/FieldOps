@@ -24,7 +24,7 @@ public static class Extensions
             var options = sp.GetRequiredService<S3Options>();
 
             return new AmazonS3Client(
-                options.AccessKeyId, 
+                options.AccessKeyId,
                 options.SecretAccessKey,
                 new AmazonS3Config
                 {
