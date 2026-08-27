@@ -24,6 +24,12 @@
     <Project Path="FieldOps.Modules.Operators.Contracts/FieldOps.Modules.Operators.Contracts.csproj" Id="ac81ace7-185c-4590-85f7-339556877b0b" />
     <Project Path="FieldOps.Modules.Operators.Core/FieldOps.Modules.Operators.Core.csproj" Id="a0c4baed-c9fc-41f4-a439-08418225114d" />
   </Folder>
+  <Folder Name="/Src/Modules/Reports/">
+    <Project Path="FieldOps.Modules.Reports.Api/FieldOps.Modules.Reports.Api.csproj" Id="752f8b87-67fc-4b85-906f-3d1a30e0972d" />
+    <Project Path="FieldOps.Modules.Reports.Application/FieldOps.Modules.Reports.Application.csproj" Id="a1082d99-7f3f-4853-b53f-c6f7f2486120" />
+    <Project Path="FieldOps.Modules.Reports.Domain/FieldOps.Modules.Reports.Domain.csproj" Id="88933382-7905-41a8-9ff6-f1ea00e359fd" />
+    <Project Path="FieldOps.Modules.Reports.Infrastructure/FieldOps.Modules.Reports.Infrastructure.csproj" Id="1a7b2f31-b77d-4693-b25d-3cef51820bcd" />
+  </Folder>
 <Folder Name="/Src/Modules/Technicians/">
   <Project Path="FieldOps.Modules.Technicians.Api/FieldOps.Modules.Technicians.Api.csproj" Id="8a96f6fa-39a7-4b11-8ee0-4cb874b0018f" />
   <Project Path="FieldOps.Modules.Technicians.Contracts/FieldOps.Modules.Technicians.Contracts.csproj" Id="50d947bf-9b4b-44cf-a5e4-b2a2d643f88f" />
