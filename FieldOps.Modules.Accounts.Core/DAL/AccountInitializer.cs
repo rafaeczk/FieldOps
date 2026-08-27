@@ -11,8 +11,8 @@ using Microsoft.Extensions.Logging;
 namespace FieldOps.Modules.Accounts.Core.DAL;
 
 internal class AccountInitializer(
-    IServiceScopeFactory scopeFactory, 
-    IWebHostEnvironment env, 
+    IServiceScopeFactory scopeFactory,
+    IWebHostEnvironment env,
     ILogger<AccountInitializer> logger,
     IPasswordHasher<Account> hasher,
     IClock clock) : IHostedService
@@ -43,9 +43,9 @@ internal class AccountInitializer(
         var password = "123";
 
         var admin = Account.Create(
-            email, 
-            hasher.HashPassword(default, password), 
-            adminRole, 
+            email,
+            hasher.HashPassword(default!, password),
+            adminRole,
             clock.UtcNow());
 
         dbContext.Accounts.Add(admin);

@@ -13,7 +13,7 @@ internal class IdentityService(
     IAccountRepository accountRepository,
     IOutboxMessagesRepository outboxRepository,
     IAccountUnitOfWork unitOfWork,
-    IPasswordHasher<Account> passwordHasher, 
+    IPasswordHasher<Account> passwordHasher,
     IAuthManager authManager,
     IClock clock) : IIdentityService
 {
@@ -41,7 +41,7 @@ internal class IdentityService(
         if (account is null)
             throw new InvalidCredentialsException();
 
-        if (passwordHasher.VerifyHashedPassword(default, account.Hash, command.Password) == PasswordVerificationResult.Failed)
+        if (passwordHasher.VerifyHashedPassword(default!, account.Hash, command.Password) == PasswordVerificationResult.Failed)
             throw new InvalidCredentialsException();
 
         var jwt = authManager.CreateToken(account.Id.ToString(), account.Role);
@@ -57,9 +57,9 @@ internal class IdentityService(
 
         if (foundAccount is not null)
             throw new EmailInUseException();
-        
 
-        var hash = passwordHasher.HashPassword(default, command.Password);
+
+        var hash = passwordHasher.HashPassword(default!, command.Password);
 
         var account = Account.Create(command.Id, email, hash, command.Role, clock.UtcNow());
 

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="FieldOps.Modules.WorkOrders.Tests" />
+		<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\FieldOps.Modules.Accounts.Contracts\FieldOps.Modules.Accounts.Contracts.csproj" />
+		<ProjectReference Include="..\FieldOps.Shared.Infrastructure\FieldOps.Shared.Infrastructure.csproj" />
+	</ItemGroup>
+
+</Project>

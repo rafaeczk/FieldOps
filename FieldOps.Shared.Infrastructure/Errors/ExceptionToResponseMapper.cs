@@ -10,14 +10,14 @@ internal class ExceptionToResponseMapper : IExceptionToResponseMapper
         {
             BaseException e => new ErrorResponse(
                 new ErrorList(
-                    new Error(e.Message, 
-                    null)), 
+                    new Error(e.Message,
+                    null)),
                 HttpStatusCode.BadRequest),
 
             _ => new ErrorResponse(
                 new ErrorList(
-                    new Error("Internal server error.", 
-                    null)), 
+                    new Error("Internal server error.",
+                    null)),
                 HttpStatusCode.InternalServerError)
         };
 
