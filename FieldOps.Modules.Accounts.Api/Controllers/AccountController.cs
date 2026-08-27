@@ -15,7 +15,7 @@ internal class AccountController(IIdentityService identityService, IContext cont
     private readonly IContext context = context;
 
     [HttpPost("sign-in")]
-    public async Task<ActionResult> SignIn([FromBody] SignInDto dto)
+    public async Task<ActionResult<SignInResponseDto>> SignIn([FromBody] SignInDto dto)
     {
         var jwt = await identityService.SignInAsync(new(dto.Email, dto.Password));
 
@@ -29,7 +29,11 @@ internal class AccountController(IIdentityService identityService, IContext cont
 
         Response.Cookies.Append(authOptions.Challenge, jwt.AccessToken, cookieOptions);
 
-        return Ok();
+        var response = new SignInResponseDto(
+            jwt.AccessToken,
+            new SignInUserDto(jwt.Id, jwt.Email, jwt.Role));
+
+        return Ok(response);
     }
 
     [HttpGet("me")]

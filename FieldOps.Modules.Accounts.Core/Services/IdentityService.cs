@@ -45,6 +45,7 @@ internal class IdentityService(
             throw new InvalidCredentialsException();
 
         var jwt = authManager.CreateToken(account.Id.ToString(), account.Role);
+        jwt.Email = account.Email;
 
         return jwt;
     }
