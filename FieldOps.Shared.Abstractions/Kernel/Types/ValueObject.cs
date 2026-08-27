@@ -1,4 +1,4 @@
-﻿namespace FieldOps.Shared.Infrastructure.Common;
+﻿namespace FieldOps.Shared.Abstractions.Kernel.Types;
 
 public abstract class ValueObject
 {
