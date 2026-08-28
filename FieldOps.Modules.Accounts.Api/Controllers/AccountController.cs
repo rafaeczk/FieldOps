@@ -31,7 +31,7 @@ internal class AccountController(IIdentityService identityService, IContext cont
 
         var response = new SignInResponseDto(
             jwt.AccessToken,
-            new SignInUserDto(jwt.Id, jwt.Email, jwt.Role));
+            new SignInUserDto(Guid.Parse(jwt.Id), jwt.Email, jwt.FullName, jwt.Role, jwt.CreatedAt));
 
         return Ok(response);
     }
@@ -41,5 +41,27 @@ internal class AccountController(IIdentityService identityService, IContext cont
     public async Task<ActionResult<AccountDto>> GetMe()
     {
         return this.OkOrNotFound(await identityService.GetAsync(context.Identity.Id));
+    }
+
+    [HttpPut("me")]
+    [Authorize]
+    public async Task<ActionResult<AccountDto>> UpdateMe([FromBody] UpdateProfileDto dto)
+    {
+        var result = await identityService.UpdateProfileAsync(
+            context.Identity.Id,
+            new UpdateProfileCommand(dto.Email, dto.FullName));
+
+        return Ok(result);
+    }
+
+    [HttpPut("me/password")]
+    [Authorize]
+    public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
+    {
+        await identityService.ChangePasswordAsync(
+            context.Identity.Id,
+            new ChangePasswordCommand(dto.CurrentPassword, dto.NewPassword));
+
+        return Ok();
     }
 }

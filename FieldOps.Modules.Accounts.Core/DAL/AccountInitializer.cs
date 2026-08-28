@@ -45,13 +45,14 @@ internal class AccountInitializer(
         var admin = Account.Create(
             email,
             hasher.HashPassword(default!, password),
+            "Administrator",
             adminRole,
             clock.UtcNow());
 
         dbContext.Accounts.Add(admin);
         await dbContext.SaveChangesAsync(ct);
 
-        logger.LogInformation("The admin has been created {email} {password}", email, password);
+        logger.LogInformation("The admin has been created {email}", email);
     }
 
     public Task StopAsync(CancellationToken ct) => Task.CompletedTask;
