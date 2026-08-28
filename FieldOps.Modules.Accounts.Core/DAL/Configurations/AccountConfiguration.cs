@@ -15,6 +15,8 @@ internal class AccountConfiguration : IEntityTypeConfiguration<Account>
 
         builder.Property(a => a.Hash).IsRequired();
 
+        builder.Property(a => a.FullName).IsRequired().HasMaxLength(255);
+
         builder.Property(a => a.Role)
             .HasConversion(
                 role => role.Value,

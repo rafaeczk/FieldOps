@@ -9,6 +9,6 @@ internal class OperatorCreatedHandler(IIdentityService identity) : INotification
 {
     public async Task Handle(OperatorCreated @event, CancellationToken ct)
     {
-        await identity.CreateAccountAsync(new(@event.RequestedAccountId, @event.RequestedEmail, @event.RequestedPassword, new(AccountRole.Operator)));
+        await identity.CreateAccountAsync(new(@event.RequestedAccountId, @event.RequestedEmail, @event.RequestedPassword, @event.FullName, new(AccountRole.Operator)));
     }
 }
