@@ -12,7 +12,7 @@ internal class ExceptionToResponseMapper : IExceptionToResponseMapper
                 new ErrorList(
                     new Error(e.Message,
                     null)),
-                HttpStatusCode.BadRequest),
+                e.StatusCode),
 
             _ => new ErrorResponse(
                 new ErrorList(
