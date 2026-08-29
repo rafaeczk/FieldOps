@@ -330,4 +330,26 @@ public class IdentityServiceTests
         await Assert.ThrowsAsync<AccountNotFoundException>(
             () => _sut.ChangePasswordAsync(Guid.NewGuid(), new ChangePasswordCommand("current123", "newpass123")));
     }
+
+    [Fact]
+    public async Task GetTechniciansAsync_ReturnsTechnicianList()
+    {
+        var accounts = new List<Account>
+        {
+            Account.Create("tech1@test.com", "hash1", "Tech One", new AccountRole(AccountRole.Technician), DateTime.UtcNow),
+            Account.Create("tech2@test.com", "hash2", "Tech Two", new AccountRole(AccountRole.Technician), DateTime.UtcNow),
+        };
+
+        _accountRepositoryMock
+            .Setup(x => x.GetByRoleAsync(It.IsAny<AccountRole>()))
+            .ReturnsAsync(accounts);
+
+        var result = await _sut.GetTechniciansAsync();
+
+        Assert.Equal(2, result.Count);
+        Assert.Equal("tech1@test.com", result[0].Email);
+        Assert.Equal("Tech One", result[0].FullName);
+        Assert.Equal("tech2@test.com", result[1].Email);
+        Assert.Equal("Tech Two", result[1].FullName);
+    }
 }

@@ -294,4 +294,26 @@ public class WorkOrderServiceTests
         await Assert.ThrowsAsync<WorkOrderNotFoundException>(
             () => _sut.DeleteAsync(Guid.NewGuid()));
     }
+
+    [Fact]
+    public async Task DeleteAsync_HasReports_ThrowsWorkOrderHasReportsException()
+    {
+        var workOrderId = Guid.NewGuid();
+        var workOrder = WorkOrder.Create(
+            "Fix plumbing", "Leaking pipe", "123 Main St",
+            DateTime.UtcNow.AddDays(1), "MEDIUM", Guid.NewGuid(), DateTime.UtcNow);
+
+        _repositoryMock
+            .Setup(x => x.GetAsync(workOrderId))
+            .ReturnsAsync(workOrder);
+        _repositoryMock
+            .Setup(x => x.HasReportsAsync(workOrderId))
+            .ReturnsAsync(true);
+
+        await Assert.ThrowsAsync<WorkOrderHasReportsException>(
+            () => _sut.DeleteAsync(workOrderId));
+
+        _repositoryMock.Verify(x => x.DeleteAsync(It.IsAny<WorkOrder>()), Times.Never);
+        _unitOfWorkMock.Verify(x => x.SaveChangesAsync(), Times.Never);
+    }
 }

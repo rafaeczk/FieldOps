@@ -89,7 +89,7 @@ internal class WorkOrderRepository(WorkOrderDbContext context) : IWorkOrderRepos
     public async Task<bool> HasReportsAsync(Guid workOrderId)
     {
         var count = await context.Database
-            .SqlQueryRaw<int>("SELECT COUNT(*) AS \"Value\" FROM reports.\"Reports\" WHERE \"WorkOrderId\" = {0}", workOrderId)
+            .SqlQueryRaw<long>("SELECT COUNT(*) AS \"Value\" FROM reports.\"Reports\" WHERE \"WorkOrderId\" = {0}", workOrderId)
             .SingleAsync();
         return count > 0;
     }
