@@ -9,5 +9,6 @@ internal interface IWorkOrderRepository
     Task<IReadOnlyList<WorkOrder>> BrowseByOperatorAsync(Guid operatorId);
     Task<IReadOnlyList<WorkOrder>> BrowseByTechnicianAsync(Guid technicianId);
     Task<IReadOnlyList<WorkOrder>> BrowseAllAsync();
+    Task<bool> HasReportsAsync(Guid workOrderId);
     Task DeleteAsync(WorkOrder workOrder);
 }

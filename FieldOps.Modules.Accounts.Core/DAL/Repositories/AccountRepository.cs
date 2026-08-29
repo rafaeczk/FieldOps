@@ -1,5 +1,6 @@
 ﻿using FieldOps.Modules.Accounts.Core.Entities;
 using FieldOps.Modules.Accounts.Core.Repositories;
+using FieldOps.Modules.Accounts.Core.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace FieldOps.Modules.Accounts.Core.DAL.Repositories;
@@ -26,6 +27,14 @@ internal class AccountRepository(AccountDbContext context) : IAccountRepository
     public async Task<Account?> GetAsync(string email)
     {
         return await context.Accounts.SingleOrDefaultAsync(a => a.Email == email);
+    }
+
+    public async Task<IReadOnlyList<Account>> GetByRoleAsync(AccountRole role)
+    {
+        return await context.Accounts
+            .Where(a => a.Role == role)
+            .OrderBy(a => a.Email)
+            .ToListAsync();
     }
 
     public async Task UpdateAsync(Account account)

@@ -43,6 +43,13 @@ internal class AccountController(IIdentityService identityService, IContext cont
         return this.OkOrNotFound(await identityService.GetAsync(context.Identity.Id));
     }
 
+    [HttpGet("technicians")]
+    [Authorize(Roles = "ADMIN,OPERATOR")]
+    public async Task<ActionResult<IReadOnlyList<AccountDto>>> GetTechnicians()
+    {
+        return Ok(await identityService.GetTechniciansAsync());
+    }
+
     [HttpPut("me")]
     [Authorize]
     public async Task<ActionResult<AccountDto>> UpdateMe([FromBody] UpdateProfileDto dto)

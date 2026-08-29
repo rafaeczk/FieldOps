@@ -3,6 +3,7 @@ using FieldOps.Modules.Accounts.Core.DTOs;
 using FieldOps.Modules.Accounts.Core.Entities;
 using FieldOps.Modules.Accounts.Core.Exceptions;
 using FieldOps.Modules.Accounts.Core.Repositories;
+using FieldOps.Modules.Accounts.Core.ValueObjects;
 using FieldOps.Shared.Abstractions.Auth;
 using FieldOps.Shared.Abstractions.Time;
 using Microsoft.AspNetCore.Identity;
@@ -32,6 +33,12 @@ internal class IdentityService(
             return null;
 
         return new(account.Id, account.Email, account.FullName, account.Role, account.CreatedAt);
+    }
+
+    public async Task<IReadOnlyList<AccountDto>> GetTechniciansAsync()
+    {
+        var accounts = await accountRepository.GetByRoleAsync(new AccountRole(AccountRole.Technician));
+        return accounts.Select(a => new AccountDto(a.Id, a.Email, a.FullName, a.Role, a.CreatedAt)).ToList();
     }
 
     public async Task<JsonWebToken> SignInAsync(SignInCommand command)

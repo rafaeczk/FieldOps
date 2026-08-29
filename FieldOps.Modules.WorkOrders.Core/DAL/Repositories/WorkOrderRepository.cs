@@ -42,6 +42,14 @@ internal class WorkOrderRepository(WorkOrderDbContext context) : IWorkOrderRepos
             .ToListAsync();
     }
 
+    public async Task<bool> HasReportsAsync(Guid workOrderId)
+    {
+        var count = await context.Database
+            .SqlQueryRaw<int>("SELECT COUNT(*) AS \"Value\" FROM reports.\"Reports\" WHERE \"WorkOrderId\" = {0}", workOrderId)
+            .SingleAsync();
+        return count > 0;
+    }
+
     public Task DeleteAsync(WorkOrder workOrder)
     {
         context.WorkOrders.Remove(workOrder);

@@ -123,6 +123,9 @@ internal class WorkOrderService(
         if (workOrder is null)
             throw new WorkOrderNotFoundException(id);
 
+        if (await repository.HasReportsAsync(id))
+            throw new WorkOrderHasReportsException(id);
+
         await repository.DeleteAsync(workOrder);
         await unitOfWork.SaveChangesAsync();
     }
