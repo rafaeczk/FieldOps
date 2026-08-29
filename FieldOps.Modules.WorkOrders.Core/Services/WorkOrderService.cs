@@ -27,6 +27,7 @@ internal class WorkOrderService(
             dto.Description,
             dto.Address,
             dto.Deadline,
+            dto.Priority,
             operatorId,
             clock.UtcNow());
 
@@ -50,25 +51,61 @@ internal class WorkOrderService(
         if (workOrder is null)
             return null;
 
-        return Map<WorkOrderDto>(workOrder);
+        var assignees = await repository.GetAssigneesAsync(id);
+        return Map(workOrder, assignees);
     }
 
     public async Task<IReadOnlyList<WorkOrderDto>> BrowseByOperatorAsync(Guid operatorId)
     {
         var workOrders = await repository.BrowseByOperatorAsync(operatorId);
-        return [.. workOrders.Select(Map<WorkOrderDto>)];
+        return await MapRange(workOrders);
     }
 
     public async Task<IReadOnlyList<WorkOrderDto>> BrowseByTechnicianAsync(Guid technicianId)
     {
         var workOrders = await repository.BrowseByTechnicianAsync(technicianId);
-        return [.. workOrders.Select(Map<WorkOrderDto>)];
+        return await MapRange(workOrders);
     }
 
     public async Task<IReadOnlyList<WorkOrderDto>> BrowseAllAsync()
     {
         var workOrders = await repository.BrowseAllAsync();
-        return [.. workOrders.Select(Map<WorkOrderDto>)];
+        return await MapRange(workOrders);
+    }
+
+    public async Task<WorkOrderListDto> BrowseByOperatorAsync(Guid operatorId, WorkOrderFilterDto filter)
+    {
+        var (items, totalCount) = await repository.BrowseByOperatorAsync(operatorId, filter);
+        var dtos = await MapRange(items);
+        return new WorkOrderListDto(dtos, totalCount, filter.Page, filter.PageSize);
+    }
+
+    public async Task<WorkOrderListDto> BrowseByTechnicianAsync(Guid technicianId, WorkOrderFilterDto filter)
+    {
+        var (items, totalCount) = await repository.BrowseByTechnicianAsync(technicianId, filter);
+        var dtos = await MapRange(items);
+        return new WorkOrderListDto(dtos, totalCount, filter.Page, filter.PageSize);
+    }
+
+    public async Task<WorkOrderListDto> BrowseAllAsync(WorkOrderFilterDto filter)
+    {
+        var (items, totalCount) = await repository.BrowseAllAsync(filter);
+        var dtos = await MapRange(items);
+        return new WorkOrderListDto(dtos, totalCount, filter.Page, filter.PageSize);
+    }
+
+    public async Task UpdateAsync(Guid id, UpdateWorkOrderDto dto)
+    {
+        var workOrder = await repository.GetAsync(id);
+
+        if (workOrder is null)
+            throw new WorkOrderNotFoundException(id);
+
+        if (workOrder.Status == WorkOrderStatus.Completed || workOrder.Status == WorkOrderStatus.Cancelled)
+            throw new WorkOrderImmutableException(workOrder.Id, workOrder.Status, "edit");
+
+        workOrder.UpdateDetails(dto.Title, dto.Description, dto.Address, dto.Deadline, dto.Priority, clock.UtcNow());
+        await unitOfWork.SaveChangesAsync();
     }
 
     public async Task UpdateStatusAsync(Guid id, UpdateWorkOrderStatusDto dto)
@@ -78,21 +115,18 @@ internal class WorkOrderService(
         if (workOrder is null)
             throw new WorkOrderNotFoundException(id);
 
-        try
-        {
-            workOrder.UpdateStatus(dto.Status, clock.UtcNow());
-        }
-        catch (ArgumentException)
-        {
+        if (!WorkOrderStatus.IsValid(dto.Status))
             throw new InvalidWorkOrderStatusException(dto.Status);
-        }
+
+        workOrder.UpdateStatus(dto.Status, clock.UtcNow());
 
         await unitOfWork.SaveChangesAsync();
 
+        var assignees = await repository.GetAssigneesAsync(id);
         await messageClient.PublishAsync(new WorkOrderStatusChangedEvent(
             workOrder.Id,
             workOrder.Status,
-            workOrder.TechnicianId,
+            assignees.Select(a => a.TechnicianId).ToList(),
             workOrder.OperatorId));
     }
 
@@ -103,17 +137,38 @@ internal class WorkOrderService(
         if (workOrder is null)
             throw new WorkOrderNotFoundException(id);
 
-        if (workOrder.TechnicianId is not null)
-            throw new WorkOrderAlreadyAssignedException(id);
+        if (await repository.IsAssignedAsync(id, dto.TechnicianId))
+            return;
 
-        workOrder.AssignTechnician(dto.TechnicianId, clock.UtcNow());
+        if (workOrder.Status == WorkOrderStatus.Completed || workOrder.Status == WorkOrderStatus.Cancelled)
+            throw new WorkOrderImmutableException(workOrder.Id, workOrder.Status, "assign technicians to");
+
+        if (workOrder.Status == WorkOrderStatus.Pending)
+            workOrder.UpdateStatus(WorkOrderStatus.InProgress, clock.UtcNow());
+
+        await repository.AddAssigneeAsync(id, dto.TechnicianId, clock.UtcNow());
         await unitOfWork.SaveChangesAsync();
 
+        var assignees = await repository.GetAssigneesAsync(id);
         await messageClient.PublishAsync(new WorkOrderStatusChangedEvent(
             workOrder.Id,
             workOrder.Status,
-            workOrder.TechnicianId,
+            assignees.Select(a => a.TechnicianId).ToList(),
             workOrder.OperatorId));
+    }
+
+    public async Task UnassignTechnicianAsync(Guid workOrderId, Guid technicianId)
+    {
+        var workOrder = await repository.GetAsync(workOrderId);
+
+        if (workOrder is null)
+            throw new WorkOrderNotFoundException(workOrderId);
+
+        if (workOrder.Status == WorkOrderStatus.Completed || workOrder.Status == WorkOrderStatus.Cancelled)
+            throw new WorkOrderImmutableException(workOrder.Id, workOrder.Status, "unassign technicians from");
+
+        await repository.RemoveAssigneeAsync(workOrderId, technicianId);
+        await unitOfWork.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(Guid id)
@@ -130,7 +185,22 @@ internal class WorkOrderService(
         await unitOfWork.SaveChangesAsync();
     }
 
-    private static T Map<T>(WorkOrder workOrder) where T : WorkOrderDto, new()
+    private async Task<IReadOnlyList<WorkOrderDto>> MapRange(IReadOnlyList<WorkOrder> workOrders)
+    {
+        var orderIds = workOrders.Select(wo => wo.Id).ToList();
+        var allAssignees = await repository.GetAssigneesForOrdersAsync(orderIds);
+        var assigneesByOrder = allAssignees
+            .GroupBy(a => a.WorkOrderId)
+            .ToDictionary(g => g.Key, g => (IReadOnlyList<WorkOrderAssignee>)g.ToList());
+
+        return workOrders.Select(wo =>
+        {
+            assigneesByOrder.TryGetValue(wo.Id, out var assignees);
+            return Map(wo, assignees ?? []);
+        }).ToList();
+    }
+
+    private static WorkOrderDto Map(WorkOrder workOrder, IReadOnlyList<WorkOrderAssignee> assignees)
         => new()
         {
             Id = workOrder.Id,
@@ -139,7 +209,8 @@ internal class WorkOrderService(
             Address = workOrder.Address,
             Deadline = workOrder.Deadline,
             Status = workOrder.Status,
-            TechnicianId = workOrder.TechnicianId,
+            Priority = workOrder.Priority,
+            TechnicianIds = assignees.Select(a => a.TechnicianId).ToList(),
             OperatorId = workOrder.OperatorId,
             CreatedAt = workOrder.CreatedAt,
             UpdatedAt = workOrder.UpdatedAt

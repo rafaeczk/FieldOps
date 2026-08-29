@@ -5,5 +5,5 @@ namespace FieldOps.Modules.WorkOrders.Core.Events;
 internal record WorkOrderStatusChangedEvent(
     Guid Id,
     string Status,
-    Guid? TechnicianId,
+    IReadOnlyList<Guid> TechnicianIds,
     Guid OperatorId) : IEvent;

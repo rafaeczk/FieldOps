@@ -27,25 +27,33 @@ internal class WorkOrdersController(IWorkOrderService service, IContext context)
         return this.OkOrNotFound(await service.GetByAsync(id));
     }
 
+    [HttpPut("{id}")]
+    [Authorize(Roles = "ADMIN,OPERATOR")]
+    public async Task<ActionResult> UpdateWorkOrder(Guid id, [FromBody] UpdateWorkOrderDto dto)
+    {
+        await service.UpdateAsync(id, dto);
+        return Ok();
+    }
+
     [HttpGet("operator")]
     [Authorize(Roles = "ADMIN,OPERATOR")]
-    public async Task<ActionResult<IReadOnlyList<WorkOrderDto>>> BrowseByOperator()
+    public async Task<ActionResult<WorkOrderListDto>> BrowseByOperator([FromQuery] WorkOrderFilterDto filter)
     {
-        return Ok(await service.BrowseByOperatorAsync(context.Identity.Id));
+        return Ok(await service.BrowseByOperatorAsync(context.Identity.Id, filter));
     }
 
     [HttpGet("technician")]
     [Authorize(Roles = "TECHNICIAN")]
-    public async Task<ActionResult<IReadOnlyList<WorkOrderDto>>> BrowseByTechnician()
+    public async Task<ActionResult<WorkOrderListDto>> BrowseByTechnician([FromQuery] WorkOrderFilterDto filter)
     {
-        return Ok(await service.BrowseByTechnicianAsync(context.Identity.Id));
+        return Ok(await service.BrowseByTechnicianAsync(context.Identity.Id, filter));
     }
 
     [HttpGet("all")]
     [Authorize(Roles = "ADMIN")]
-    public async Task<ActionResult<IReadOnlyList<WorkOrderDto>>> BrowseAll()
+    public async Task<ActionResult<WorkOrderListDto>> BrowseAll([FromQuery] WorkOrderFilterDto filter)
     {
-        return Ok(await service.BrowseAllAsync());
+        return Ok(await service.BrowseAllAsync(filter));
     }
 
     [HttpPatch("{id}/status")]
@@ -61,6 +69,14 @@ internal class WorkOrdersController(IWorkOrderService service, IContext context)
     public async Task<ActionResult> AssignTechnician(Guid id, [FromBody] AssignTechnicianDto dto)
     {
         await service.AssignTechnicianAsync(id, dto);
+        return Ok();
+    }
+
+    [HttpDelete("{id}/assign/{technicianId}")]
+    [Authorize(Roles = "ADMIN,OPERATOR")]
+    public async Task<ActionResult> UnassignTechnician(Guid id, Guid technicianId)
+    {
+        await service.UnassignTechnicianAsync(id, technicianId);
         return Ok();
     }
 

@@ -13,11 +13,18 @@ internal class WorkOrderConfiguration : IEntityTypeConfiguration<WorkOrder>
 
         builder.Property(wo => wo.Title).IsRequired().HasMaxLength(200);
 
+        builder.Property(wo => wo.Description).HasMaxLength(255);
+
         builder.Property(wo => wo.Address).IsRequired().HasMaxLength(500);
 
         builder.Property(wo => wo.Status)
             .IsRequired()
             .HasConversion(v => v.Value, v => new WorkOrderStatus(v));
+
+        builder.Property(wo => wo.Priority)
+            .IsRequired()
+            .HasMaxLength(20)
+            .HasConversion(v => v.Value, v => new WorkOrderPriority(v));
 
         builder.Property(wo => wo.OperatorId).IsRequired();
 
@@ -25,10 +32,10 @@ internal class WorkOrderConfiguration : IEntityTypeConfiguration<WorkOrder>
 
         builder.Property(wo => wo.UpdatedAt).IsRequired();
 
-        builder.HasIndex(wo => wo.TechnicianId);
-
         builder.HasIndex(wo => wo.OperatorId);
 
         builder.HasIndex(wo => wo.Status);
+
+        builder.HasIndex(wo => wo.Priority);
     }
 }
