@@ -10,6 +10,20 @@ public class WorkOrderStatus
     public const string Cancelled = "CANCELLED";
     public static readonly HashSet<string> AcceptedValues = [Pending, InProgress, Completed, Cancelled];
 
+    private static readonly Dictionary<string, HashSet<string>> AllowedTransitions = new()
+    {
+        [Pending] = [InProgress, Cancelled],
+        [InProgress] = [Completed, Cancelled],
+        [Completed] = [],
+        [Cancelled] = []
+    };
+
+    public static bool IsValidTransition(string from, string to)
+        => AllowedTransitions.TryGetValue(from, out var allowed) && allowed.Contains(to);
+
+    public static bool IsValid(string value)
+        => AcceptedValues.Contains(value);
+
     public WorkOrderStatus(string value)
     {
         if (!AcceptedValues.Contains(value))
