@@ -10,7 +10,7 @@ internal class WorkOrder
     public string Address { get; private set; } = null!;
     public DateTime Deadline { get; private set; }
     public WorkOrderStatus Status { get; private set; } = null!;
-    public Guid? TechnicianId { get; private set; }
+    public WorkOrderPriority Priority { get; private set; } = null!;
     public Guid OperatorId { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; private set; }
@@ -22,6 +22,7 @@ internal class WorkOrder
         string? description,
         string address,
         DateTime deadline,
+        string priority,
         Guid operatorId,
         DateTime createdAt)
     {
@@ -33,6 +34,7 @@ internal class WorkOrder
             Address = address,
             Deadline = deadline,
             Status = new WorkOrderStatus(WorkOrderStatus.Pending),
+            Priority = new WorkOrderPriority(priority),
             OperatorId = operatorId,
             CreatedAt = createdAt,
             UpdatedAt = createdAt
@@ -46,7 +48,7 @@ internal class WorkOrder
         string address,
         DateTime deadline,
         WorkOrderStatus status,
-        Guid? technicianId,
+        WorkOrderPriority priority,
         Guid operatorId,
         DateTime createdAt)
     {
@@ -58,32 +60,29 @@ internal class WorkOrder
             Address = address,
             Deadline = deadline,
             Status = status,
-            TechnicianId = technicianId,
+            Priority = priority,
             OperatorId = operatorId,
             CreatedAt = createdAt,
             UpdatedAt = createdAt
         };
     }
 
-    public void AssignTechnician(Guid technicianId, DateTime updatedAt)
-    {
-        TechnicianId = technicianId;
-        Status = new WorkOrderStatus(WorkOrderStatus.InProgress);
-        UpdatedAt = updatedAt;
-    }
-
     public void UpdateStatus(string status, DateTime updatedAt)
     {
+        if (!WorkOrderStatus.IsValidTransition(Status, status))
+            throw new Exceptions.InvalidWorkOrderTransitionException(Status, status);
+
         Status = new WorkOrderStatus(status);
         UpdatedAt = updatedAt;
     }
 
-    public void UpdateDetails(string title, string? description, string address, DateTime deadline, DateTime updatedAt)
+    public void UpdateDetails(string title, string? description, string address, DateTime deadline, string priority, DateTime updatedAt)
     {
         Title = title;
         Description = description;
         Address = address;
         Deadline = deadline;
+        Priority = new WorkOrderPriority(priority);
         UpdatedAt = updatedAt;
     }
 }

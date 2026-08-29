@@ -1,6 +1,10 @@
+using System.Net;
 using FieldOps.Shared.Abstractions.Errors;
 
 namespace FieldOps.Modules.WorkOrders.Core.Exceptions;
 
 internal class WorkOrderNotFoundException(Guid id)
-    : BaseException($"Work order with ID '{id}' was not found.");
+    : BaseException($"Work order with ID '{id}' was not found.")
+{
+    public override HttpStatusCode StatusCode => HttpStatusCode.NotFound;
+}
