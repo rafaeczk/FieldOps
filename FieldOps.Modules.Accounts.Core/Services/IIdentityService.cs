@@ -7,6 +7,7 @@ namespace FieldOps.Modules.Accounts.Core.Services;
 public interface IIdentityService
 {
     Task<AccountDto?> GetAsync(Guid id);
+    Task<IReadOnlyList<AccountDto>> GetTechniciansAsync();
     Task<JsonWebToken> SignInAsync(SignInCommand dto);
     Task CreateAccountAsync(CreateAccountCommand dto);
     Task DeleteAccountAsync(Guid id);
