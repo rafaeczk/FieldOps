@@ -29,6 +29,13 @@ internal class AccountRepository(AccountDbContext context) : IAccountRepository
         return await context.Accounts.SingleOrDefaultAsync(a => a.Email == email);
     }
 
+    public async Task<IReadOnlyList<Account>> GetAllAsync()
+    {
+        return await context.Accounts
+            .OrderBy(a => a.Email)
+            .ToListAsync();
+    }
+
     public async Task<IReadOnlyList<Account>> GetByRoleAsync(AccountRole role)
     {
         return await context.Accounts

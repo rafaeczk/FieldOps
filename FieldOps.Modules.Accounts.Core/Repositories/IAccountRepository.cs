@@ -7,6 +7,7 @@ internal interface IAccountRepository
 {
     Task<Account?> GetAsync(Guid id);
     Task<Account?> GetAsync(string email);
+    Task<IReadOnlyList<Account>> GetAllAsync();
     Task<IReadOnlyList<Account>> GetByRoleAsync(AccountRole role);
     Task CreateAsync(Account account);
     Task UpdateAsync(Account account);

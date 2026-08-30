@@ -35,6 +35,12 @@ internal class IdentityService(
         return new(account.Id, account.Email, account.FullName, account.Role, account.CreatedAt);
     }
 
+    public async Task<IReadOnlyList<AccountDto>> GetAllAsync()
+    {
+        var accounts = await accountRepository.GetAllAsync();
+        return accounts.Select(a => new AccountDto(a.Id, a.Email, a.FullName, a.Role, a.CreatedAt)).ToList();
+    }
+
     public async Task<IReadOnlyList<AccountDto>> GetTechniciansAsync()
     {
         var accounts = await accountRepository.GetByRoleAsync(new AccountRole(AccountRole.Technician));

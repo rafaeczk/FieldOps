@@ -2,6 +2,8 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\FieldOps.Modules.Accounts.Core\FieldOps.Modules.Accounts.Core.csproj" />
+		<ProjectReference Include="..\FieldOps.Modules.Technicians.Contracts\FieldOps.Modules.Technicians.Contracts.csproj" />
+		<ProjectReference Include="..\FieldOps.Modules.Operators.Contracts\FieldOps.Modules.Operators.Contracts.csproj" />
 	</ItemGroup>
 
 </Project>
