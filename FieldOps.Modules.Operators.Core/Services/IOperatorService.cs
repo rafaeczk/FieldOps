@@ -8,6 +8,5 @@ public interface IOperatorService
     Task<OperatorDetalisDto?> GetByAsync(Guid id);
     Task<IReadOnlyList<OperatorDto>> BrowseAsync();
     Task DeleteAsync(Guid id);
-
-
+    Task DeleteByAccountIdAsync(Guid accountId);
 }
