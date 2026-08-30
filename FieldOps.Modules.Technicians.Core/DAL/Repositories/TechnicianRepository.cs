@@ -26,5 +26,10 @@ namespace FieldOps.Modules.Technicians.Core.DAL.Repositories
         {
             return await context.Technicians.SingleOrDefaultAsync(t => t.Id == id);
         }
+
+        public async Task<Technician?> GetByAccountIdAsync(Guid accountId)
+        {
+            return await context.Technicians.SingleOrDefaultAsync(t => t.AccountId == accountId);
+        }
     }
 }

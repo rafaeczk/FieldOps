@@ -8,5 +8,6 @@ namespace FieldOps.Modules.Technicians.Core.Services
         Task<TechnicianDto?> GetByAsync(Guid id);
         Task<IReadOnlyList<TechnicianDto>> BrowseAsync();
         Task DeleteAsync(Guid id);
+        Task DeleteByAccountIdAsync(Guid accountId);
     }
 }
