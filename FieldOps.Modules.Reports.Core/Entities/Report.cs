@@ -45,7 +45,7 @@ internal class Report
 
     public void AddPhoto(string photoPath, DateTime updatedAt)
     {
-        PhotoPaths.Add(photoPath);
+        PhotoPaths = [..PhotoPaths, photoPath];
         UpdatedAt = updatedAt;
     }
 
