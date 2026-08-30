@@ -32,6 +32,15 @@ internal class WorkOrderService(
             clock.UtcNow());
 
         await repository.CreateAsync(workOrder);
+
+        if (dto.TechnicianIds is { Count: > 0 })
+        {
+            foreach (var technicianId in dto.TechnicianIds)
+            {
+                await repository.AddAssigneeAsync(workOrder.Id, technicianId, clock.UtcNow());
+            }
+        }
+
         await unitOfWork.SaveChangesAsync();
 
         await messageClient.PublishAsync(new WorkOrderCreatedEvent(

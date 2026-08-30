@@ -5,4 +5,5 @@ public record CreateWorkOrderDto(
     string? Description,
     string Address,
     DateTime Deadline,
-    string Priority = "MEDIUM");
+    string Priority = "MEDIUM",
+    List<Guid>? TechnicianIds = null);
