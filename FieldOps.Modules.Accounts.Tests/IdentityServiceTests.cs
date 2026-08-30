@@ -352,4 +352,46 @@ public class IdentityServiceTests
         Assert.Equal("tech2@test.com", result[1].Email);
         Assert.Equal("Tech Two", result[1].FullName);
     }
+
+    [Fact]
+    public async Task GetAllAsync_ReturnsAllAccounts()
+    {
+        var accounts = new List<Account>
+        {
+            Account.Create("admin@test.com", "hash1", "Admin User", new AccountRole(AccountRole.Admin), DateTime.UtcNow),
+            Account.Create("op@test.com", "hash2", "Operator User", new AccountRole(AccountRole.Operator), DateTime.UtcNow),
+            Account.Create("tech@test.com", "hash3", "Tech User", new AccountRole(AccountRole.Technician), DateTime.UtcNow),
+        };
+
+        _accountRepositoryMock
+            .Setup(x => x.GetAllAsync())
+            .ReturnsAsync(accounts);
+
+        var result = await _sut.GetAllAsync();
+
+        Assert.Equal(3, result.Count);
+    }
+
+    [Fact]
+    public async Task CreateAccountAsync_AsAdmin_CreatesOperatorAccount()
+    {
+        var command = new CreateAccountCommand(Guid.NewGuid(), "newop@test.com", "password123", "New Operator", new AccountRole(AccountRole.Operator));
+        var fixedTime = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+        _clockMock.Setup(x => x.UtcNow()).Returns(fixedTime);
+        _accountRepositoryMock
+            .Setup(x => x.GetAsync(command.Email))
+            .ReturnsAsync((Account?)null);
+        _passwordHasherMock
+            .Setup(x => x.HashPassword(default!, command.Password))
+            .Returns("hashed-password");
+
+        await _sut.CreateAccountAsync(command);
+
+        _accountRepositoryMock.Verify(x => x.CreateAsync(It.Is<Account>(a =>
+            a.Email == command.Email &&
+            a.Hash == "hashed-password" &&
+            a.Role == command.Role)), Times.Once);
+        _unitOfWorkMock.Verify(x => x.SaveChangesAsync(), Times.Once);
+    }
 }
