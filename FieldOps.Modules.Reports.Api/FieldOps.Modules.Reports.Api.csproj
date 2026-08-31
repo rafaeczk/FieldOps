@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\FieldOps.Modules.Reports.Infrastructure\FieldOps.Modules.Reports.Infrastructure.csproj" />
+	</ItemGroup>
+
 </Project>

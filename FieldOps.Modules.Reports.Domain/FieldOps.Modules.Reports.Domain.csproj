@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\FieldOps.Shared.Abstractions\FieldOps.Shared.Abstractions.csproj" />
+	</ItemGroup>
+	
 </Project>

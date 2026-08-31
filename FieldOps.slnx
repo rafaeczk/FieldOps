@@ -9,6 +9,10 @@
     <Project Path="FieldOps.Modules.Accounts.Contracts/FieldOps.Modules.Accounts.Contracts.csproj" Id="6e6c8114-9258-46c5-8dc6-db1e661c400b" />
     <Project Path="FieldOps.Modules.Accounts.Core/FieldOps.Modules.Accounts.Core.csproj" />
   </Folder>
+  <Folder Name="/Src/Modules/Assets/">
+    <Project Path="FieldOps.Modules.Assets.Api/FieldOps.Modules.Assets.Api.csproj" Id="5759748b-9ecf-43e2-830c-dea1afdbd23b" />
+    <Project Path="FieldOps.Modules.Assets.Core/FieldOps.Modules.Assets.Core.csproj" Id="ab5d0a11-403c-404e-9cfe-068fd8b72c93" />
+  </Folder>
   <Folder Name="/Src/Modules/Files/">
     <Project Path="FieldOps.Modules.Files.Api/FieldOps.Modules.Files.Api.csproj" Id="e4267ea2-a9ff-4a9a-a050-a467c07d5077" />
     <Project Path="FieldOps.Modules.Files.Core/FieldOps.Modules.Files.Core.csproj" Id="53be45d8-052e-4750-81a2-24ac227890d7" />
