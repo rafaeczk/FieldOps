@@ -6,7 +6,7 @@ namespace FieldOps.Shared.Infrastructure.Messages;
 
 public static class Extensions
 {
-    public static IServiceCollection AddMediatRHandlers(this IServiceCollection services, Type whereToLook)
+    public static IServiceCollection AddMediatRRequestHandlers(this IServiceCollection services, Type whereToLook)
     {
         var allTypes = whereToLook.Assembly.GetTypes();
 

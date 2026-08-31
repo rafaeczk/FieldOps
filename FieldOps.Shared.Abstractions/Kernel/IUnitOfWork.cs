@@ -1,4 +1,4 @@
-﻿namespace FieldOps.Shared.Infrastructure.Postgres;
+﻿namespace FieldOps.Shared.Abstractions.Kernel;
 
 public interface IUnitOfWork
 {

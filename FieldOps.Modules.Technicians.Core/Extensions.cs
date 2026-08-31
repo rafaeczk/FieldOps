@@ -4,6 +4,7 @@ using FieldOps.Modules.Technicians.Core.DAL.Repositories;
 using FieldOps.Modules.Technicians.Core.Repositories;
 using FieldOps.Modules.Technicians.Core.Services;
 using FieldOps.Shared.Infrastructure.Events;
+using FieldOps.Shared.Infrastructure.Messages;
 using FieldOps.Shared.Infrastructure.Postgres;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -16,6 +17,9 @@ namespace FieldOps.Modules.Technicians.Core
         {
             services.AddPostgres<TechniciansDbContext>();
             services.AddScoped<ITechnicianUnitOfWork, TechnicianUnitOfWork>();
+
+            services.AddMediatRNotificationHandlers(typeof(ModuleMarker));
+            services.AddMediatRRequestHandlers(typeof(ModuleMarker));
 
             services.AddScoped<ITechnicianRepository, TechnicianRepository>();
             services.AddScoped<IOutboxMessagesRepository, OutboxMessagesRepository>();
@@ -36,3 +40,5 @@ namespace FieldOps.Modules.Technicians.Core
         }
     }
 }
+
+internal class ModuleMarker { }

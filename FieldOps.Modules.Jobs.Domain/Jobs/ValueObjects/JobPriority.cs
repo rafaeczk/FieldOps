@@ -15,7 +15,7 @@ public class JobPriority : ValueObject
     public JobPriority(string value)
     {
         if (!AcceptedValues.Contains(value))
-            throw new InvalidJobStatusException(value);
+            throw new InvalidJobPriorityException(value);
 
         Value = value;
     }
