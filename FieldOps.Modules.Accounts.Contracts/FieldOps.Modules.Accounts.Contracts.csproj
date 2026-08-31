@@ -1,7 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <ItemGroup>
-    <ProjectReference Include="..\FieldOps.Shared.Infrastructure\FieldOps.Shared.Infrastructure.csproj" />
+    <ProjectReference Include="..\FieldOps.Shared.Abstractions\FieldOps.Shared.Abstractions.csproj" />
   </ItemGroup>
-
 </Project>

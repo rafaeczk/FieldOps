@@ -5,6 +5,7 @@ using FieldOps.Modules.Accounts.Core.Entities;
 using FieldOps.Modules.Accounts.Core.Repositories;
 using FieldOps.Modules.Accounts.Core.Services;
 using FieldOps.Shared.Infrastructure.Events;
+using FieldOps.Shared.Infrastructure.Messages;
 using FieldOps.Shared.Infrastructure.Postgres;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,9 @@ public static class Extensions
     {
         services.AddPostgres<AccountDbContext>();
         services.AddScoped<IAccountUnitOfWork, AccountUnitOfWork>();
+
+        services.AddMediatRNotificationHandlers(typeof(ModuleMarker));
+        services.AddMediatRRequestHandlers(typeof(ModuleMarker));
 
         services.AddHostedService<AccountInitializer>();
 
