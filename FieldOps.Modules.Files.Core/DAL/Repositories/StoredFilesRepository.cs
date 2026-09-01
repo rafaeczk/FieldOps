@@ -1,6 +1,7 @@
 ﻿using FieldOps.Modules.Files.Core.Entities;
 using FieldOps.Modules.Files.Core.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace FieldOps.Modules.Files.Core.DAL.Repositories;
 
@@ -21,5 +22,12 @@ internal class StoredFilesRepository(FilesDbContext context) : IStoredFilesRepos
     public void Delete(StoredFile storedFile)
     {
         context.Files.Remove(storedFile);
+    }
+
+    public Task<int> CountAsync(Expression<Func<StoredFile, bool>> predicate, CancellationToken ct = default)
+    {
+        return context.Files
+            .Where(predicate)
+            .CountAsync(ct);
     }
 }

@@ -11,16 +11,19 @@ using FieldOps.Shared.Abstractions.Time;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using FieldOps.Modules.Files.Contracts;
+using FieldOps.Modules.Reports.Domain.Reports.Exceptions;
+using FieldOps.Modules.Assets.Contracts;
 
 namespace FieldOps.Modules.Reports.Application.Reports.Commands
 {
-    public record CreateReportCommand( Guid JobId,
+    public record CreateReportCommand(Guid JobId,
         Guid AssetId,
         string Note,
         Address Address,
         List<Guid>? FileIds = null) : IMessage<Guid>;
 
-    public sealed class CreateReportCommandHandler(IReportsWriteRepository repository, IReportsUnitOfWork unitOfWork, ITechniciansModuleApi technicianModuleApi, IContext context, IClock clock) : IMessageHandler<CreateReportCommand, Guid>
+    public sealed class CreateReportCommandHandler(IReportsWriteRepository repository, IReportsUnitOfWork unitOfWork, ITechniciansModuleApi technicianModuleApi, IFilesModuleApi filesModuleApi, IAssetsModuleApi assetsModuleApi, IContext context, IClock clock) : IMessageHandler<CreateReportCommand, Guid>
     {
         public async Task<Guid> HandleAsync(CreateReportCommand message, CancellationToken ct)
         {
@@ -29,12 +32,23 @@ namespace FieldOps.Modules.Reports.Application.Reports.Commands
             if (operatorId is null)
                 throw new UnauthorizedAccessException();
 
-            var fileIds = message.FileIds?.Select(id => new FileId(id)).ToList()
-                          ?? new List<FileId>();
+            var assetExists = await assetsModuleApi.Exists(message.AssetId, ct);
+            if (!assetExists)
+            {
+                throw new AssetNotFoundException(message.AssetId);
+            }
 
-            var job = Report.Create(
+            var rawFileIds = message.FileIds?.Distinct().ToList() ?? [];
+            if (rawFileIds.Count > 0 && !await filesModuleApi.AllExistAsync(rawFileIds, ct))
+            {
+                throw new FileDoesNotExistException();
+            }
+
+            var fileIds = rawFileIds.Select(id => new FileId(id)).ToList();
+
+            var report = Report.Create(
                 new AggregateId(),
-                new (message.JobId),
+                new(message.JobId),
                 new(operatorId.Value),
                 new(message.AssetId),
                 message.Note,
@@ -43,10 +57,10 @@ namespace FieldOps.Modules.Reports.Application.Reports.Commands
                 clock.UtcNow()
                 );
 
-            repository.Add(job);
+            repository.Add(report);
             await unitOfWork.SaveChangesAsync(ct);
 
-            return job.Id;
+            return report.Id;
         }
     }
 }
