@@ -40,6 +40,11 @@ internal static class Extensions
             };
         });
 
+        services.AddRouting(options =>
+        {
+            options.LowercaseUrls = true; 
+        });
+
         services.AddTransient(typeof(IRequestHandler<,>), typeof(MediatRMessageBridge<,>));
         services.AddTransient(typeof(IRequestHandler<>), typeof(MediatRVoidMessageBridge<>));
 

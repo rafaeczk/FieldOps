@@ -15,6 +15,8 @@ public sealed class Report : AggregateRoot
     public Address Address { get; private set; } = null!;
     public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; private set; }
+    public bool IsDeleted { get; private set; }
+    public DateTime? DeletedAt { get; private set; }
     private readonly List<FileId> _fileIds = new();
     public IReadOnlyCollection<FileId> FileIds => _fileIds.AsReadOnly();
 
@@ -78,6 +80,15 @@ public sealed class Report : AggregateRoot
     public void ChangeAddress(Address address)
     {
         Address = address;
+        UpdatedAt = DateTime.UtcNow;
+        IncrementVersion();
+    }
+
+    public void SoftDelete()
+    {
+        if (IsDeleted) return;
+        IsDeleted = true;
+        DeletedAt = DateTime.UtcNow;
         UpdatedAt = DateTime.UtcNow;
         IncrementVersion();
     }

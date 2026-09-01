@@ -5,8 +5,9 @@ using FieldOps.Shared.Abstractions.Pagination;
 
 namespace FieldOps.Modules.Reports.Application.Reports.Repositories;
 
-public interface IReportReadRepository
+public interface IReportsReadRepository
 {
-    Task<PagedResult<Report>> BrowseAsync(PaginationParams pagination);
-    Task<ReportDetailsDto?> GetAsync(Guid jobId);
+    Task<PagedResult<ReportListItemDto>> BrowseAsync(PaginationParams pagination);
+    Task<ReportDetailsDto?> GetAsync(Guid reportId);
+    Task<Report?> GetByIdAsync(Guid reportId);
 }

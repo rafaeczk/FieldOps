@@ -18,7 +18,7 @@ internal class JobsController(ISender sender) : BaseController
     public async Task<ActionResult<Guid>> CreateAsync(CreateJobDto dto)
     {
         var jobId = await sender.Send(new CreateJobCommand(dto.Title, dto.Description, new(dto.Priority), dto.Address, dto.Deadline));
-        return Ok(jobId);
+        return CreatedAtAction(nameof(GetAsync), new { id = jobId }, jobId);
     }
 
     [HttpPut("{id:guid}")]
