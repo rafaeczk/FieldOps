@@ -5,6 +5,8 @@ using FieldOps.Modules.Technicians.Api;
 using FieldOps.Shared.Infrastructure;
 using FieldOps.Modules.Jobs.Api;
 using FieldOps.Modules.Reports.Api;
+using FieldOps.Modules.Assets.Api;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,8 @@ builder.Services.AddTechniciansModule();
 builder.Services.AddFilesModule();
 builder.Services.AddJobsModule();
 builder.Services.AddReportsModule();
+builder.Services.AddAssetsModule();
+
 
 var app = builder.Build();
 
@@ -27,4 +31,5 @@ app.UseTechniciansModule();
 app.UseFilesModule();
 app.UseJobsModule();
 app.UseReportsModule();
+app.UseAssetsModule();
 app.Run();

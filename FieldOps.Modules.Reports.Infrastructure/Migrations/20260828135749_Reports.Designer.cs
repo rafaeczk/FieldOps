@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace FieldOps.Modules.Reports.Infrastructure.Migrations
 {
-    [DbContext(typeof(ReportDbContext))]
+    [DbContext(typeof(ReportsDbContext))]
     [Migration("20260828135749_Reports")]
     partial class Reports
     {

@@ -1,4 +1,5 @@
-﻿using FieldOps.Modules.Technicians.Contracts.Events;
+﻿using FieldOps.Modules.Technicians.Contracts;
+using FieldOps.Modules.Technicians.Contracts.Events;
 using FieldOps.Modules.Technicians.Core.DAL;
 using FieldOps.Modules.Technicians.Core.DAL.Repositories;
 using FieldOps.Modules.Technicians.Core.Repositories;
@@ -27,7 +28,7 @@ namespace FieldOps.Modules.Technicians.Core
             services.AddHostedService(sp
                 => new OutboxProcessorWorker<IOutboxMessagesRepository>(
                     scopeFactory: sp.GetRequiredService<IServiceScopeFactory>(),
-                    moduleName: "Operators",
+                    moduleName: "Technicians",
                     typeMapping: new()
                     {
                         { "TechnicianCreated", typeof(TechnicianCreated) },
@@ -36,6 +37,9 @@ namespace FieldOps.Modules.Technicians.Core
                     logger: sp.GetRequiredService<ILogger<OutboxProcessorWorker<IOutboxMessagesRepository>>>()));
 
             services.AddScoped<ITechnicianService, TechnicianService>();
+
+            services.AddScoped<ITechniciansModuleApi, TechniciansModuleApi>();
+
             return services;
         }
     }

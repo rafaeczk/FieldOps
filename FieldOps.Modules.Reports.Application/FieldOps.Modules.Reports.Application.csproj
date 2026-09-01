@@ -8,6 +8,11 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\FieldOps.Modules.Reports.Domain\FieldOps.Modules.Reports.Domain.csproj" />
+		<ProjectReference Include="..\FieldOps.Modules.Technicians.Contracts\FieldOps.Modules.Technicians.Contracts.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Reports\Queries\" />
 	</ItemGroup>
 
 </Project>

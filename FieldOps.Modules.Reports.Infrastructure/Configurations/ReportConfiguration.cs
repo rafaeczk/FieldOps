@@ -1,4 +1,5 @@
 ﻿using FieldOps.Modules.Reports.Domain.Reports.Entities;
+using FieldOps.Shared.Abstractions.Kernel.Ids;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -26,7 +27,9 @@ namespace FieldOps.Modules.Reports.Infrastructure.Configurations
                 .HasConversion(id => id.Value, value => new(value))
                 .IsRequired();
 
-            builder.Property(r => r.AssetId);
+            builder.Property(r => r.AssetId)
+              .HasConversion(id => id.Value, value => new(value))
+              .IsRequired();
 
             builder.OwnsOne(r => r.Address, addressBuilder =>
             {

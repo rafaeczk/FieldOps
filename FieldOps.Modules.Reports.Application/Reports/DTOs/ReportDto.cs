@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FieldOps.Modules.Reports.Application.DTOs
+namespace FieldOps.Modules.Reports.Application.Reports.DTOs
 {
     public record ReportListItemDto(
         Guid JobId,

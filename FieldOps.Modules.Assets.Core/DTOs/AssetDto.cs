@@ -8,7 +8,7 @@ namespace FieldOps.Modules.Assets.Core.DTOs
         Guid Id,
         string Name,
         string Manufacturer,
-        string SerialNumber,
+        string SerialNumber
         
     );
 }

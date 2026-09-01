@@ -1,4 +1,8 @@
-﻿using FieldOps.Modules.Reports.Domain.Reports.ValueObjects;
+﻿using FieldOps.Modules.Technicians.Contracts;
+using FieldOps.Modules.Reports.Application.Common;
+using FieldOps.Modules.Reports.Domain.Reports.Entities;
+using FieldOps.Modules.Reports.Domain.Reports.Repositories;
+using FieldOps.Modules.Reports.Domain.Reports.ValueObjects;
 using FieldOps.Shared.Abstractions.Contexts;
 using FieldOps.Shared.Abstractions.Kernel.Ids;
 using FieldOps.Shared.Abstractions.Kernel.Types;
@@ -10,25 +14,32 @@ using System.Text;
 
 namespace FieldOps.Modules.Reports.Application.Reports.Commands
 {
-    public record CreateReportCommandHandler(TechnicianId CreatorId, Guid  ) : IMessage<Guid>;
+    public record CreateReportCommand( Guid JobId,
+        Guid AssetId,
+        string Note,
+        Address Address,
+        List<Guid>? FileIds = null) : IMessage<Guid>;
 
-    public sealed class CreateJobCommandHandler(IJobsRepository repository, IJobsUnitOfWork unitOfWork, IOperatorsModuleApi operatorsModuleApi, IContext context, IClock clock) : IMessageHandler<CreateJobCommand, Guid>
+    public sealed class CreateReportCommandHandler(IReportsWriteRepository repository, IReportsUnitOfWork unitOfWork, ITechniciansModuleApi technicianModuleApi, IContext context, IClock clock) : IMessageHandler<CreateReportCommand, Guid>
     {
-        public async Task<Guid> HandleAsync(CreateJobCommand message, CancellationToken ct)
+        public async Task<Guid> HandleAsync(CreateReportCommand message, CancellationToken ct)
         {
-            var operatorId = await operatorsModuleApi.GetOperatorIdByAccountId(context.Identity.Id);
+            var operatorId = await technicianModuleApi.GetTechnicianIdByAccountId(context.Identity.Id);
 
             if (operatorId is null)
                 throw new UnauthorizedAccessException();
 
-            var job = Job.Create(
+            var fileIds = message.FileIds?.Select(id => new FileId(id)).ToList()
+                          ?? new List<FileId>();
+
+            var job = Report.Create(
                 new AggregateId(),
+                new (message.JobId),
                 new(operatorId.Value),
-                message.Title,
-                message.Description,
-                message.Priority,
+                new(message.AssetId),
+                message.Note,
                 message.Address,
-                message.Deadline,
+                fileIds,
                 clock.UtcNow()
                 );
 

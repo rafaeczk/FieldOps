@@ -7,7 +7,7 @@ using System.Text;
 
 namespace FieldOps.Modules.Assets.Core.DAL
 {
-    internal class AssetDbContext : DbContext
+    internal class AssetsDbContext(DbContextOptions<AssetsDbContext> options) : DbContext(options)
     {
         public DbSet<Asset> Assets { get; set; }
 

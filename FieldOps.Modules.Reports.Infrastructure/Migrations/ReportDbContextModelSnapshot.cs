@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace FieldOps.Modules.Reports.Infrastructure.Migrations
 {
-    [DbContext(typeof(ReportDbContext))]
+    [DbContext(typeof(ReportsDbContext))]
     partial class ReportDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

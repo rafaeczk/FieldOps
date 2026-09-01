@@ -33,7 +33,6 @@ namespace FieldOps.Modules.Assets.Core.DAL.Configurations
 
             builder.Property(a => a.Status)
                 .IsRequired()
-                .HasDefaultValue("Active")
                 .HasMaxLength(50);
 
             builder.Property(a => a.Notes)

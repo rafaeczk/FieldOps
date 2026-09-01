@@ -1,5 +1,6 @@
 ﻿using FieldOps.Modules.Technicians.Core.Entities;
 using FieldOps.Modules.Technicians.Core.Repositories;
+using FieldOps.Shared.Abstractions.Kernel.Ids;
 using Microsoft.EntityFrameworkCore;
 
 namespace FieldOps.Modules.Technicians.Core.DAL.Repositories
@@ -25,6 +26,11 @@ namespace FieldOps.Modules.Technicians.Core.DAL.Repositories
         public async Task<Technician?> GetAsync(Guid id)
         {
             return await context.Technicians.SingleOrDefaultAsync(t => t.Id == id);
+        }
+
+        public async Task<Technician?> GetByAccountIdAsync(Guid accountId)
+        {
+            return await context.Technicians.SingleOrDefaultAsync(t => t.AccountId == accountId);
         }
     }
 }
