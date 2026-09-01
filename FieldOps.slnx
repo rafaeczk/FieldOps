@@ -16,6 +16,7 @@
   <Folder Name="/Src/Modules/Jobs/">
     <Project Path="FieldOps.Modules.Jobs.Api/FieldOps.Modules.Jobs.Api.csproj" Id="29eecf6b-1944-4b37-a825-a7af9feb029b" />
     <Project Path="FieldOps.Modules.Jobs.Application/FieldOps.Modules.Jobs.Application.csproj" Id="873b1184-01cf-470f-a7d1-bb8e37fcb3fd" />
+    <Project Path="FieldOps.Modules.Jobs.Contracts/FieldOps.Modules.Jobs.Contracts.csproj" Id="d9fcb5cf-80e4-482d-adbb-743a1377dc6a" />
     <Project Path="FieldOps.Modules.Jobs.Domain/FieldOps.Modules.Jobs.Domain.csproj" Id="625901b8-e252-4f4b-b3ae-c3d1c93ab146" />
     <Project Path="FieldOps.Modules.Jobs.Infrastructure/FieldOps.Modules.Jobs.Infrastructure.csproj" Id="7621772b-15d6-4b50-a5d9-23317333bb83" />
   </Folder>

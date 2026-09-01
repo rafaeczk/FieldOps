@@ -1,4 +1,4 @@
-﻿using FieldOps.Modules.Technicians.Core.Repositories;
+﻿using FieldOps.Modules.Jobs.Domain.Outbox;
 using FieldOps.Shared.Abstractions.Events;
 using FieldOps.Shared.Abstractions.Time;
 using FieldOps.Shared.Infrastructure.Modules;
@@ -6,18 +6,18 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 
-namespace FieldOps.Modules.Technicians.Core.DAL.Repositories;
+namespace FieldOps.Modules.Jobs.Infrastructure.EF.Repositories;
 
-internal class OutboxMessagesRepository(TechniciansDbContext context, IClock clock, IModuleSerializer serializer) : IOutboxMessagesRepository
+internal class OutboxMessagesRepository(JobsDbContext context, IClock clock, IModuleSerializer serializer) : IOutboxMessagesRepository
 {
-    private readonly TechniciansDbContext context = context;
+    private readonly JobsDbContext context = context;
     private readonly IClock clock = clock;
     private readonly IModuleSerializer serializer = serializer;
 
-    public async Task CreateAsync<Event>(Event @event)
+    public async Task AddAsync<Event>(Event @event)
         where Event : INotification
     {
-        await context.OutboxMessages.AddAsync(new()
+        context.OutboxMessages.Add(new()
         {
             Id = Guid.NewGuid(),
             Type = typeof(Event).Name,
@@ -26,6 +26,10 @@ internal class OutboxMessagesRepository(TechniciansDbContext context, IClock clo
             ProcessedOn = null
         });
     }
+
+    public async Task AddAsync<Event>(params Event[] events)
+        where Event : INotification
+        => events.ToList().ForEach(async e => await AddAsync(e));
 
     public async Task<List<IOutboxMessageDto>> BrowseUnprocessedAsync(int batchSize)
     {

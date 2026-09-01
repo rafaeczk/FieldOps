@@ -1,4 +1,4 @@
-﻿namespace FieldOps.Shared.Infrastructure.Events;
+﻿namespace FieldOps.Shared.Abstractions.Events;
 
 public interface IModuleOutboxRepository
 {

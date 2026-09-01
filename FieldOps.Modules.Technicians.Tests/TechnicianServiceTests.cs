@@ -1,4 +1,4 @@
-using FieldOps.Modules.Accounts.Contracts.Queries;
+using FieldOps.Modules.Accounts.Contracts;
 using FieldOps.Modules.Technicians.Contracts.Events;
 using FieldOps.Modules.Technicians.Core.DTOs;
 using FieldOps.Modules.Technicians.Core.Entities;
@@ -17,7 +17,7 @@ public class TechnicianServiceTests
     private readonly Mock<IOutboxMessagesRepository> _outboxRepositoryMock = new();
     private readonly Mock<ITechnicianUnitOfWork> _unitOfWorkMock = new();
     private readonly Mock<IClock> _clockMock = new();
-    private readonly Mock<ISender> _senderMock = new();
+    private readonly Mock<IAccountsModuleApi> _accountsModuleApiMock = new();
     private readonly TechnicianService _sut;
 
     public TechnicianServiceTests()
@@ -27,7 +27,7 @@ public class TechnicianServiceTests
             _outboxRepositoryMock.Object,
             _unitOfWorkMock.Object,
             _clockMock.Object,
-            _senderMock.Object);
+            _accountsModuleApiMock.Object);
     }
 
     [Fact]
@@ -37,8 +37,8 @@ public class TechnicianServiceTests
         var fixedTime = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         _clockMock.Setup(x => x.UtcNow()).Returns(fixedTime);
-        _senderMock
-            .Setup(x => x.Send(It.IsAny<CheckAccountEmailIsTaken>(), It.IsAny<CancellationToken>()))
+        _accountsModuleApiMock
+            .Setup(x => x.CheckAccountEmailIsTaken(dto.RequestedEmail))
             .ReturnsAsync(false);
 
         var result = await _sut.CreateAsync(dto);
@@ -55,8 +55,8 @@ public class TechnicianServiceTests
     {
         var dto = new CreateTechnicianDto("John Smith", "existing@test.com", "password123");
 
-        _senderMock
-            .Setup(x => x.Send(It.IsAny<CheckAccountEmailIsTaken>(), It.IsAny<CancellationToken>()))
+        _accountsModuleApiMock
+            .Setup(x => x.CheckAccountEmailIsTaken(dto.RequestedEmail))
             .ReturnsAsync(true);
 
         await Assert.ThrowsAsync<EmailInUseException>(() => _sut.CreateAsync(dto));

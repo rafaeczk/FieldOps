@@ -1,4 +1,4 @@
-﻿using FieldOps.Shared.Infrastructure.Events;
+﻿using FieldOps.Shared.Abstractions.Events;
 using MediatR;
 
 namespace FieldOps.Modules.Technicians.Core.Repositories;

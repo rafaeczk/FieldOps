@@ -1,4 +1,5 @@
-﻿using FieldOps.Modules.Accounts.Contracts.Events;
+﻿using FieldOps.Modules.Accounts.Contracts;
+using FieldOps.Modules.Accounts.Contracts.Events;
 using FieldOps.Modules.Accounts.Core.DAL;
 using FieldOps.Modules.Accounts.Core.DAL.Repositories;
 using FieldOps.Modules.Accounts.Core.Entities;
@@ -39,6 +40,7 @@ public static class Extensions
                 logger: sp.GetRequiredService<ILogger<OutboxProcessorWorker<IOutboxMessagesRepository>>>()));
 
         services.AddTransient<IIdentityService, IdentityService>();
+        services.AddScoped<IAccountsModuleApi, AccountsModuleApi>();
 
         services.AddSingleton<IPasswordHasher<Account>, PasswordHasher<Account>>();
 

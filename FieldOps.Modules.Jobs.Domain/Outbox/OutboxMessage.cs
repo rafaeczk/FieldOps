@@ -1,8 +1,9 @@
-﻿using FieldOps.Shared.Abstractions.Events;
+﻿
+using FieldOps.Shared.Abstractions.Events;
 
-namespace FieldOps.Modules.Accounts.Core.Entities;
+namespace FieldOps.Modules.Jobs.Domain.Outbox;
 
-internal class OutboxMessage : IOutboxMessageDto
+public class OutboxMessage : IOutboxMessageDto
 {
     public Guid Id { get; set; }
     public string Type { get; set; } = null!;

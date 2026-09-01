@@ -6,6 +6,6 @@ namespace FieldOps.Modules.Jobs.Domain.Jobs.Repositories;
 public interface IJobsRepository
 {
     Task<Job?> GetAsync(AggregateId id);
-    void Add(Job job);
-    void Update(Job job);
+    Task AddAsync(Job job);
+    Task UpdateAsync(Job job);
 }
