@@ -6,7 +6,6 @@ using FieldOps.Modules.Jobs.Domain.Jobs.ValueObjects;
 using FieldOps.Modules.Jobs.Domain.Outbox;
 using FieldOps.Modules.Operators.Contracts;
 using FieldOps.Shared.Abstractions.Contexts;
-using FieldOps.Shared.Abstractions.Kernel.Types;
 using FieldOps.Shared.Abstractions.Messages;
 using FieldOps.Shared.Abstractions.Time;
 
@@ -25,7 +24,6 @@ public sealed class CreateJobCommandHandler(IJobsRepository repository, IOutboxM
             throw new UnauthorizedAccessException();
 
         var job = Job.Create(
-            new AggregateId(),
             new(operatorId.Value),
             message.Title,
             message.Description,

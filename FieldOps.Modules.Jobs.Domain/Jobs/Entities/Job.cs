@@ -6,7 +6,7 @@ using FieldOps.Shared.Abstractions.Kernel.Types;
 
 namespace FieldOps.Modules.Jobs.Domain.Jobs.Entities;
 
-public sealed class Job : AggregateRoot
+public sealed class Job : AggregateRoot<JobId>
 {
     public OperatorId CreatorId { get; private set; } = null!;
     public string Title { get; private set; } = null!;
@@ -17,15 +17,17 @@ public sealed class Job : AggregateRoot
     public DateTime Deadline { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; private set; }
+    private readonly List<JobAssignee> _assignees = [];
+    public IReadOnlyCollection<JobAssignee> Assignees => _assignees.AsReadOnly();
 
     private Job() { }
 
-    public static Job Create(AggregateId id, OperatorId creatorId, string title, 
+    public static Job Create(OperatorId creatorId, string title, 
         string? description, JobPriority priority, Address address, DateTime deadline, DateTime createdAt)
     {
         var job = new Job
         {
-            Id = id,
+            Id = Guid.NewGuid(),
             CreatorId = creatorId,
             Status = new(JobStatus.Pending),
             CreatedAt = createdAt,
@@ -41,6 +43,29 @@ public sealed class Job : AggregateRoot
         job.AddEvent(new JobAdded(job));
 
         return job;
+    }
+
+    // ASSIGNEES
+
+    public void AddAssignee(TechnicianId technicianId)
+    {
+        if (_assignees.Any(a => a.TechnicianId == technicianId))
+            throw new AssigneeAlreadyExists(Id, technicianId);
+
+        var assignee = JobAssignee.Create(technicianId, new(Id));
+        _assignees.Add(assignee);
+        AddEvent(new JobAssigneeAdded(assignee));
+    }
+
+    public void RemoveAssignee(TechnicianId technicianId)
+    {
+        var assignee = _assignees.SingleOrDefault(a => a.TechnicianId == technicianId);
+
+        if (assignee is null)
+            throw new AssigneeDoesntExist(Id, technicianId);
+
+        _assignees.Remove(assignee);
+        AddEvent(new JobAssigneeRemoved(assignee));
     }
 
     // STATUSES
@@ -97,5 +122,13 @@ public sealed class Job : AggregateRoot
     {
         Deadline = deadline;
         IncrementVersion();
+    }
+
+    // GUARDS
+
+    public void EnsureCanBeEdited(OperatorId operatorId)
+    {
+        if (CreatorId != operatorId)
+            throw new UnauthorizedJobAccessException(Id);
     }
 }

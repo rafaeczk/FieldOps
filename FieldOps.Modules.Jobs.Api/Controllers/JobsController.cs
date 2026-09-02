@@ -36,6 +36,22 @@ internal class JobsController(ISender sender) : BaseController
         return this.OkOrNotFound(await sender.Send(new GetJobQuery(id)));
     }
 
+    [HttpPost("{id:guid}/assignees")]
+    [Authorize(Roles = "ADMIN,OPERATOR")]
+    public async Task<ActionResult> AddAssignee(Guid id, [FromBody] JobAssigneeActionDto dto)
+    {
+        await sender.Send(new AddJobAssigneeCommand(id, dto.TechnicianId));
+        return NoContent();
+    }
+
+    [HttpDelete("{id:guid}/assignees")]
+    [Authorize(Roles = "ADMIN,OPERATOR")]
+    public async Task<ActionResult> RemoveAssignee(Guid id, [FromBody] JobAssigneeActionDto dto)
+    {
+        await sender.Send(new RemoveJobAssigneeCommand(id, dto.TechnicianId));
+        return NoContent();
+    }
+
     [HttpGet]
     [Authorize(Roles = "ADMIN,OPERATOR,TECHNICIAN")]
     public async Task<ActionResult<JobDto>> BrowseAsync(

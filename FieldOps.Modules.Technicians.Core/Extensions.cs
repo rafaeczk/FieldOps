@@ -1,4 +1,5 @@
-﻿using FieldOps.Modules.Technicians.Contracts.Events;
+﻿using FieldOps.Modules.Technicians.Contracts;
+using FieldOps.Modules.Technicians.Contracts.Events;
 using FieldOps.Modules.Technicians.Core.DAL;
 using FieldOps.Modules.Technicians.Core.DAL.Repositories;
 using FieldOps.Modules.Technicians.Core.Repositories;
@@ -36,6 +37,8 @@ namespace FieldOps.Modules.Technicians.Core
                     logger: sp.GetRequiredService<ILogger<OutboxProcessorWorker<IOutboxMessagesRepository>>>()));
 
             services.AddScoped<ITechnicianService, TechnicianService>();
+            services.AddScoped<ITechnicianModuleApi, TechnicianModuleApi>();
+
             return services;
         }
     }

@@ -15,6 +15,7 @@ internal class JobsReadRepository(JobsDbContext context) : IJobsReadRepository
         var totalItems = await context.Jobs.CountAsync();
 
         var jobs = await context.Jobs
+            .AsNoTracking()
             .OrderByDescending(j => j.CreatedAt)
             .Paginate(pagination)
             .Select(j => new JobListItemDto(j.Id, j.Title, j.Status.Value, j.Priority.Value, j.Deadline))
@@ -25,10 +26,11 @@ internal class JobsReadRepository(JobsDbContext context) : IJobsReadRepository
 
     public async Task<JobDto?> GetAsync(Guid jobId)
     {
-        var job = await context.Jobs.SingleOrDefaultAsync(j => j.Id == jobId);
+        var job = await context.Jobs.Include(j => j.Assignees).AsNoTracking().SingleOrDefaultAsync(j => j.Id == jobId);
 
         if (job is null) return null;
 
-        return new(job.Id, job.Title, job.Description, job.Status, job.Priority, job.Address, job.Deadline, job.CreatedAt, job.UpdatedAt);
+        return new(job.Id, job.Title, job.Description, job.Status, job.Priority, 
+            job.Address, job.Deadline, job.CreatedAt, job.UpdatedAt, [.. job.Assignees.Select(a => a.TechnicianId.Value)]);
     }
 }

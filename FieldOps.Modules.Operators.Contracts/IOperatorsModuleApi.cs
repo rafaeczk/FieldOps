@@ -1,6 +1,8 @@
-﻿namespace FieldOps.Modules.Operators.Contracts;
+﻿using FieldOps.Shared.Abstractions.Kernel.Ids;
+
+namespace FieldOps.Modules.Operators.Contracts;
 
 public interface IOperatorsModuleApi
 {
-    Task<Guid?> GetOperatorIdByAccountId(Guid accountId);
+    Task<OperatorId?> GetOperatorIdByAccountId(Guid accountId);
 }

@@ -1,5 +1,4 @@
 ﻿using FieldOps.Modules.Jobs.Application.Jobs.DTOs;
-using FieldOps.Modules.Jobs.Application.Jobs.Exceptions;
 using FieldOps.Modules.Jobs.Application.Jobs.Repositories;
 using FieldOps.Shared.Abstractions.Messages;
 

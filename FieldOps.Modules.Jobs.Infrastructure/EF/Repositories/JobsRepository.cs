@@ -1,7 +1,7 @@
 ﻿using FieldOps.Modules.Jobs.Domain.Jobs.Entities;
 using FieldOps.Modules.Jobs.Domain.Jobs.Repositories;
 using FieldOps.Shared.Abstractions.Kernel;
-using FieldOps.Shared.Abstractions.Kernel.Types;
+using FieldOps.Shared.Abstractions.Kernel.Ids;
 using Microsoft.EntityFrameworkCore;
 
 namespace FieldOps.Modules.Jobs.Infrastructure.EF.Repositories;
@@ -17,9 +17,9 @@ internal sealed class JobsRepository(JobsDbContext context, IDomainEventDispatch
         await domainEventDispatcher.DispatchAsync([.. job.Events]);
     }
 
-    public Task<Job?> GetAsync(AggregateId id)
+    public Task<Job?> GetAsync(JobId id)
     {
-        return context.Jobs.SingleOrDefaultAsync(j => j.Id == id);
+        return context.Jobs.Include(j => j.Assignees).SingleOrDefaultAsync(j => j.Id.Equals(id));
     }
 
     public async Task UpdateAsync(Job job)
