@@ -4,5 +4,5 @@ namespace FieldOps.Modules.Operators.Contracts;
 
 public interface IOperatorsModuleApi
 {
-    Task<OperatorId?> GetOperatorIdByAccountId(Guid accountId);
+    Task<OperatorId?> GetOperatorIdByAccountId(AccountId accountId);
 }

@@ -14,7 +14,7 @@ internal class TechnicianModuleApi(ISender sender) : ITechnicianModuleApi
         return sender.Send(new GetTechnicianExistsQuery(technicianId));
     }
 
-    public Task<Guid?> GetTechnicianIdByAccountId(Guid accountId)
+    public Task<Guid?> GetTechnicianIdByAccountId(AccountId accountId)
     {
         return sender.Send(new GetTechnicianIdByAccountIdQuery(accountId));
     }

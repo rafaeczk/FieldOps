@@ -1,5 +1,6 @@
 ﻿using FieldOps.Modules.Operators.Core.Entities;
 using FieldOps.Modules.Operators.Core.Repositories;
+using FieldOps.Shared.Abstractions.Kernel.Ids;
 using Microsoft.EntityFrameworkCore;
 
 namespace FieldOps.Modules.Operators.Core.DAL.Repositories;
@@ -22,7 +23,7 @@ internal class OperatorRepository(OperatorDbContext context) : IOperatorReposito
     {
         context.Operators.Remove(@operator);
     }
-    public async Task<Operator?> GetAsync(Guid id)
+    public async Task<Operator?> GetAsync(OperatorId id)
     {
         return await context.Operators.SingleOrDefaultAsync(o => o.Id == id);
     }

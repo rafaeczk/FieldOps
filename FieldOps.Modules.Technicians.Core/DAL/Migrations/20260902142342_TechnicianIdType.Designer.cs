@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FieldOps.Modules.Technicians.Core.DAL.Migrations
 {
     [DbContext(typeof(TechnicianDbContext))]
-    [Migration("20260826181525_TechniciansOutbox")]
-    partial class TechniciansOutbox
+    [Migration("20260902142342_TechnicianIdType")]
+    partial class TechnicianIdType
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,7 +54,6 @@ namespace FieldOps.Modules.Technicians.Core.DAL.Migrations
             modelBuilder.Entity("FieldOps.Modules.Technicians.Core.Entities.Technician", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("AccountId")

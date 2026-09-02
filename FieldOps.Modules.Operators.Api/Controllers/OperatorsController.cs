@@ -18,10 +18,10 @@ internal class OperatorsController(IOperatorService service) : BaseController
         return Ok(operatorId);
     }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<OperatorDetalisDto>> GetOperator(Guid id)
+    [HttpGet("{operatorId:guid}")]
+    public async Task<ActionResult<OperatorDetalisDto>> GetOperator(Guid operatorId)
     {
-        return this.OkOrNotFound(await service.GetByAsync(id));
+        return this.OkOrNotFound(await service.GetByAsync(operatorId));
     }
 
     [HttpGet]
@@ -30,11 +30,11 @@ internal class OperatorsController(IOperatorService service) : BaseController
         return Ok(await service.BrowseAsync());
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{operatorId:guid}")]
     [Authorize(Roles = "ADMIN")]
-    public async Task<ActionResult> DeleteOperator(Guid id)
+    public async Task<ActionResult> DeleteOperator(Guid operatorId)
     {
-        await service.DeleteAsync(id);
+        await service.DeleteAsync(operatorId);
         return Ok();
     }
 }

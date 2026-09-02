@@ -9,7 +9,7 @@ internal class OperatorsModuleApi(ISender sender) : IOperatorsModuleApi
 {
     private readonly ISender sender = sender;
 
-    public Task<OperatorId?> GetOperatorIdByAccountId(Guid accountId)
+    public Task<OperatorId?> GetOperatorIdByAccountId(AccountId accountId)
     {
         return sender.Send(new GetOperatorIdByAccountIdQuery(accountId));
     }

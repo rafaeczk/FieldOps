@@ -4,6 +4,7 @@ using FieldOps.Modules.Technicians.Core.DTOs;
 using FieldOps.Modules.Technicians.Core.Entities;
 using FieldOps.Modules.Technicians.Core.Exceptions;
 using FieldOps.Modules.Technicians.Core.Repositories;
+using FieldOps.Shared.Abstractions.Kernel.Ids;
 using FieldOps.Shared.Abstractions.Time;
 
 namespace FieldOps.Modules.Technicians.Core.Services;
@@ -48,7 +49,7 @@ internal class TechnicianService(ITechnicianRepository repository, IOutboxMessag
         return technician.Id;
     }
 
-    public async Task DeleteAsync(Guid id)
+    public async Task DeleteAsync(TechnicianId id)
     {
         var technician = await repository.GetAsync(id);
 
@@ -62,7 +63,7 @@ internal class TechnicianService(ITechnicianRepository repository, IOutboxMessag
         await unitOfWork.SaveChangesAsync();
     }
 
-    public async Task<TechnicianDto?> GetByAsync(Guid id)
+    public async Task<TechnicianDto?> GetByAsync(TechnicianId id)
     {
         var technician = await repository.GetAsync(id);
         if (technician is null)

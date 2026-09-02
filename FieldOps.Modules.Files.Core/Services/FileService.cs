@@ -2,6 +2,7 @@
 using FieldOps.Modules.Files.Core.Entities;
 using FieldOps.Modules.Files.Core.Exceptions;
 using FieldOps.Modules.Files.Core.Repositories;
+using FieldOps.Shared.Abstractions.Kernel.Ids;
 using FieldOps.Shared.Abstractions.Time;
 
 namespace FieldOps.Modules.Files.Core.Services;
@@ -27,7 +28,7 @@ internal class FileService(IFileStorageService storageService, IStoredFilesRepos
         return file.Id;
     }
 
-    public async Task<FileDto?> GetFileAsync(Guid fileId)
+    public async Task<FileDto?> GetFileAsync(FileId fileId)
     {
         var file = await filesRepository.GetAsync(fileId);
 
@@ -39,7 +40,7 @@ internal class FileService(IFileStorageService storageService, IStoredFilesRepos
         return new(url, file.FileName, file.ContentType);
     }
 
-    public async Task DeleteFileAsync(Guid fileId)
+    public async Task DeleteFileAsync(FileId fileId)
     {
         var file = await filesRepository.GetAsync(fileId);
 

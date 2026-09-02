@@ -4,6 +4,6 @@ namespace FieldOps.Modules.Technicians.Contracts;
 
 public interface ITechnicianModuleApi
 {
-    Task<Guid?> GetTechnicianIdByAccountId(Guid accountId);
+    Task<Guid?> GetTechnicianIdByAccountId(AccountId accountId);
     Task<bool> GetTechnicianExists(TechnicianId technicianId);
 }

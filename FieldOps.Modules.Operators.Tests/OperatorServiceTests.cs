@@ -76,7 +76,7 @@ public class OperatorServiceTests
 
         Assert.NotNull(result);
         Assert.Equal(@operator.FullName, result.FullName);
-        Assert.Equal(@operator.Id, result.Id);
+        Assert.Equal(@operator.Id.Value, result.Id);
     }
 
     [Fact]

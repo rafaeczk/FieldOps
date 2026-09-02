@@ -16,7 +16,7 @@ namespace FieldOps.Modules.Technicians.Core
     {
         public static IServiceCollection AddCore(this IServiceCollection services)
         {
-            services.AddPostgres<TechniciansDbContext>();
+            services.AddPostgres<TechnicianDbContext>();
             services.AddScoped<ITechnicianUnitOfWork, TechnicianUnitOfWork>();
 
             services.AddMediatRNotificationHandlers(typeof(ModuleMarker));

@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FieldOps.Modules.Technicians.Core.DAL.Repositories
 {
-    internal class TechnicianRepository(TechniciansDbContext context) : ITechnicianRepository
+    internal class TechnicianRepository(TechnicianDbContext context) : ITechnicianRepository
     {
-        private readonly TechniciansDbContext context = context;
+        private readonly TechnicianDbContext context = context;
 
         public async Task<IReadOnlyList<Technician>> BrowseAsync()
         {

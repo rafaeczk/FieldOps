@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace FieldOps.Modules.Technicians.Core.Migrations
 {
-    [DbContext(typeof(TechniciansDbContext))]
+    [DbContext(typeof(TechnicianDbContext))]
     partial class TechniciansDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -51,7 +51,6 @@ namespace FieldOps.Modules.Technicians.Core.Migrations
             modelBuilder.Entity("FieldOps.Modules.Technicians.Core.Entities.Technician", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("AccountId")

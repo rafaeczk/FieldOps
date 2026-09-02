@@ -1,5 +1,6 @@
 ﻿using FieldOps.Modules.Accounts.Core.Entities;
 using FieldOps.Modules.Accounts.Core.Repositories;
+using FieldOps.Shared.Abstractions.Kernel.Ids;
 using Microsoft.EntityFrameworkCore;
 
 namespace FieldOps.Modules.Accounts.Core.DAL.Repositories;
@@ -18,7 +19,7 @@ internal class AccountRepository(AccountDbContext context) : IAccountRepository
         context.Accounts.Remove(account);
     }
 
-    public async Task<Account?> GetAsync(Guid id)
+    public async Task<Account?> GetAsync(AccountId id)
     {
         return await context.Accounts.SingleOrDefaultAsync(a => a.Id == id);
     }

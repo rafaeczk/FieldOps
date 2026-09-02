@@ -8,9 +8,9 @@ using System.Text;
 
 namespace FieldOps.Modules.Technicians.Core.DAL.Repositories;
 
-internal class OutboxMessagesRepository(TechniciansDbContext context, IClock clock, IModuleSerializer serializer) : IOutboxMessagesRepository
+internal class OutboxMessagesRepository(TechnicianDbContext context, IClock clock, IModuleSerializer serializer) : IOutboxMessagesRepository
 {
-    private readonly TechniciansDbContext context = context;
+    private readonly TechnicianDbContext context = context;
     private readonly IClock clock = clock;
     private readonly IModuleSerializer serializer = serializer;
 

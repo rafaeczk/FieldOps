@@ -4,6 +4,7 @@ using FieldOps.Modules.Accounts.Core.Entities;
 using FieldOps.Modules.Accounts.Core.Exceptions;
 using FieldOps.Modules.Accounts.Core.Repositories;
 using FieldOps.Shared.Abstractions.Auth;
+using FieldOps.Shared.Abstractions.Kernel.Ids;
 using FieldOps.Shared.Abstractions.Time;
 using Microsoft.AspNetCore.Identity;
 
@@ -24,7 +25,7 @@ internal class IdentityService(
     private readonly IAuthManager authManager = authManager;
     private readonly IClock clock = clock;
 
-    public async Task<AccountDto?> GetAsync(Guid id)
+    public async Task<AccountDto?> GetAsync(AccountId id)
     {
         var account = await accountRepository.GetAsync(id);
 
@@ -69,7 +70,7 @@ internal class IdentityService(
         await unitOfWork.SaveChangesAsync();
     }
 
-    public async Task DeleteAccountAsync(Guid id)
+    public async Task DeleteAccountAsync(AccountId id)
     {
         var account = await accountRepository.GetAsync(id);
 

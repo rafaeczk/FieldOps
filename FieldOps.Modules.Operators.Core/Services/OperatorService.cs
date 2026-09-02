@@ -4,6 +4,7 @@ using FieldOps.Modules.Operators.Core.DTOs;
 using FieldOps.Modules.Operators.Core.Entities;
 using FieldOps.Modules.Operators.Core.Exceptions;
 using FieldOps.Modules.Operators.Core.Repositories;
+using FieldOps.Shared.Abstractions.Kernel.Ids;
 using FieldOps.Shared.Abstractions.Time;
 
 namespace FieldOps.Modules.Operators.Core.Services;
@@ -42,7 +43,7 @@ internal class OperatorService(IOperatorRepository repository, IOutboxMessagesRe
         return @operator.Id;
     }
 
-    public async Task<OperatorDetalisDto?> GetByAsync(Guid id)
+    public async Task<OperatorDetalisDto?> GetByAsync(OperatorId id)
     {
         var @operator = await repository.GetAsync(id);
 
@@ -60,7 +61,7 @@ internal class OperatorService(IOperatorRepository repository, IOutboxMessagesRe
         return [.. operators.Select(Map<OperatorDto>)];
     }
 
-    public async Task DeleteAsync(Guid id)
+    public async Task DeleteAsync(OperatorId id)
     {
         var @operator = await repository.GetAsync(id);
 

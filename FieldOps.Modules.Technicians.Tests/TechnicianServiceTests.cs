@@ -76,7 +76,7 @@ public class TechnicianServiceTests
 
         Assert.NotNull(result);
         Assert.Equal(technician.FullName, result.FullName);
-        Assert.Equal(technician.Id, result.Id);
+        Assert.Equal(technician.Id.Value, result.Id);
     }
 
     [Fact]
