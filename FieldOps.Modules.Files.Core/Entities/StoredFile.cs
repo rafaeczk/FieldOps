@@ -1,8 +1,10 @@
-﻿namespace FieldOps.Modules.Files.Core.Entities;
+﻿using FieldOps.Shared.Abstractions.Kernel.Ids;
+
+namespace FieldOps.Modules.Files.Core.Entities;
 
 internal class StoredFile
 {
-    public Guid Id { get; private set; }
+    public FileId Id { get; private set; } = null!;
     public string FileName { get; private set; } = null!;
     public string ContentType { get; set; } = null!;
     public long Size { get; set; }

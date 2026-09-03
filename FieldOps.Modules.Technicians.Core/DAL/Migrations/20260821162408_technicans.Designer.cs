@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace FieldOps.Modules.Technicians.Core.Migrations
 {
-    [DbContext(typeof(TechniciansDbContext))]
+    [DbContext(typeof(TechnicianDbContext))]
     [Migration("20260821162408_technicans")]
     partial class technicans
     {

@@ -10,12 +10,11 @@ internal class AccountConfiguration : IEntityTypeConfiguration<Account>
     public void Configure(EntityTypeBuilder<Account> builder)
     {
         builder.HasKey(a => a.Id);
+        builder.Property(a => a.Id).HasConversion(x => x.Value, x => new(x));
 
         builder.HasIndex(a => a.Email).IsUnique();
 
         builder.Property(a => a.Hash).IsRequired();
-
-        builder.Property(a => a.FullName).IsRequired().HasMaxLength(255);
 
         builder.Property(a => a.Role)
             .HasConversion(

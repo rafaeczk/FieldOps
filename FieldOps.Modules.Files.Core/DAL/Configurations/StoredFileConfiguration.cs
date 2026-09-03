@@ -9,6 +9,7 @@ internal class StoredFileConfiguration : IEntityTypeConfiguration<StoredFile>
     public void Configure(EntityTypeBuilder<StoredFile> builder)
     {
         builder.HasKey(f => f.Id);
+        builder.Property(f => f.Id).HasConversion(x => x.Value, x => new(x));
 
         builder.Property(f => f.StorageKey).IsRequired().HasMaxLength(255);
         builder.HasIndex(f => f.StorageKey).IsUnique();

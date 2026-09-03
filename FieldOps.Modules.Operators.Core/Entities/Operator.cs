@@ -1,10 +1,11 @@
-﻿using FieldOps.Shared.Abstractions.Time;
+﻿using FieldOps.Shared.Abstractions.Kernel.Ids;
+using FieldOps.Shared.Abstractions.Time;
 
 namespace FieldOps.Modules.Operators.Core.Entities;
 
 internal class Operator
 {
-    public Guid Id { get; private set; }
+    public OperatorId Id { get; private set; } = null!;
     public Guid AccountId { get; private set; }
     public string FullName { get; private set; } = null!;
     public DateTime CreatedAt { get; private set; }

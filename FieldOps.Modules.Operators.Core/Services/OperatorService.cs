@@ -1,25 +1,26 @@
-﻿using FieldOps.Modules.Accounts.Contracts.Queries;
+﻿using FieldOps.Modules.Accounts.Contracts;
 using FieldOps.Modules.Operators.Contracts.Events;
 using FieldOps.Modules.Operators.Core.DTOs;
 using FieldOps.Modules.Operators.Core.Entities;
 using FieldOps.Modules.Operators.Core.Exceptions;
 using FieldOps.Modules.Operators.Core.Repositories;
+using FieldOps.Shared.Abstractions.Kernel.Ids;
 using FieldOps.Shared.Abstractions.Time;
-using MediatR;
 
 namespace FieldOps.Modules.Operators.Core.Services;
 
-internal class OperatorService(IOperatorRepository repository, IOutboxMessagesRepository outboxRepository, IOperatorUnitOfWork unitOfWork, IClock clock, ISender sender) : IOperatorService
+internal class OperatorService(IOperatorRepository repository, IOutboxMessagesRepository outboxRepository, IOperatorUnitOfWork unitOfWork,
+    IClock clock, IAccountsModuleApi accountsModuleApi) : IOperatorService
 {
     private readonly IOperatorRepository repository = repository;
     private readonly IOutboxMessagesRepository outboxRepository = outboxRepository;
     private readonly IOperatorUnitOfWork unitOfWork = unitOfWork;
     private readonly IClock clock = clock;
-    private readonly ISender sender = sender;
+    private readonly IAccountsModuleApi accountsModuleApi = accountsModuleApi;
 
     public async Task<Guid> CreateAsync(CreateOperatorDto dto)
     {
-        if (await sender.Send(new CheckAccountEmailIsTaken(dto.RequestedEmail)))
+        if (await accountsModuleApi.CheckAccountEmailIsTaken(dto.RequestedEmail))
             throw new EmailInUseException();
 
         var @operator = Operator.Create(
@@ -42,7 +43,7 @@ internal class OperatorService(IOperatorRepository repository, IOutboxMessagesRe
         return @operator.Id;
     }
 
-    public async Task<OperatorDetalisDto?> GetByAsync(Guid id)
+    public async Task<OperatorDetalisDto?> GetByAsync(OperatorId id)
     {
         var @operator = await repository.GetAsync(id);
 
@@ -60,7 +61,7 @@ internal class OperatorService(IOperatorRepository repository, IOutboxMessagesRe
         return [.. operators.Select(Map<OperatorDto>)];
     }
 
-    public async Task DeleteAsync(Guid id)
+    public async Task DeleteAsync(OperatorId id)
     {
         var @operator = await repository.GetAsync(id);
 
@@ -73,7 +74,7 @@ internal class OperatorService(IOperatorRepository repository, IOutboxMessagesRe
         await unitOfWork.SaveChangesAsync();
     }
 
-    public async Task DeleteByAccountIdAsync(Guid accountId)
+    public async Task DeleteByAccountIdAsync(AccountId accountId)
     {
         var @operator = await repository.GetByAccountIdAsync(accountId);
 

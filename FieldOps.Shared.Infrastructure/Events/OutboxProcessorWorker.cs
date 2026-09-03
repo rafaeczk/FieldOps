@@ -1,4 +1,5 @@
-﻿using FieldOps.Shared.Infrastructure.Modules;
+﻿using FieldOps.Shared.Abstractions.Events;
+using FieldOps.Shared.Infrastructure.Modules;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

@@ -26,7 +26,6 @@ namespace FieldOps.Modules.Accounts.Core.DAL.Migrations
             modelBuilder.Entity("FieldOps.Modules.Accounts.Core.Entities.Account", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
@@ -35,11 +34,6 @@ namespace FieldOps.Modules.Accounts.Core.DAL.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("Hash")
                         .IsRequired()

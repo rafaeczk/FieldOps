@@ -1,10 +1,12 @@
-﻿using FieldOps.Modules.Accounts.Contracts.Events;
+﻿using FieldOps.Modules.Accounts.Contracts;
+using FieldOps.Modules.Accounts.Contracts.Events;
 using FieldOps.Modules.Accounts.Core.DAL;
 using FieldOps.Modules.Accounts.Core.DAL.Repositories;
 using FieldOps.Modules.Accounts.Core.Entities;
 using FieldOps.Modules.Accounts.Core.Repositories;
 using FieldOps.Modules.Accounts.Core.Services;
 using FieldOps.Shared.Infrastructure.Events;
+using FieldOps.Shared.Infrastructure.Messages;
 using FieldOps.Shared.Infrastructure.Postgres;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +21,9 @@ public static class Extensions
         services.AddPostgres<AccountDbContext>();
         services.AddScoped<IAccountUnitOfWork, AccountUnitOfWork>();
 
+        services.AddMediatRNotificationHandlers(typeof(ModuleMarker));
+        services.AddMediatRRequestHandlers(typeof(ModuleMarker));
+
         services.AddHostedService<AccountInitializer>();
 
         services.AddScoped<IAccountRepository, AccountRepository>();
@@ -27,7 +32,7 @@ public static class Extensions
         services.AddHostedService(sp
             => new OutboxProcessorWorker<IOutboxMessagesRepository>(
                 scopeFactory: sp.GetRequiredService<IServiceScopeFactory>(),
-                moduleName: "Operators",
+                moduleName: "Accounts",
                 typeMapping: new()
                 {
                     { "AccountCreated", typeof(AccountCreated) },
@@ -35,6 +40,7 @@ public static class Extensions
                 logger: sp.GetRequiredService<ILogger<OutboxProcessorWorker<IOutboxMessagesRepository>>>()));
 
         services.AddTransient<IIdentityService, IdentityService>();
+        services.AddScoped<IAccountsModuleApi, AccountsModuleApi>();
 
         services.AddSingleton<IPasswordHasher<Account>, PasswordHasher<Account>>();
 

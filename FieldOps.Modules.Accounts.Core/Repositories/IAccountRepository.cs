@@ -1,11 +1,12 @@
 ﻿using FieldOps.Modules.Accounts.Core.Entities;
 using FieldOps.Modules.Accounts.Core.ValueObjects;
+using FieldOps.Shared.Abstractions.Kernel.Ids;
 
 namespace FieldOps.Modules.Accounts.Core.Repositories;
 
 internal interface IAccountRepository
 {
-    Task<Account?> GetAsync(Guid id);
+    Task<Account?> GetAsync(AccountId id);
     Task<Account?> GetAsync(string email);
     Task<IReadOnlyList<Account>> GetAllAsync();
     Task<IReadOnlyList<Account>> GetByRoleAsync(AccountRole role);

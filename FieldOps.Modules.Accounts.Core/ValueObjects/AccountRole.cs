@@ -1,4 +1,4 @@
-﻿using FieldOps.Shared.Infrastructure.Common;
+﻿using FieldOps.Shared.Abstractions.Kernel.Types;
 
 namespace FieldOps.Modules.Accounts.Core.ValueObjects;
 

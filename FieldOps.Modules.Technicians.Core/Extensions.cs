@@ -1,9 +1,11 @@
-﻿using FieldOps.Modules.Technicians.Contracts.Events;
+﻿using FieldOps.Modules.Technicians.Contracts;
+using FieldOps.Modules.Technicians.Contracts.Events;
 using FieldOps.Modules.Technicians.Core.DAL;
 using FieldOps.Modules.Technicians.Core.DAL.Repositories;
 using FieldOps.Modules.Technicians.Core.Repositories;
 using FieldOps.Modules.Technicians.Core.Services;
 using FieldOps.Shared.Infrastructure.Events;
+using FieldOps.Shared.Infrastructure.Messages;
 using FieldOps.Shared.Infrastructure.Postgres;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,8 +17,11 @@ namespace FieldOps.Modules.Technicians.Core
     {
         public static IServiceCollection AddCore(this IServiceCollection services)
         {
-            services.AddPostgres<TechniciansDbContext>();
+            services.AddPostgres<TechnicianDbContext>();
             services.AddScoped<ITechnicianUnitOfWork, TechnicianUnitOfWork>();
+
+            services.AddMediatRNotificationHandlers(typeof(ModuleMarker));
+            services.AddMediatRRequestHandlers(typeof(ModuleMarker));
 
             services.AddScoped<ITechnicianRepository, TechnicianRepository>();
             services.AddScoped<IOutboxMessagesRepository, OutboxMessagesRepository>();
@@ -35,9 +40,13 @@ namespace FieldOps.Modules.Technicians.Core
                     logger: sp.GetRequiredService<ILogger<OutboxProcessorWorker<IOutboxMessagesRepository>>>()));
 
             services.AddScoped<ITechnicianService, TechnicianService>();
+            services.AddScoped<ITechnicianModuleApi, TechnicianModuleApi>();
+
             return services;
         }
     }
 
     internal class ModuleMarker { }
 }
+
+internal class ModuleMarker { }

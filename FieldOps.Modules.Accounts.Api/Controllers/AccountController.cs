@@ -59,7 +59,7 @@ internal class AccountController(IIdentityService identityService, IContext cont
     {
         var result = await identityService.UpdateProfileAsync(
             context.Identity.Id,
-            new UpdateProfileCommand(dto.Email, dto.FullName));
+            new UpdateProfileCommand(dto.Email));
 
         return Ok(result);
     }

@@ -3,12 +3,15 @@ using FieldOps.Shared.Abstractions.Time;
 using FieldOps.Shared.Infrastructure.Api;
 using FieldOps.Shared.Infrastructure.Auth;
 using FieldOps.Shared.Infrastructure.S3;
-using FieldOps.Shared.Abstractions.Messaging;
 using FieldOps.Shared.Infrastructure.Contexts;
 using FieldOps.Shared.Infrastructure.Errors;
+using FieldOps.Shared.Infrastructure.Events;
+using FieldOps.Shared.Infrastructure.Kernel;
+using FieldOps.Shared.Infrastructure.Messages;
 using FieldOps.Shared.Infrastructure.Modules;
 using FieldOps.Shared.Infrastructure.Services;
 using FieldOps.Shared.Infrastructure.Time;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -39,9 +42,13 @@ internal static class Extensions
             };
         });
 
-        services.AddS3();
+        services.AddTransient(typeof(IRequestHandler<,>), typeof(MediatRMessageBridge<,>));
+        services.AddTransient(typeof(IRequestHandler<>), typeof(MediatRVoidMessageBridge<>));
+        services.AddTransient(typeof(INotificationHandler<>), typeof(MediatRNotificationBridge<>));
 
-        services.AddSingleton<IMessageClient, Messaging.NoopMessageClient>();
+        services.AddDomainEvents();
+
+        services.AddS3();
 
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

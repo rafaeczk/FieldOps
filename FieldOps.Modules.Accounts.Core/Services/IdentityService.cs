@@ -5,6 +5,7 @@ using FieldOps.Modules.Accounts.Core.Exceptions;
 using FieldOps.Modules.Accounts.Core.Repositories;
 using FieldOps.Modules.Accounts.Core.ValueObjects;
 using FieldOps.Shared.Abstractions.Auth;
+using FieldOps.Shared.Abstractions.Kernel.Ids;
 using FieldOps.Shared.Abstractions.Time;
 using Microsoft.AspNetCore.Identity;
 
@@ -25,26 +26,26 @@ internal class IdentityService(
     private readonly IAuthManager authManager = authManager;
     private readonly IClock clock = clock;
 
-    public async Task<AccountDto?> GetAsync(Guid id)
+    public async Task<AccountDto?> GetAsync(AccountId id)
     {
         var account = await accountRepository.GetAsync(id);
 
         if (account is null)
             return null;
 
-        return new(account.Id, account.Email, account.FullName, account.Role, account.CreatedAt);
+        return new(account.Id, account.Email, account.Role, account.CreatedAt);
     }
 
     public async Task<IReadOnlyList<AccountDto>> GetAllAsync()
     {
         var accounts = await accountRepository.GetAllAsync();
-        return accounts.Select(a => new AccountDto(a.Id, a.Email, a.FullName, a.Role, a.CreatedAt)).ToList();
+        return [.. accounts.Select(a => new AccountDto(a.Id, a.Email, a.Role, a.CreatedAt))];
     }
 
     public async Task<IReadOnlyList<AccountDto>> GetTechniciansAsync()
     {
         var accounts = await accountRepository.GetByRoleAsync(new AccountRole(AccountRole.Technician));
-        return accounts.Select(a => new AccountDto(a.Id, a.Email, a.FullName, a.Role, a.CreatedAt)).ToList();
+        return [.. accounts.Select(a => new AccountDto(a.Id, a.Email, a.Role, a.CreatedAt))];
     }
 
     public async Task<JsonWebToken> SignInAsync(SignInCommand command)
@@ -58,9 +59,8 @@ internal class IdentityService(
         if (passwordHasher.VerifyHashedPassword(default!, account.Hash, command.Password) == PasswordVerificationResult.Failed)
             throw new InvalidCredentialsException();
 
-        var jwt = authManager.CreateToken(account.Id.ToString(), account.Role);
+        var jwt = authManager.CreateToken(account.Id.Value.ToString(), account.Role);
         jwt.Email = account.Email;
-        jwt.FullName = account.FullName;
         jwt.CreatedAt = account.CreatedAt;
 
         return jwt;
@@ -77,7 +77,7 @@ internal class IdentityService(
 
         var hash = passwordHasher.HashPassword(default!, command.Password);
 
-        var account = Account.Create(command.Id, email, hash, command.FullName, command.Role, clock.UtcNow());
+        var account = Account.Create(command.Id, email, hash, command.Role, clock.UtcNow());
 
         await accountRepository.CreateAsync(account);
         await outboxRepository.CreateAsync(new AccountCreated(account.Id, account.Email, account.Role));
@@ -85,7 +85,7 @@ internal class IdentityService(
         await unitOfWork.SaveChangesAsync();
     }
 
-    public async Task DeleteAccountAsync(Guid id)
+    public async Task DeleteAccountAsync(AccountId id)
     {
         var account = await accountRepository.GetAsync(id);
 
@@ -96,7 +96,7 @@ internal class IdentityService(
         await unitOfWork.SaveChangesAsync();
     }
 
-    public async Task<AccountDto?> UpdateProfileAsync(Guid id, UpdateProfileCommand command)
+    public async Task<AccountDto?> UpdateProfileAsync(AccountId id, UpdateProfileCommand command)
     {
         var account = await accountRepository.GetAsync(id);
 
@@ -112,7 +112,7 @@ internal class IdentityService(
                 throw new EmailInUseException();
         }
 
-        account.UpdateProfile(email, command.FullName, clock.UtcNow());
+        account.UpdateProfile(email, clock.UtcNow());
 
         try
         {
@@ -123,10 +123,10 @@ internal class IdentityService(
             throw new EmailInUseException();
         }
 
-        return new AccountDto(account.Id, account.Email, account.FullName, account.Role, account.CreatedAt);
+        return new AccountDto(account.Id, account.Email, account.Role, account.CreatedAt);
     }
 
-    public async Task ChangePasswordAsync(Guid id, ChangePasswordCommand command)
+    public async Task ChangePasswordAsync(AccountId id, ChangePasswordCommand command)
     {
         if (command.NewPassword.Length < 6)
             throw new InvalidPasswordException("Password must be at least 6 characters");
