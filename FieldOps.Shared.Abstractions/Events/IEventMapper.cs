@@ -1,7 +1,6 @@
-﻿using FieldOps.Shared.Abstractions.Events;
-using FieldOps.Shared.Abstractions.Kernel;
+﻿using FieldOps.Shared.Abstractions.Kernel;
 
-namespace FieldOps.Modules.Jobs.Application.Jobs.Services;
+namespace FieldOps.Shared.Abstractions.Events;
 
 public interface IEventMapper
 {

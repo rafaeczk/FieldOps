@@ -14,7 +14,7 @@ namespace FieldOps.Modules.Jobs.Application.Jobs.Commands;
 public record CreateJobCommand(string Title, string? Description, JobPriority Priority, Address Address, DateTime Deadline) : IMessage<Guid>;
 
 public sealed class CreateJobCommandHandler(IJobsRepository repository, IOutboxMessagesRepository outboxRepository, IJobsUnitOfWork unitOfWork,
-    IOperatorsModuleApi operatorsModuleApi, IEventMapper eventMapper, IContext context, IClock clock) : IMessageHandler<CreateJobCommand, Guid>
+    IOperatorsModuleApi operatorsModuleApi, IJobEventMapper eventMapper, IContext context, IClock clock) : IMessageHandler<CreateJobCommand, Guid>
 {
     public async Task<Guid> HandleAsync(CreateJobCommand message, CancellationToken ct)
     {

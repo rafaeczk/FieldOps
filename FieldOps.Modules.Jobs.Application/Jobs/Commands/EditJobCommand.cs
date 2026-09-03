@@ -13,7 +13,7 @@ namespace FieldOps.Modules.Jobs.Application.Jobs.Commands;
 public record EditJobCommand(Guid JobId, string Title, string? Description, JobPriority Priority, Address Address, DateTime Deadline) : IMessage;
 
 internal sealed class EditJobCommandHandler(IJobsRepository repository, IOutboxMessagesRepository outboxRepository, IJobsUnitOfWork unitOfWork,
-    IOperatorsModuleApi operatorsModuleApi, IEventMapper eventMapper, IContext context) : IMessageHandler<EditJobCommand>
+    IOperatorsModuleApi operatorsModuleApi, IJobEventMapper eventMapper, IContext context) : IMessageHandler<EditJobCommand>
 {
     public async Task HandleAsync(EditJobCommand message, CancellationToken ct)
     {

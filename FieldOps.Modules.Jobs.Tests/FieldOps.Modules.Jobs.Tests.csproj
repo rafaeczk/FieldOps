@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	<TargetFramework>net10.0</TargetFramework>
+	<IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<PackageReference Include="coverlet.collector" Version="6.0.4" />
+	<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+	<PackageReference Include="Moq" Version="4.20.72" />
+	<PackageReference Include="xunit" Version="2.9.3" />
+	<PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<ProjectReference Include="..\FieldOps.Modules.Jobs.Domain\FieldOps.Modules.Jobs.Domain.csproj" />
+	<ProjectReference Include="..\FieldOps.Modules.Jobs.Application\FieldOps.Modules.Jobs.Application.csproj" />
+	<ProjectReference Include="..\FieldOps.Modules.Jobs.Contracts\FieldOps.Modules.Jobs.Contracts.csproj" />
+	<ProjectReference Include="..\FieldOps.Shared.Abstractions\FieldOps.Shared.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>

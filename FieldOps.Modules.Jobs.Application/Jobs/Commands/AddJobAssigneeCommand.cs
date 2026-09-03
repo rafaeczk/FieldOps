@@ -12,7 +12,7 @@ namespace FieldOps.Modules.Jobs.Application.Jobs.Commands;
 public record AddJobAssigneeCommand(JobId JobId, TechnicianId TechnicianId) : IMessage;
 
 internal sealed class AddJobAssigneeCommandHandler(IJobsRepository repository, IOutboxMessagesRepository outboxRepository, IJobsUnitOfWork unitOfWork,
-    IEventMapper eventMapper, ITechnicianModuleApi technicianModuleApi) : IMessageHandler<AddJobAssigneeCommand>
+    IJobEventMapper eventMapper, ITechnicianModuleApi technicianModuleApi) : IMessageHandler<AddJobAssigneeCommand>
 {
     public async Task HandleAsync(AddJobAssigneeCommand message, CancellationToken ct)
     {

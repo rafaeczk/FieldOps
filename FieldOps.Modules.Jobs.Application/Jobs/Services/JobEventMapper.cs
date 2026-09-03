@@ -4,7 +4,7 @@ using FieldOps.Shared.Abstractions.Kernel;
 
 namespace FieldOps.Modules.Jobs.Application.Jobs.Services;
 
-internal class EventMapper : IEventMapper
+public class JobEventMapper : IJobEventMapper
 {
     public IIntegrationEvent? Map(IDomainEvent @event)
         => @event switch

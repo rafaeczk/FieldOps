@@ -11,7 +11,7 @@ namespace FieldOps.Modules.Jobs.Application.Jobs.Commands;
 public record RemoveJobAssigneeCommand(JobId JobId, TechnicianId TechnicianId) : IMessage;
 
 internal sealed class RemoveJobAssigneeCommandHandler(IJobsRepository repository, IOutboxMessagesRepository outboxRepository, IJobsUnitOfWork unitOfWork,
-    IEventMapper eventMapper) : IMessageHandler<RemoveJobAssigneeCommand>
+    IJobEventMapper eventMapper) : IMessageHandler<RemoveJobAssigneeCommand>
 {
     public async Task HandleAsync(RemoveJobAssigneeCommand message, CancellationToken ct)
     {

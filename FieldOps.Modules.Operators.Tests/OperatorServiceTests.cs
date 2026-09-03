@@ -7,7 +7,6 @@ using FieldOps.Modules.Operators.Core.Repositories;
 using FieldOps.Modules.Operators.Core.Services;
 using FieldOps.Shared.Abstractions.Kernel.Ids;
 using FieldOps.Shared.Abstractions.Time;
-using MediatR;
 using Moq;
 
 namespace FieldOps.Modules.Operators.Tests;
