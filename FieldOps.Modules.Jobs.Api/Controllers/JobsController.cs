@@ -9,12 +9,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FieldOps.Modules.Jobs.Api.Controllers;
 
+[Authorize(Roles = "OPERATOR")]
 internal class JobsController(ISender sender) : BaseController
 {
     private readonly ISender sender = sender;
 
     [HttpPost]
-    [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<ActionResult<Guid>> CreateAsync(CreateJobDto dto)
     {
         var jobId = await sender.Send(new CreateJobCommand(dto.Title, dto.Description, new(dto.Priority), dto.Address, dto.Deadline));
@@ -22,7 +22,6 @@ internal class JobsController(ISender sender) : BaseController
     }
 
     [HttpPut("{id:guid}")]
-    [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<ActionResult> EditAsync(Guid id, EditJobDto dto)
     {
         await sender.Send(new EditJobCommand(id, dto.Title, dto.Description, new(dto.Priority), dto.Address, dto.Deadline));
@@ -30,14 +29,13 @@ internal class JobsController(ISender sender) : BaseController
     }
 
     [HttpGet("{id:guid}")]
-    [Authorize(Roles = "ADMIN,OPERATOR,TECHNICIAN")]
+    [AllowAnonymous]
     public async Task<ActionResult<JobDto>> GetAsync(Guid id)
     {
         return this.OkOrNotFound(await sender.Send(new GetJobQuery(id)));
     }
 
     [HttpPost("{id:guid}/assignees")]
-    [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<ActionResult> AddAssignee(Guid id, [FromBody] JobAssigneeActionDto dto)
     {
         await sender.Send(new AddJobAssigneeCommand(id, dto.TechnicianId));
@@ -45,7 +43,6 @@ internal class JobsController(ISender sender) : BaseController
     }
 
     [HttpDelete("{id:guid}/assignees")]
-    [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<ActionResult> RemoveAssignee(Guid id, [FromBody] JobAssigneeActionDto dto)
     {
         await sender.Send(new RemoveJobAssigneeCommand(id, dto.TechnicianId));
@@ -53,7 +50,7 @@ internal class JobsController(ISender sender) : BaseController
     }
 
     [HttpGet]
-    [Authorize(Roles = "ADMIN,OPERATOR,TECHNICIAN")]
+    [AllowAnonymous]
     public async Task<ActionResult<JobDto>> BrowseAsync(
         [FromQuery] int? pageNumber,
         [FromQuery] int? pageSize)
