@@ -23,6 +23,11 @@ internal class JobsReadRepository(JobsDbContext context) : IJobsReadRepository
         return new(jobs, totalItems, pagination);
     }
 
+    public Task<bool> ExistsAsync(Guid id, CancellationToken ct = default)
+    {
+        return context.Jobs.AnyAsync(j => j.Id == id, ct);  
+    }
+
     public async Task<JobDto?> GetAsync(Guid jobId)
     {
         var job = await context.Jobs.SingleOrDefaultAsync(j => j.Id == jobId);

@@ -7,8 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediatR" Version="14.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\FieldOps.Modules.Jobs.Domain\FieldOps.Modules.Jobs.Domain.csproj" />
     <ProjectReference Include="..\FieldOps.Modules.Operators.Contracts\FieldOps.Modules.Operators.Contracts.csproj" />
+	  <ProjectReference Include="..\FieldOps.Modules.Jobs.Contracts\FieldOps.Modules.Jobs.Contracts.csproj" />
+
+
   </ItemGroup>
 
 </Project>

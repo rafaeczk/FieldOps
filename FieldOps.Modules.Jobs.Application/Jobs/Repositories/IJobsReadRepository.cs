@@ -8,4 +8,5 @@ public interface IJobsReadRepository
 {
     Task<PagedResult<JobListItemDto>> BrowseAsync(PaginationParams pagination);
     Task<JobDto?> GetAsync(Guid jobId);
+    Task<bool> ExistsAsync(Guid id, CancellationToken ct = default);
 }

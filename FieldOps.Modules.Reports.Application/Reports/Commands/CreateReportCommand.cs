@@ -14,6 +14,7 @@ using System.Text;
 using FieldOps.Modules.Files.Contracts;
 using FieldOps.Modules.Reports.Domain.Reports.Exceptions;
 using FieldOps.Modules.Assets.Contracts;
+using FieldOps.Modules.Jobs.Contracts;
 
 namespace FieldOps.Modules.Reports.Application.Reports.Commands
 {
@@ -23,7 +24,7 @@ namespace FieldOps.Modules.Reports.Application.Reports.Commands
         Address Address,
         List<Guid>? FileIds = null) : IMessage<Guid>;
 
-    public sealed class CreateReportCommandHandler(IReportsWriteRepository repository, IReportsUnitOfWork unitOfWork, ITechniciansModuleApi technicianModuleApi, IFilesModuleApi filesModuleApi, IAssetsModuleApi assetsModuleApi, IContext context, IClock clock) : IMessageHandler<CreateReportCommand, Guid>
+    public sealed class CreateReportCommandHandler(IReportsWriteRepository repository, IReportsUnitOfWork unitOfWork, ITechniciansModuleApi technicianModuleApi, IFilesModuleApi filesModuleApi, IAssetsModuleApi assetsModuleApi,IJobsModuleApi jobsModuleApi, IContext context, IClock clock) : IMessageHandler<CreateReportCommand, Guid>
     {
         public async Task<Guid> HandleAsync(CreateReportCommand message, CancellationToken ct)
         {
@@ -32,11 +33,19 @@ namespace FieldOps.Modules.Reports.Application.Reports.Commands
             if (operatorId is null)
                 throw new UnauthorizedAccessException();
 
+            var jobExists = await jobsModuleApi.Exists(message.JobId, ct);
+            if (!jobExists)
+            {
+                throw new JobNotFoundException(message.JobId);
+            }
+
             var assetExists = await assetsModuleApi.Exists(message.AssetId, ct);
             if (!assetExists)
             {
                 throw new AssetNotFoundException(message.AssetId);
             }
+
+           
 
             var rawFileIds = message.FileIds?.Distinct().ToList() ?? [];
             if (rawFileIds.Count > 0 && !await filesModuleApi.AllExistAsync(rawFileIds, ct))

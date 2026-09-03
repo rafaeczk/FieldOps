@@ -11,6 +11,7 @@
 		<ProjectReference Include="..\FieldOps.Modules.Technicians.Contracts\FieldOps.Modules.Technicians.Contracts.csproj" />
 		<ProjectReference Include="..\FieldOps.Modules.Files.Contracts\FieldOps.Modules.Files.Contracts.csproj" />
 		<ProjectReference Include="..\FieldOps.Modules.Assets.Contracts\FieldOps.Modules.Assets.Contracts.csproj" />
+		<ProjectReference Include="..\FieldOps.Modules.Jobs.Contracts\FieldOps.Modules.Jobs.Contracts.csproj" />
 
 
 	</ItemGroup>
