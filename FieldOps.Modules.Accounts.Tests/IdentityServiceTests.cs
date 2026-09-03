@@ -1,11 +1,11 @@
 using FieldOps.Modules.Accounts.Contracts.Events;
-using FieldOps.Modules.Accounts.Core.DTOs;
 using FieldOps.Modules.Accounts.Core.Entities;
 using FieldOps.Modules.Accounts.Core.Exceptions;
 using FieldOps.Modules.Accounts.Core.Repositories;
 using FieldOps.Modules.Accounts.Core.Services;
 using FieldOps.Modules.Accounts.Core.ValueObjects;
 using FieldOps.Shared.Abstractions.Auth;
+using FieldOps.Shared.Abstractions.Kernel.Ids;
 using FieldOps.Shared.Abstractions.Time;
 using Microsoft.AspNetCore.Identity;
 using Moq;
@@ -49,7 +49,7 @@ public class IdentityServiceTests
             .Returns(PasswordVerificationResult.Success);
 
         _authManagerMock
-            .Setup(x => x.CreateToken(account.Id.ToString(), account.Role, It.IsAny<string>(), It.IsAny<IDictionary<string, IEnumerable<string>>>()))
+            .Setup(x => x.CreateToken(account.Id.Value.ToString(), account.Role))
             .Returns(new JsonWebToken { AccessToken = "jwt-token", Expires = 1234567890 });
 
         var result = await _sut.SignInAsync(new SignInCommand(email, password));
@@ -146,7 +146,7 @@ public class IdentityServiceTests
     public async Task DeleteAccountAsync_NonExistingAccount_ThrowsAccountNotFoundException()
     {
         _accountRepositoryMock
-            .Setup(x => x.GetAsync(It.IsAny<Guid>()))
+            .Setup(x => x.GetAsync(It.IsAny<AccountId>()))
             .ReturnsAsync((Account?)null);
 
         await Assert.ThrowsAsync<AccountNotFoundException>(
@@ -174,7 +174,7 @@ public class IdentityServiceTests
     public async Task GetAsync_NonExistingAccount_ReturnsNull()
     {
         _accountRepositoryMock
-            .Setup(x => x.GetAsync(It.IsAny<Guid>()))
+            .Setup(x => x.GetAsync(It.IsAny<AccountId>()))
             .ReturnsAsync((Account?)null);
 
         var result = await _sut.GetAsync(Guid.NewGuid());
@@ -243,7 +243,7 @@ public class IdentityServiceTests
     public async Task UpdateProfileAsync_NonExistingAccount_ThrowsAccountNotFoundException()
     {
         _accountRepositoryMock
-            .Setup(x => x.GetAsync(It.IsAny<Guid>()))
+            .Setup(x => x.GetAsync(It.IsAny<AccountId>()))
             .ReturnsAsync((Account?)null);
 
         await Assert.ThrowsAsync<AccountNotFoundException>(
@@ -322,7 +322,7 @@ public class IdentityServiceTests
     public async Task ChangePasswordAsync_NonExistingAccount_ThrowsAccountNotFoundException()
     {
         _accountRepositoryMock
-            .Setup(x => x.GetAsync(It.IsAny<Guid>()))
+            .Setup(x => x.GetAsync(It.IsAny<AccountId>()))
             .ReturnsAsync((Account?)null);
 
         await Assert.ThrowsAsync<AccountNotFoundException>(

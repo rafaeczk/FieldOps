@@ -5,6 +5,7 @@ using FieldOps.Modules.Technicians.Core.Entities;
 using FieldOps.Modules.Technicians.Core.Exceptions;
 using FieldOps.Modules.Technicians.Core.Repositories;
 using FieldOps.Modules.Technicians.Core.Services;
+using FieldOps.Shared.Abstractions.Kernel.Ids;
 using FieldOps.Shared.Abstractions.Time;
 using MediatR;
 using Moq;
@@ -83,7 +84,7 @@ public class TechnicianServiceTests
     public async Task GetByAsync_NonExistingTechnician_ReturnsNull()
     {
         _repositoryMock
-            .Setup(x => x.GetAsync(It.IsAny<Guid>()))
+            .Setup(x => x.GetAsync(It.IsAny<TechnicianId>()))
             .ReturnsAsync((Technician?)null);
 
         var result = await _sut.GetByAsync(Guid.NewGuid());
@@ -130,7 +131,7 @@ public class TechnicianServiceTests
     public async Task DeleteAsync_NonExistingTechnician_ThrowsTechnicianNotFoundException()
     {
         _repositoryMock
-            .Setup(x => x.GetAsync(It.IsAny<Guid>()))
+            .Setup(x => x.GetAsync(It.IsAny<TechnicianId>()))
             .ReturnsAsync((Technician?)null);
 
         await Assert.ThrowsAsync<TechnicianNotFoundException>(() => _sut.DeleteAsync(Guid.NewGuid()));

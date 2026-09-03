@@ -5,6 +5,7 @@ using FieldOps.Modules.Operators.Core.Entities;
 using FieldOps.Modules.Operators.Core.Exceptions;
 using FieldOps.Modules.Operators.Core.Repositories;
 using FieldOps.Modules.Operators.Core.Services;
+using FieldOps.Shared.Abstractions.Kernel.Ids;
 using FieldOps.Shared.Abstractions.Time;
 using MediatR;
 using Moq;
@@ -83,7 +84,7 @@ public class OperatorServiceTests
     public async Task GetByAsync_NonExistingOperator_ReturnsNull()
     {
         _repositoryMock
-            .Setup(x => x.GetAsync(It.IsAny<Guid>()))
+            .Setup(x => x.GetAsync(It.IsAny<OperatorId>()))
             .ReturnsAsync((Operator?)null);
 
         var result = await _sut.GetByAsync(Guid.NewGuid());
@@ -130,7 +131,7 @@ public class OperatorServiceTests
     public async Task DeleteAsync_NonExistingOperator_ThrowsOperatorNotFoundException()
     {
         _repositoryMock
-            .Setup(x => x.GetAsync(It.IsAny<Guid>()))
+            .Setup(x => x.GetAsync(It.IsAny<OperatorId>()))
             .ReturnsAsync((Operator?)null);
 
         await Assert.ThrowsAsync<OperatorNotFoundException>(() => _sut.DeleteAsync(Guid.NewGuid()));
