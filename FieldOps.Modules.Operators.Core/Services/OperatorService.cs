@@ -9,7 +9,7 @@ using FieldOps.Shared.Abstractions.Time;
 
 namespace FieldOps.Modules.Operators.Core.Services;
 
-internal class OperatorService(IOperatorRepository repository, IOutboxMessagesRepository outboxRepository, IOperatorUnitOfWork unitOfWork, 
+internal class OperatorService(IOperatorRepository repository, IOutboxMessagesRepository outboxRepository, IOperatorUnitOfWork unitOfWork,
     IClock clock, IAccountsModuleApi accountsModuleApi) : IOperatorService
 {
     private readonly IOperatorRepository repository = repository;

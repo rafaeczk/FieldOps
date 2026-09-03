@@ -30,7 +30,7 @@ internal class JobsReadRepository(JobsDbContext context) : IJobsReadRepository
 
         if (job is null) return null;
 
-        return new(job.Id, job.Title, job.Description, job.Status, job.Priority, 
+        return new(job.Id, job.Title, job.Description, job.Status, job.Priority,
             job.Address, job.Deadline, job.CreatedAt, job.UpdatedAt, [.. job.Assignees.Select(a => a.TechnicianId.Value)]);
     }
 }

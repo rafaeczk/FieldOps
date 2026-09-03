@@ -22,7 +22,7 @@ public sealed class Job : AggregateRoot<JobId>
 
     private Job() { }
 
-    public static Job Create(OperatorId creatorId, string title, 
+    public static Job Create(OperatorId creatorId, string title,
         string? description, JobPriority priority, Address address, DateTime deadline, DateTime createdAt)
     {
         var job = new Job

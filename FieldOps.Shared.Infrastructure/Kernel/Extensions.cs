@@ -19,11 +19,11 @@ public static class Extensions
         {
             var interfaces = type.GetInterfaces().Where(i => i.IsGenericType);
 
-            foreach(var @interface in interfaces)
+            foreach (var @interface in interfaces)
             {
                 var genericDefinition = @interface.GetGenericTypeDefinition();
 
-                if(genericDefinition == typeof(IDomainEventHandler<>))
+                if (genericDefinition == typeof(IDomainEventHandler<>))
                 {
                     services.AddTransient(@interface, type);
                 }

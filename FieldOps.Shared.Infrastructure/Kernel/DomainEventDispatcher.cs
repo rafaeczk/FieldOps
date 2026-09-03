@@ -26,7 +26,7 @@ internal sealed class DomainEventDispatcher(IServiceProvider serviceProvider) : 
                 if (h is null) return Task.CompletedTask;
                 var method = handlerType.GetMethod(nameof(IDomainEventHandler<>.HandleAsync));
                 if (method is null) return Task.CompletedTask;
-                return (Task) method.Invoke(h, [@event]);
+                return (Task)method.Invoke(h, [@event]);
             });
 
             await Task.WhenAll(tasks);
