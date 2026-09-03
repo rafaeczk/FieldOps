@@ -32,7 +32,7 @@ public static class Extensions
         services.AddHostedService(sp
             => new OutboxProcessorWorker<IOutboxMessagesRepository>(
                 scopeFactory: sp.GetRequiredService<IServiceScopeFactory>(),
-                moduleName: "Operators",
+                moduleName: "Accounts",
                 typeMapping: new()
                 {
                     { "AccountCreated", typeof(AccountCreated) },

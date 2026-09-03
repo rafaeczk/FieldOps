@@ -41,17 +41,20 @@ namespace FieldOps.Modules.WorkOrders.Core.DAL.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<Guid>("OperatorId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<Guid?>("TechnicianId")
-                        .HasColumnType("uuid");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -65,11 +68,38 @@ namespace FieldOps.Modules.WorkOrders.Core.DAL.Migrations
 
                     b.HasIndex("OperatorId");
 
+                    b.HasIndex("Priority");
+
                     b.HasIndex("Status");
+
+                    b.ToTable("WorkOrders", "workorders");
+                });
+
+            modelBuilder.Entity("FieldOps.Modules.WorkOrders.Core.Entities.WorkOrderAssignee", b =>
+                {
+                    b.Property<Guid>("WorkOrderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TechnicianId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("AssignedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("WorkOrderId", "TechnicianId");
 
                     b.HasIndex("TechnicianId");
 
-                    b.ToTable("WorkOrders", "workorders");
+                    b.ToTable("WorkOrderAssignees", "workorders");
+                });
+
+            modelBuilder.Entity("FieldOps.Modules.WorkOrders.Core.Entities.WorkOrderAssignee", b =>
+                {
+                    b.HasOne("FieldOps.Modules.WorkOrders.Core.Entities.WorkOrder", null)
+                        .WithMany()
+                        .HasForeignKey("WorkOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

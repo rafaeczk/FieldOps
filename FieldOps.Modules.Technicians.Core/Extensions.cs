@@ -7,6 +7,7 @@ using FieldOps.Modules.Technicians.Core.Services;
 using FieldOps.Shared.Infrastructure.Events;
 using FieldOps.Shared.Infrastructure.Messages;
 using FieldOps.Shared.Infrastructure.Postgres;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -25,10 +26,12 @@ namespace FieldOps.Modules.Technicians.Core
             services.AddScoped<ITechnicianRepository, TechnicianRepository>();
             services.AddScoped<IOutboxMessagesRepository, OutboxMessagesRepository>();
 
+            services.AddMediatR(config => config.RegisterServicesFromAssemblyContaining<ModuleMarker>());
+
             services.AddHostedService(sp
                 => new OutboxProcessorWorker<IOutboxMessagesRepository>(
                     scopeFactory: sp.GetRequiredService<IServiceScopeFactory>(),
-                    moduleName: "Operators",
+                    moduleName: "Technicians",
                     typeMapping: new()
                     {
                         { "TechnicianCreated", typeof(TechnicianCreated) },
@@ -42,6 +45,8 @@ namespace FieldOps.Modules.Technicians.Core
             return services;
         }
     }
+
+    internal class ModuleMarker { }
 }
 
 internal class ModuleMarker { }

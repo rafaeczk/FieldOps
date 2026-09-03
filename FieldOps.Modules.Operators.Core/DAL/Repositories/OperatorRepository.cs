@@ -28,7 +28,7 @@ internal class OperatorRepository(OperatorDbContext context) : IOperatorReposito
         return await context.Operators.SingleOrDefaultAsync(o => o.Id == id);
     }
 
-    public async Task<Operator?> GetByAccountIdAsync(Guid accountId)
+    public async Task<Operator?> GetByAccountIdAsync(AccountId accountId)
     {
         return await context.Operators.SingleOrDefaultAsync(o => o.AccountId == accountId);
     }

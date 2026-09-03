@@ -8,7 +8,7 @@ internal interface IOperatorRepository
 {
     Task CreateAsync(Operator @operator);
     Task<Operator?> GetAsync(OperatorId id);
-    Task<Operator?> GetByAccountIdAsync(Guid accountId);
+    Task<Operator?> GetByAccountIdAsync(AccountId accountId);
     Task<IReadOnlyList<Operator>> BrowseAsync();
     Task DeleteAsync(Operator @operator);
 }

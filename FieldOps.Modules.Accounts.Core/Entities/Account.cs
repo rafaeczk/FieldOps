@@ -13,7 +13,6 @@ internal class Account
     public DateTime UpdatedAt { get; private set; }
 
     private Account() { }
-
     public static Account Create(string email, string hash, AccountRole role, DateTime createdAt)
     {
         return new Account
@@ -38,5 +37,17 @@ internal class Account
             CreatedAt = createdAt,
             UpdatedAt = createdAt
         };
+    }
+
+    public void UpdateProfile(string email, DateTime updatedAt)
+    {
+        Email = email;
+        UpdatedAt = updatedAt;
+    }
+
+    public void ChangePassword(string hash, DateTime updatedAt)
+    {
+        Hash = hash;
+        UpdatedAt = updatedAt;
     }
 }

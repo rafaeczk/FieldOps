@@ -181,4 +181,213 @@ public class IdentityServiceTests
 
         Assert.Null(result);
     }
+
+    [Fact]
+    public async Task UpdateProfileAsync_ValidCommand_UpdatesProfile()
+    {
+        var accountId = Guid.NewGuid();
+        var account = Account.Create(accountId, "old@test.com", "hash", new AccountRole(AccountRole.Admin), DateTime.UtcNow);
+        var fixedTime = new DateTime(2024, 6, 1, 0, 0, 0, DateTimeKind.Utc);
+
+        _clockMock.Setup(x => x.UtcNow()).Returns(fixedTime);
+        _accountRepositoryMock
+            .Setup(x => x.GetAsync(accountId))
+            .ReturnsAsync(account);
+        _accountRepositoryMock
+            .Setup(x => x.GetAsync("new@test.com"))
+            .ReturnsAsync((Account?)null);
+
+        var result = await _sut.UpdateProfileAsync(accountId, new UpdateProfileCommand("new@test.com"));
+
+        Assert.NotNull(result);
+        Assert.Equal("new@test.com", result.Email);
+        _unitOfWorkMock.Verify(x => x.SaveChangesAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task UpdateProfileAsync_DuplicateEmail_ThrowsEmailInUseException()
+    {
+        var accountId = Guid.NewGuid();
+        var account = Account.Create(accountId, "current@test.com", "hash", new AccountRole(AccountRole.Admin), DateTime.UtcNow);
+        var existingAccount = Account.Create("taken@test.com", "hash", new AccountRole(AccountRole.Operator), DateTime.UtcNow);
+
+        _accountRepositoryMock
+            .Setup(x => x.GetAsync(accountId))
+            .ReturnsAsync(account);
+        _accountRepositoryMock
+            .Setup(x => x.GetAsync("taken@test.com"))
+            .ReturnsAsync(existingAccount);
+
+        await Assert.ThrowsAsync<EmailInUseException>(
+            () => _sut.UpdateProfileAsync(accountId, new UpdateProfileCommand("taken@test.com")));
+    }
+
+    [Fact]
+    public async Task UpdateProfileAsync_SameEmail_DoesNotCheckUniqueness()
+    {
+        var accountId = Guid.NewGuid();
+        var account = Account.Create(accountId, "same@test.com", "hash", new AccountRole(AccountRole.Admin), DateTime.UtcNow);
+
+        _accountRepositoryMock
+            .Setup(x => x.GetAsync(accountId))
+            .ReturnsAsync(account);
+
+        var result = await _sut.UpdateProfileAsync(accountId, new UpdateProfileCommand("same@test.com"));
+
+        Assert.NotNull(result);
+        _accountRepositoryMock.Verify(x => x.GetAsync(accountId), Times.Once);
+        _accountRepositoryMock.Verify(x => x.GetAsync(It.IsAny<string>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task UpdateProfileAsync_NonExistingAccount_ThrowsAccountNotFoundException()
+    {
+        _accountRepositoryMock
+            .Setup(x => x.GetAsync(It.IsAny<Guid>()))
+            .ReturnsAsync((Account?)null);
+
+        await Assert.ThrowsAsync<AccountNotFoundException>(
+            () => _sut.UpdateProfileAsync(Guid.NewGuid(), new UpdateProfileCommand("test@test.com")));
+    }
+
+    [Fact]
+    public async Task ChangePasswordAsync_ValidCommand_ChangesPassword()
+    {
+        var accountId = Guid.NewGuid();
+        var account = Account.Create(accountId, "test@test.com", "old-hash", new AccountRole(AccountRole.Admin), DateTime.UtcNow);
+        var fixedTime = new DateTime(2024, 6, 1, 0, 0, 0, DateTimeKind.Utc);
+
+        _clockMock.Setup(x => x.UtcNow()).Returns(fixedTime);
+        _accountRepositoryMock
+            .Setup(x => x.GetAsync(accountId))
+            .ReturnsAsync(account);
+        _passwordHasherMock
+            .Setup(x => x.VerifyHashedPassword(default!, "old-hash", "current123"))
+            .Returns(PasswordVerificationResult.Success);
+        _passwordHasherMock
+            .Setup(x => x.HashPassword(default!, "newpass123"))
+            .Returns("new-hash");
+
+        await _sut.ChangePasswordAsync(accountId, new ChangePasswordCommand("current123", "newpass123"));
+
+        _unitOfWorkMock.Verify(x => x.SaveChangesAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task ChangePasswordAsync_WrongCurrentPassword_ThrowsInvalidCredentialsException()
+    {
+        var accountId = Guid.NewGuid();
+        var account = Account.Create(accountId, "test@test.com", "hash", new AccountRole(AccountRole.Admin), DateTime.UtcNow);
+
+        _accountRepositoryMock
+            .Setup(x => x.GetAsync(accountId))
+            .ReturnsAsync(account);
+        _passwordHasherMock
+            .Setup(x => x.VerifyHashedPassword(default!, "hash", "wrongpassword"))
+            .Returns(PasswordVerificationResult.Failed);
+
+        await Assert.ThrowsAsync<InvalidCredentialsException>(
+            () => _sut.ChangePasswordAsync(accountId, new ChangePasswordCommand("wrongpassword", "newpass123")));
+    }
+
+    [Fact]
+    public async Task ChangePasswordAsync_TooShort_ThrowsInvalidPasswordException()
+    {
+        var accountId = Guid.NewGuid();
+        var account = Account.Create(accountId, "test@test.com", "hash", new AccountRole(AccountRole.Admin), DateTime.UtcNow);
+
+        _accountRepositoryMock
+            .Setup(x => x.GetAsync(accountId))
+            .ReturnsAsync(account);
+
+        await Assert.ThrowsAsync<InvalidPasswordException>(
+            () => _sut.ChangePasswordAsync(accountId, new ChangePasswordCommand("current123", "short")));
+    }
+
+    [Fact]
+    public async Task ChangePasswordAsync_SameAsCurrent_ThrowsInvalidPasswordException()
+    {
+        var accountId = Guid.NewGuid();
+        var account = Account.Create(accountId, "test@test.com", "hash", new AccountRole(AccountRole.Admin), DateTime.UtcNow);
+
+        _accountRepositoryMock
+            .Setup(x => x.GetAsync(accountId))
+            .ReturnsAsync(account);
+
+        await Assert.ThrowsAsync<InvalidPasswordException>(
+            () => _sut.ChangePasswordAsync(accountId, new ChangePasswordCommand("samepass123", "samepass123")));
+    }
+
+    [Fact]
+    public async Task ChangePasswordAsync_NonExistingAccount_ThrowsAccountNotFoundException()
+    {
+        _accountRepositoryMock
+            .Setup(x => x.GetAsync(It.IsAny<Guid>()))
+            .ReturnsAsync((Account?)null);
+
+        await Assert.ThrowsAsync<AccountNotFoundException>(
+            () => _sut.ChangePasswordAsync(Guid.NewGuid(), new ChangePasswordCommand("current123", "newpass123")));
+    }
+
+    [Fact]
+    public async Task GetTechniciansAsync_ReturnsTechnicianList()
+    {
+        var accounts = new List<Account>
+        {
+            Account.Create("tech1@test.com", "hash1", new AccountRole(AccountRole.Technician), DateTime.UtcNow),
+            Account.Create("tech2@test.com", "hash2", new AccountRole(AccountRole.Technician), DateTime.UtcNow),
+        };
+
+        _accountRepositoryMock
+            .Setup(x => x.GetByRoleAsync(It.IsAny<AccountRole>()))
+            .ReturnsAsync(accounts);
+
+        var result = await _sut.GetTechniciansAsync();
+
+        Assert.Equal(2, result.Count);
+        Assert.Equal("tech1@test.com", result[0].Email);
+        Assert.Equal("tech2@test.com", result[1].Email);
+    }
+
+    [Fact]
+    public async Task GetAllAsync_ReturnsAllAccounts()
+    {
+        var accounts = new List<Account>
+        {
+            Account.Create("admin@test.com", "hash1", new AccountRole(AccountRole.Admin), DateTime.UtcNow),
+            Account.Create("op@test.com", "hash2", new AccountRole(AccountRole.Operator), DateTime.UtcNow),
+            Account.Create("tech@test.com", "hash3", new AccountRole(AccountRole.Technician), DateTime.UtcNow),
+        };
+
+        _accountRepositoryMock
+            .Setup(x => x.GetAllAsync())
+            .ReturnsAsync(accounts);
+
+        var result = await _sut.GetAllAsync();
+
+        Assert.Equal(3, result.Count);
+    }
+
+    [Fact]
+    public async Task CreateAccountAsync_AsAdmin_CreatesOperatorAccount()
+    {
+        var command = new CreateAccountCommand(Guid.NewGuid(), "newop@test.com", "password123", new AccountRole(AccountRole.Operator));
+        var fixedTime = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+        _clockMock.Setup(x => x.UtcNow()).Returns(fixedTime);
+        _accountRepositoryMock
+            .Setup(x => x.GetAsync(command.Email))
+            .ReturnsAsync((Account?)null);
+        _passwordHasherMock
+            .Setup(x => x.HashPassword(default!, command.Password))
+            .Returns("hashed-password");
+
+        await _sut.CreateAccountAsync(command);
+
+        _accountRepositoryMock.Verify(x => x.CreateAsync(It.Is<Account>(a =>
+            a.Email == command.Email &&
+            a.Hash == "hashed-password" &&
+            a.Role == command.Role)), Times.Once);
+        _unitOfWorkMock.Verify(x => x.SaveChangesAsync(), Times.Once);
+    }
 }

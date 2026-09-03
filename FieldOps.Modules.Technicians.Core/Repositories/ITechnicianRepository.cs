@@ -10,7 +10,7 @@ internal interface ITechnicianRepository
     Task CreateAsync(Technician technician);
     Task<bool> ExistsAsync(TechnicianId id);
     Task<Technician?> GetAsync(TechnicianId id);
-    Task<Technician?> GetByAccountIdAsync(Guid accountId);
+    Task<Technician?> GetByAccountIdAsync(AccountId accountId);
     Task<IReadOnlyList<Technician>> BrowseAsync();
     Task DeleteAsync(Technician technician);
 }

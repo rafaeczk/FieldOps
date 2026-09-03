@@ -4,6 +4,7 @@ using FieldOps.Modules.Files.Core.Exceptions;
 using FieldOps.Modules.Files.Core.Repositories;
 using FieldOps.Shared.Abstractions.Kernel.Ids;
 using FieldOps.Shared.Abstractions.Time;
+using System.Net.Mime;
 
 namespace FieldOps.Modules.Files.Core.Services;
 
@@ -49,5 +50,7 @@ internal class FileService(IFileStorageService storageService, IStoredFilesRepos
 
         filesRepository.Delete(file);
         await unitOfWork.SaveChangesAsync();
+
+        await storageService.DeleteAsync(file.StorageKey);
     }
 }

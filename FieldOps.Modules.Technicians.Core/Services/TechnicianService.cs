@@ -63,6 +63,20 @@ internal class TechnicianService(ITechnicianRepository repository, IOutboxMessag
         await unitOfWork.SaveChangesAsync();
     }
 
+    public async Task DeleteByAccountIdAsync(AccountId accountId)
+    {
+        var technician = await repository.GetByAccountIdAsync(accountId);
+
+        if (technician is null)
+            return;
+
+        await repository.DeleteAsync(technician);
+
+        await outboxRepository.CreateAsync(new TechnicianDeleted(technician.AccountId));
+
+        await unitOfWork.SaveChangesAsync();
+    }
+
     public async Task<TechnicianDto?> GetByAsync(TechnicianId id)
     {
         var technician = await repository.GetAsync(id);

@@ -31,7 +31,7 @@ public class WorkOrderServiceTests
     [Fact]
     public async Task CreateAsync_ValidCommand_CreatesWorkOrderAndPublishesEvent()
     {
-        var dto = new CreateWorkOrderDto("Fix plumbing", "Leaking pipe", "123 Main St", DateTime.UtcNow.AddDays(1));
+        var dto = new CreateWorkOrderDto("Fix plumbing", "Leaking pipe", "123 Main St", DateTime.UtcNow.AddDays(1), "MEDIUM");
         var operatorId = Guid.NewGuid();
         var fixedTime = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
@@ -54,11 +54,14 @@ public class WorkOrderServiceTests
         var workOrderId = Guid.NewGuid();
         var workOrder = WorkOrder.Create(
             "Fix plumbing", "Leaking pipe", "123 Main St",
-            DateTime.UtcNow.AddDays(1), Guid.NewGuid(), DateTime.UtcNow);
+            DateTime.UtcNow.AddDays(1), "MEDIUM", Guid.NewGuid(), DateTime.UtcNow);
 
         _repositoryMock
             .Setup(x => x.GetAsync(workOrderId))
             .ReturnsAsync(workOrder);
+        _repositoryMock
+            .Setup(x => x.GetAssigneesAsync(workOrderId))
+            .ReturnsAsync(new List<WorkOrderAssignee>());
 
         var result = await _sut.GetByAsync(workOrderId);
 
@@ -85,13 +88,19 @@ public class WorkOrderServiceTests
         var operatorId = Guid.NewGuid();
         var workOrders = new List<WorkOrder>
         {
-            WorkOrder.Create("Fix plumbing", null, "123 Main St", DateTime.UtcNow.AddDays(1), operatorId, DateTime.UtcNow),
-            WorkOrder.Create("Fix electrical", null, "456 Oak Ave", DateTime.UtcNow.AddDays(2), operatorId, DateTime.UtcNow)
+            WorkOrder.Create("Fix plumbing", null, "123 Main St", DateTime.UtcNow.AddDays(1), "MEDIUM", operatorId, DateTime.UtcNow),
+            WorkOrder.Create("Fix electrical", null, "456 Oak Ave", DateTime.UtcNow.AddDays(2), "MEDIUM", operatorId, DateTime.UtcNow)
         };
 
         _repositoryMock
             .Setup(x => x.BrowseByOperatorAsync(operatorId))
             .ReturnsAsync(workOrders);
+        _repositoryMock
+            .Setup(x => x.GetAssigneesAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(new List<WorkOrderAssignee>());
+        _repositoryMock
+            .Setup(x => x.GetAssigneesForOrdersAsync(It.IsAny<IEnumerable<Guid>>()))
+            .ReturnsAsync(new List<WorkOrderAssignee>());
 
         var result = await _sut.BrowseByOperatorAsync(operatorId);
 
@@ -104,13 +113,19 @@ public class WorkOrderServiceTests
         var technicianId = Guid.NewGuid();
         var workOrders = new List<WorkOrder>
         {
-            WorkOrder.Create("Fix plumbing", null, "123 Main St", DateTime.UtcNow.AddDays(1), Guid.NewGuid(), DateTime.UtcNow),
-            WorkOrder.Create("Fix electrical", null, "456 Oak Ave", DateTime.UtcNow.AddDays(2), Guid.NewGuid(), DateTime.UtcNow)
+            WorkOrder.Create("Fix plumbing", null, "123 Main St", DateTime.UtcNow.AddDays(1), "MEDIUM", Guid.NewGuid(), DateTime.UtcNow),
+            WorkOrder.Create("Fix electrical", null, "456 Oak Ave", DateTime.UtcNow.AddDays(2), "MEDIUM", Guid.NewGuid(), DateTime.UtcNow)
         };
 
         _repositoryMock
             .Setup(x => x.BrowseByTechnicianAsync(technicianId))
             .ReturnsAsync(workOrders);
+        _repositoryMock
+            .Setup(x => x.GetAssigneesAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(new List<WorkOrderAssignee>());
+        _repositoryMock
+            .Setup(x => x.GetAssigneesForOrdersAsync(It.IsAny<IEnumerable<Guid>>()))
+            .ReturnsAsync(new List<WorkOrderAssignee>());
 
         var result = await _sut.BrowseByTechnicianAsync(technicianId);
 
@@ -122,13 +137,19 @@ public class WorkOrderServiceTests
     {
         var workOrders = new List<WorkOrder>
         {
-            WorkOrder.Create("Fix plumbing", null, "123 Main St", DateTime.UtcNow.AddDays(1), Guid.NewGuid(), DateTime.UtcNow),
-            WorkOrder.Create("Fix electrical", null, "456 Oak Ave", DateTime.UtcNow.AddDays(2), Guid.NewGuid(), DateTime.UtcNow)
+            WorkOrder.Create("Fix plumbing", null, "123 Main St", DateTime.UtcNow.AddDays(1), "MEDIUM", Guid.NewGuid(), DateTime.UtcNow),
+            WorkOrder.Create("Fix electrical", null, "456 Oak Ave", DateTime.UtcNow.AddDays(2), "MEDIUM", Guid.NewGuid(), DateTime.UtcNow)
         };
 
         _repositoryMock
             .Setup(x => x.BrowseAllAsync())
             .ReturnsAsync(workOrders);
+        _repositoryMock
+            .Setup(x => x.GetAssigneesAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(new List<WorkOrderAssignee>());
+        _repositoryMock
+            .Setup(x => x.GetAssigneesForOrdersAsync(It.IsAny<IEnumerable<Guid>>()))
+            .ReturnsAsync(new List<WorkOrderAssignee>());
 
         var result = await _sut.BrowseAllAsync();
 
@@ -141,11 +162,14 @@ public class WorkOrderServiceTests
         var workOrderId = Guid.NewGuid();
         var workOrder = WorkOrder.Create(
             "Fix plumbing", "Leaking pipe", "123 Main St",
-            DateTime.UtcNow.AddDays(1), Guid.NewGuid(), DateTime.UtcNow);
+            DateTime.UtcNow.AddDays(1), "MEDIUM", Guid.NewGuid(), DateTime.UtcNow);
 
         _repositoryMock
             .Setup(x => x.GetAsync(workOrderId))
             .ReturnsAsync(workOrder);
+        _repositoryMock
+            .Setup(x => x.GetAssigneesAsync(workOrderId))
+            .ReturnsAsync(new List<WorkOrderAssignee>());
 
         var dto = new UpdateWorkOrderStatusDto(WorkOrderStatus.InProgress);
         await _sut.UpdateStatusAsync(workOrderId, dto);
@@ -172,7 +196,7 @@ public class WorkOrderServiceTests
         var workOrderId = Guid.NewGuid();
         var workOrder = WorkOrder.Create(
             "Fix plumbing", "Leaking pipe", "123 Main St",
-            DateTime.UtcNow.AddDays(1), Guid.NewGuid(), DateTime.UtcNow);
+            DateTime.UtcNow.AddDays(1), "MEDIUM", Guid.NewGuid(), DateTime.UtcNow);
 
         _repositoryMock
             .Setup(x => x.GetAsync(workOrderId))
@@ -189,36 +213,46 @@ public class WorkOrderServiceTests
         var technicianId = Guid.NewGuid();
         var workOrder = WorkOrder.Create(
             "Fix plumbing", "Leaking pipe", "123 Main St",
-            DateTime.UtcNow.AddDays(1), Guid.NewGuid(), DateTime.UtcNow);
+            DateTime.UtcNow.AddDays(1), "MEDIUM", Guid.NewGuid(), DateTime.UtcNow);
 
         _repositoryMock
             .Setup(x => x.GetAsync(workOrderId))
             .ReturnsAsync(workOrder);
+        _repositoryMock
+            .Setup(x => x.IsAssignedAsync(workOrderId, technicianId))
+            .ReturnsAsync(false);
+        _repositoryMock
+            .Setup(x => x.GetAssigneesAsync(workOrderId))
+            .ReturnsAsync(new List<WorkOrderAssignee>());
 
         var dto = new AssignTechnicianDto(technicianId);
         await _sut.AssignTechnicianAsync(workOrderId, dto);
 
-        Assert.Equal(technicianId, workOrder.TechnicianId);
         Assert.Equal(WorkOrderStatus.InProgress, workOrder.Status);
+        _repositoryMock.Verify(x => x.AddAssigneeAsync(workOrderId, technicianId, It.IsAny<DateTime>()), Times.Once);
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(), Times.Once);
         _messageClientMock.Verify(x => x.PublishAsync(It.IsAny<WorkOrderStatusChangedEvent>()), Times.Once);
     }
 
     [Fact]
-    public async Task AssignTechnicianAsync_AlreadyAssigned_ThrowsWorkOrderAlreadyAssignedException()
+    public async Task AssignTechnicianAsync_AlreadyAssigned_SkipsSilently()
     {
         var workOrderId = Guid.NewGuid();
+        var technicianId = Guid.NewGuid();
         var workOrder = WorkOrder.Create(
             "Fix plumbing", "Leaking pipe", "123 Main St",
-            DateTime.UtcNow.AddDays(1), Guid.NewGuid(), DateTime.UtcNow);
-        workOrder.AssignTechnician(Guid.NewGuid(), DateTime.UtcNow);
+            DateTime.UtcNow.AddDays(1), "MEDIUM", Guid.NewGuid(), DateTime.UtcNow);
 
         _repositoryMock
             .Setup(x => x.GetAsync(workOrderId))
             .ReturnsAsync(workOrder);
+        _repositoryMock
+            .Setup(x => x.IsAssignedAsync(workOrderId, technicianId))
+            .ReturnsAsync(true);
 
-        await Assert.ThrowsAsync<WorkOrderAlreadyAssignedException>(
-            () => _sut.AssignTechnicianAsync(workOrderId, new AssignTechnicianDto(Guid.NewGuid())));
+        await _sut.AssignTechnicianAsync(workOrderId, new AssignTechnicianDto(technicianId));
+
+        _repositoryMock.Verify(x => x.AddAssigneeAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<DateTime>()), Times.Never);
     }
 
     [Fact]
@@ -238,7 +272,7 @@ public class WorkOrderServiceTests
         var workOrderId = Guid.NewGuid();
         var workOrder = WorkOrder.Create(
             "Fix plumbing", "Leaking pipe", "123 Main St",
-            DateTime.UtcNow.AddDays(1), Guid.NewGuid(), DateTime.UtcNow);
+            DateTime.UtcNow.AddDays(1), "MEDIUM", Guid.NewGuid(), DateTime.UtcNow);
 
         _repositoryMock
             .Setup(x => x.GetAsync(workOrderId))
@@ -259,5 +293,27 @@ public class WorkOrderServiceTests
 
         await Assert.ThrowsAsync<WorkOrderNotFoundException>(
             () => _sut.DeleteAsync(Guid.NewGuid()));
+    }
+
+    [Fact]
+    public async Task DeleteAsync_HasReports_ThrowsWorkOrderHasReportsException()
+    {
+        var workOrderId = Guid.NewGuid();
+        var workOrder = WorkOrder.Create(
+            "Fix plumbing", "Leaking pipe", "123 Main St",
+            DateTime.UtcNow.AddDays(1), "MEDIUM", Guid.NewGuid(), DateTime.UtcNow);
+
+        _repositoryMock
+            .Setup(x => x.GetAsync(workOrderId))
+            .ReturnsAsync(workOrder);
+        _repositoryMock
+            .Setup(x => x.HasReportsAsync(workOrderId))
+            .ReturnsAsync(true);
+
+        await Assert.ThrowsAsync<WorkOrderHasReportsException>(
+            () => _sut.DeleteAsync(workOrderId));
+
+        _repositoryMock.Verify(x => x.DeleteAsync(It.IsAny<WorkOrder>()), Times.Never);
+        _unitOfWorkMock.Verify(x => x.SaveChangesAsync(), Times.Never);
     }
 }

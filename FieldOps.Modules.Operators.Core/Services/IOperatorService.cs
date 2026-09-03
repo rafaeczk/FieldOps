@@ -9,4 +9,5 @@ public interface IOperatorService
     Task<OperatorDetalisDto?> GetByAsync(OperatorId id);
     Task<IReadOnlyList<OperatorDto>> BrowseAsync();
     Task DeleteAsync(OperatorId id);
+    Task DeleteByAccountIdAsync(AccountId accountId);
 }

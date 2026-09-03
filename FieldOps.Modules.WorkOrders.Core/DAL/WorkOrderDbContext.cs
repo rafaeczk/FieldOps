@@ -6,6 +6,7 @@ namespace FieldOps.Modules.WorkOrders.Core.DAL;
 internal class WorkOrderDbContext(DbContextOptions<WorkOrderDbContext> options) : DbContext(options)
 {
     public DbSet<WorkOrder> WorkOrders { get; set; }
+    public DbSet<WorkOrderAssignee> WorkOrderAssignees { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

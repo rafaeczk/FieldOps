@@ -74,6 +74,19 @@ internal class OperatorService(IOperatorRepository repository, IOutboxMessagesRe
         await unitOfWork.SaveChangesAsync();
     }
 
+    public async Task DeleteByAccountIdAsync(AccountId accountId)
+    {
+        var @operator = await repository.GetByAccountIdAsync(accountId);
+
+        if (@operator is null)
+            return;
+
+        await repository.DeleteAsync(@operator);
+        await outboxRepository.CreateAsync(new OperatorDeleted(@operator.AccountId));
+
+        await unitOfWork.SaveChangesAsync();
+    }
+
     private static T Map<T>(Operator @operator) where T : OperatorDto, new()
          => new()
          {
