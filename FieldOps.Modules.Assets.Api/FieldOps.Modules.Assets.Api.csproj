@@ -10,8 +10,4 @@
 		<ProjectReference Include="..\FieldOps.Modules.Assets.Core\FieldOps.Modules.Assets.Core.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
 </Project>

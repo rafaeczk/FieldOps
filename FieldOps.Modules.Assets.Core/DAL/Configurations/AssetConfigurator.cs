@@ -37,6 +37,12 @@ namespace FieldOps.Modules.Assets.Core.DAL.Configurations
 
             builder.Property(a => a.Notes)
                 .HasMaxLength(1000);
+
+            builder.Property(a => a.CreatedAt).IsRequired();
+            builder.Property(a => a.UpdatedAt).IsRequired();
+
+            builder.Property(a => a.IsDeleted).HasDefaultValue(false);
+            builder.Property(a => a.DeletedAt).IsRequired(false);
         }
     }
 

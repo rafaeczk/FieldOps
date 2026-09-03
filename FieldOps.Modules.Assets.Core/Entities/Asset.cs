@@ -16,6 +16,48 @@ namespace FieldOps.Modules.Assets.Core.Entities
         public DateTime? LastServiceDate { get; set; }
         public AssetStatus Status { get; set; } = AssetStatus.Active;
         public string Notes { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; private set; }
+        public DateTime UpdatedAt { get; private set; }
+        public bool IsDeleted { get; private set; }
+        public DateTime? DeletedAt { get; private set; }
+
+        private Asset() { }
+
+        public static Asset Create(string name, string serialNumber, string model, string manufacturer, DateTime? purchaseDate, DateTime? warrantyExpires, DateTime createdAt)
+        {
+            return new Asset
+            {
+                Id = Guid.NewGuid(),
+                Name = name,
+                SerialNumber = serialNumber,
+                Model = model,
+                Manufacturer = manufacturer,
+                PurchaseDate = purchaseDate,
+                WarrantyExpires = warrantyExpires,
+                CreatedAt = createdAt,
+                UpdatedAt = createdAt
+            };
+        }
+
+        public void UpdateDetails(string name, string serialNumber, string model, string manufacturer, DateTime? purchaseDate, DateTime? warrantyExpires, string notes, DateTime updatedAt)
+        {
+            Name = name;
+            SerialNumber = serialNumber;
+            Model = model;
+            Manufacturer = manufacturer;
+            PurchaseDate = purchaseDate;
+            WarrantyExpires = warrantyExpires;
+            Notes = notes;
+            UpdatedAt = updatedAt;
+        }
+
+        public void SoftDelete(DateTime deletedAt)
+        {
+            if (IsDeleted) return;
+            IsDeleted = true;
+            DeletedAt = deletedAt;
+            UpdatedAt = deletedAt;
+        }
 
     }
 }

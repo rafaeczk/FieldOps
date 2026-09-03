@@ -26,6 +26,8 @@ namespace FieldOps.Modules.Assets.Core
             services.AddScoped<IAssetService, AssetService>();
             services.AddScoped<IAssetsModuleApi, AssetsModuleApi>();
 
+            services.AddScoped<IAssetUnitOfWork, AssetUnitOfWork>();
+
 
             return services;
         }

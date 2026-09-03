@@ -5,11 +5,12 @@ using System.Text;
 
 namespace FieldOps.Modules.Assets.Core.Services
 {
-    internal interface IAssetService
+    public interface IAssetService
     {
         Task<Guid> CreateAsync(CreateAssetDto dto);
         Task<AssetDetailsDto?> GetByAsync(Guid id);
         Task<IReadOnlyList<AssetDto>> BrowseAsync();
+        Task UpdateAsync(Guid id, EditAssetDto dto);
         Task DeleteAsync(Guid id);
 
     }

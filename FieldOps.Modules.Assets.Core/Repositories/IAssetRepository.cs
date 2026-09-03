@@ -16,6 +16,7 @@ namespace FieldOps.Modules.Assets.Core.Repositories
         Task<IReadOnlyList<Asset>> BrowseAsync();
         Task<int> CountAsync(Expression<Func<Asset, bool>> predicate, CancellationToken ct = default);
         Task<bool> ExistsAsync(Guid id, CancellationToken ct = default);
+        Task UpdateAsync(Asset asset);
         Task DeleteAsync(Asset asset);
     }
 }

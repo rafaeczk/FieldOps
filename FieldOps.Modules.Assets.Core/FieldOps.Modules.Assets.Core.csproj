@@ -10,8 +10,4 @@
 		<ProjectReference Include="..\FieldOps.Shared.Infrastructure\FieldOps.Shared.Infrastructure.csproj" />
 		<ProjectReference Include="..\FieldOps.Modules.Assets.Contracts\FieldOps.Modules.Assets.Contracts.csproj" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Migrations\" />
-	</ItemGroup>
 </Project>

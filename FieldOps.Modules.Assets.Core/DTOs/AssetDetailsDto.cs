@@ -1,4 +1,6 @@
-﻿namespace FieldOps.Modules.Assets.Core.DTOs
+﻿using System;
+
+namespace FieldOps.Modules.Assets.Core.DTOs
 {
     public record AssetDetailsDto(
         Guid Id,
