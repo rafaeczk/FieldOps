@@ -1,12 +1,7 @@
 ﻿using FieldOps.Shared.Abstractions.Errors;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace FieldOps.Modules.Reports.Domain.Reports.Exceptions
+namespace FieldOps.Modules.Reports.Domain.Reports.Exceptions;
+
+public class FileDoesNotExistException() : BaseException($"One or more files do not exist.")
 {
-    [Serializable]
-    public class FileDoesNotExistException() : BaseException($"One or more files do not exist.")
-    {
-    }
 }

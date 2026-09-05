@@ -2,6 +2,7 @@
 using FieldOps.Modules.Jobs.Application.Jobs.Exceptions;
 using FieldOps.Modules.Jobs.Domain.Jobs.Repositories;
 using FieldOps.Modules.Jobs.Domain.Jobs.ValueObjects;
+using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 using FieldOps.Shared.Abstractions.Messages;
 
 namespace FieldOps.Modules.Jobs.Application.Jobs.Commands;

@@ -1,4 +1,4 @@
-using FieldOps.Modules.Reports.Domain.Reports.ValueObjects;
+using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 
 namespace FieldOps.Modules.Reports.Api.DTOs;
 

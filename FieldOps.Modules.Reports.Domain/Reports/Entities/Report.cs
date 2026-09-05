@@ -1,6 +1,6 @@
 ﻿using FieldOps.Modules.Reports.Domain.Reports.Events;
 using FieldOps.Modules.Reports.Domain.Reports.Exceptions;
-using FieldOps.Modules.Reports.Domain.Reports.ValueObjects;
+using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 using FieldOps.Shared.Abstractions.Kernel.Ids;
 using FieldOps.Shared.Abstractions.Kernel.Types;
 
@@ -10,14 +10,14 @@ public sealed class Report : AggregateRoot
 {
     public JobId JobId { get; private set; } = null!;
     public TechnicianId CreatorId { get; private set; } = null!;
-    public AssetId AssetId { get; private set; } 
+    public AssetId AssetId { get; private set; } = null!;
     public string Note { get; private set; } = null!;
     public Address Address { get; private set; } = null!;
     public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; private set; }
     public bool IsDeleted { get; private set; }
     public DateTime? DeletedAt { get; private set; }
-    private readonly List<FileId> _fileIds = new();
+    private readonly List<FileId> _fileIds = [];
     public IReadOnlyCollection<FileId> FileIds => _fileIds.AsReadOnly();
 
     private Report() { }
@@ -92,5 +92,4 @@ public sealed class Report : AggregateRoot
         UpdatedAt = DateTime.UtcNow;
         IncrementVersion();
     }
-
 }

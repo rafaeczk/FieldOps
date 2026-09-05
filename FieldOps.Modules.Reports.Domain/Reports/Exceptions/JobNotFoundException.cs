@@ -1,13 +1,8 @@
 ﻿using FieldOps.Shared.Abstractions.Errors;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace FieldOps.Modules.Reports.Domain.Reports.Exceptions
+namespace FieldOps.Modules.Reports.Domain.Reports.Exceptions;
+
+public class JobNotFoundException(Guid jobId) : BaseException($"Job with ID '{jobId}' was not found.")
 {
-    [Serializable]
-    public class JobNotFoundException(Guid jobId) : BaseException($"Job with ID '{jobId}' was not found.")
-    {
-
-    }
+    public Guid JobId => jobId;
 }

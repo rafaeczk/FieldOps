@@ -1,7 +1,5 @@
 ﻿using FieldOps.Modules.Reports.Domain.Reports.Entities;
 using FieldOps.Modules.Reports.Domain.Reports.Repositories;
-using FieldOps.Shared.Abstractions.Kernel.Types;
-using Microsoft.EntityFrameworkCore;
 
 namespace FieldOps.Modules.Reports.Infrastructure.EF.Repositories;
 

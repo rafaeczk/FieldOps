@@ -2,7 +2,6 @@ using FieldOps.Modules.Reports.Application.Reports.DTOs;
 using FieldOps.Modules.Reports.Application.Reports.Repositories;
 using FieldOps.Shared.Abstractions.Messages;
 using FieldOps.Shared.Abstractions.Pagination;
-using System.Linq;
 
 namespace FieldOps.Modules.Reports.Application.Reports.Queries;
 

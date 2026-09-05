@@ -1,8 +1,4 @@
 ﻿using FieldOps.Modules.Reports.Domain.Reports.Entities;
-using FieldOps.Shared.Abstractions.Kernel.Types;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace FieldOps.Modules.Reports.Domain.Reports.Repositories
 {

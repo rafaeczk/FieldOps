@@ -17,7 +17,6 @@ public static class Extensions
 
         services.AddScoped<IReportsUnitOfWork, ReportsUnitOfWork>();
 
-
         services.AddScoped<IReportsWriteRepository, ReportsWriteRepository>();
         services.AddScoped<IReportsReadRepository, ReportsReadRepository>();
 

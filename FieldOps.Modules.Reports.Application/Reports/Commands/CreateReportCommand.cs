@@ -2,15 +2,12 @@
 using FieldOps.Modules.Reports.Application.Common;
 using FieldOps.Modules.Reports.Domain.Reports.Entities;
 using FieldOps.Modules.Reports.Domain.Reports.Repositories;
-using FieldOps.Modules.Reports.Domain.Reports.ValueObjects;
+using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 using FieldOps.Shared.Abstractions.Contexts;
 using FieldOps.Shared.Abstractions.Kernel.Ids;
 using FieldOps.Shared.Abstractions.Kernel.Types;
 using FieldOps.Shared.Abstractions.Messages;
 using FieldOps.Shared.Abstractions.Time;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using FieldOps.Modules.Files.Contracts;
 using FieldOps.Modules.Reports.Domain.Reports.Exceptions;
 using FieldOps.Modules.Assets.Contracts;

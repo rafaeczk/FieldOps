@@ -1,7 +1,4 @@
-﻿using FieldOps.Modules.Reports.Domain.Reports.ValueObjects;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 
 namespace FieldOps.Modules.Reports.Application.Reports.DTOs
 {

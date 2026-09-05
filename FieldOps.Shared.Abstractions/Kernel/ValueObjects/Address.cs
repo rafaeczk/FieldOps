@@ -1,6 +1,6 @@
 ﻿using FieldOps.Shared.Abstractions.Kernel.Types;
 
-namespace FieldOps.Modules.Jobs.Domain.Jobs.ValueObjects;
+namespace FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 
 public class Address : ValueObject
 {

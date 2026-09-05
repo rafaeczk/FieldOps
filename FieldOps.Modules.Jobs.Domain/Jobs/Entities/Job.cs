@@ -3,6 +3,7 @@ using FieldOps.Modules.Jobs.Domain.Jobs.Exceptions;
 using FieldOps.Modules.Jobs.Domain.Jobs.ValueObjects;
 using FieldOps.Shared.Abstractions.Kernel.Ids;
 using FieldOps.Shared.Abstractions.Kernel.Types;
+using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 
 namespace FieldOps.Modules.Jobs.Domain.Jobs.Entities;
 
