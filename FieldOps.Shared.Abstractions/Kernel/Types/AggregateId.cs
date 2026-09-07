@@ -28,7 +28,7 @@ public class AggregateId<T>(T value) : IEquatable<AggregateId<T>>
 public class AggregateId(Guid value) : AggregateId<Guid>(value)
 {
     public AggregateId() : this(Guid.NewGuid())
-    { 
+    {
     }
 
     public static implicit operator Guid(AggregateId id) => id.Value;

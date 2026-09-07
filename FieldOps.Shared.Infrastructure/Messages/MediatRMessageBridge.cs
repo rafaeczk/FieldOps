@@ -4,7 +4,7 @@ using MediatR;
 namespace FieldOps.Shared.Infrastructure.Messages;
 
 internal class MediatRMessageBridge<TMessage, TResult>(IMessageHandler<TMessage, TResult> domainHandler) : IRequestHandler<TMessage, TResult>
-    where TMessage : IMessage<TResult>
+    where TMessage : class, IMessage<TResult>
 {
     private readonly IMessageHandler<TMessage, TResult> domainHandler = domainHandler;
 
@@ -13,7 +13,7 @@ internal class MediatRMessageBridge<TMessage, TResult>(IMessageHandler<TMessage,
 }
 
 internal class MediatRVoidMessageBridge<TMessage>(IMessageHandler<TMessage> domainHandler) : IRequestHandler<TMessage>
-    where TMessage : IMessage
+    where TMessage : class, IMessage
 {
     private readonly IMessageHandler<TMessage> domainHandler = domainHandler;
 

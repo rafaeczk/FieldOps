@@ -1,9 +1,6 @@
 ﻿using FieldOps.Modules.Technicians.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace FieldOps.Modules.Technicians.Core.DAL.Configurations
 {
@@ -12,6 +9,7 @@ namespace FieldOps.Modules.Technicians.Core.DAL.Configurations
         public void Configure(EntityTypeBuilder<Technician> builder)
         {
             builder.HasKey(o => o.Id);
+            builder.Property(o => o.Id).HasConversion(x => x.Value, x => new(x));
 
             builder.HasIndex(o => o.AccountId).IsUnique();
 
@@ -20,7 +18,6 @@ namespace FieldOps.Modules.Technicians.Core.DAL.Configurations
             builder.Property(a => a.CreatedAt).IsRequired();
 
             builder.Property(a => a.UpdatedAt).IsRequired();
-
         }
     }
 }

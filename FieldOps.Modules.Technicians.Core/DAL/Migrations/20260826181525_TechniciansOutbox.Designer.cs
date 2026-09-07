@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace FieldOps.Modules.Technicians.Core.DAL.Migrations
 {
-    [DbContext(typeof(TechniciansDbContext))]
+    [DbContext(typeof(TechnicianDbContext))]
     [Migration("20260826181525_TechniciansOutbox")]
     partial class TechniciansOutbox
     {

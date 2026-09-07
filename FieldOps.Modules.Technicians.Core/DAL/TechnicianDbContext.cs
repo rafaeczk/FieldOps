@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FieldOps.Modules.Technicians.Core.DAL;
 
-internal class TechniciansDbContext(DbContextOptions<TechniciansDbContext> options) : DbContext(options)
+internal class TechnicianDbContext(DbContextOptions<TechnicianDbContext> options) : DbContext(options)
 {
     public DbSet<Technician> Technicians { get; set; }
     public DbSet<OutboxMessage> OutboxMessages { get; set; }

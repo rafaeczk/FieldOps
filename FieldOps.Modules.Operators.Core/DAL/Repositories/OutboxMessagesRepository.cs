@@ -1,6 +1,6 @@
 ﻿using FieldOps.Modules.Operators.Core.Repositories;
+using FieldOps.Shared.Abstractions.Events;
 using FieldOps.Shared.Abstractions.Time;
-using FieldOps.Shared.Infrastructure.Events;
 using FieldOps.Shared.Infrastructure.Modules;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

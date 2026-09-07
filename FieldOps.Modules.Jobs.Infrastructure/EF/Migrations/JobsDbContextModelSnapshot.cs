@@ -64,6 +64,44 @@ namespace FieldOps.Modules.Jobs.Infrastructure.EF.Migrations
                     b.ToTable("Jobs", "jobs");
                 });
 
+            modelBuilder.Entity("FieldOps.Modules.Jobs.Domain.Jobs.Entities.JobAssignee", b =>
+                {
+                    b.Property<Guid>("JobId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TechnicianId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("JobId", "TechnicianId");
+
+                    b.ToTable("JobAssignees", "jobs");
+                });
+
+            modelBuilder.Entity("FieldOps.Modules.Jobs.Domain.Outbox.OutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ProcessedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OutboxMessages", "jobs");
+                });
+
             modelBuilder.Entity("FieldOps.Modules.Jobs.Domain.Jobs.Entities.Job", b =>
                 {
                     b.OwnsOne("FieldOps.Modules.Jobs.Domain.Jobs.ValueObjects.Address", "Address", b1 =>
@@ -116,6 +154,20 @@ namespace FieldOps.Modules.Jobs.Infrastructure.EF.Migrations
 
                     b.Navigation("Address")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("FieldOps.Modules.Jobs.Domain.Jobs.Entities.JobAssignee", b =>
+                {
+                    b.HasOne("FieldOps.Modules.Jobs.Domain.Jobs.Entities.Job", null)
+                        .WithMany("Assignees")
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FieldOps.Modules.Jobs.Domain.Jobs.Entities.Job", b =>
+                {
+                    b.Navigation("Assignees");
                 });
 #pragma warning restore 612, 618
         }

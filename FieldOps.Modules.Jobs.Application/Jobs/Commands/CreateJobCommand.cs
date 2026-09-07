@@ -1,10 +1,11 @@
 ﻿using FieldOps.Modules.Jobs.Application.Common;
+using FieldOps.Modules.Jobs.Application.Jobs.Services;
 using FieldOps.Modules.Jobs.Domain.Jobs.Entities;
 using FieldOps.Modules.Jobs.Domain.Jobs.Repositories;
 using FieldOps.Modules.Jobs.Domain.Jobs.ValueObjects;
+using FieldOps.Modules.Jobs.Domain.Outbox;
 using FieldOps.Modules.Operators.Contracts;
 using FieldOps.Shared.Abstractions.Contexts;
-using FieldOps.Shared.Abstractions.Kernel.Types;
 using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 using FieldOps.Shared.Abstractions.Messages;
 using FieldOps.Shared.Abstractions.Time;
@@ -13,7 +14,8 @@ namespace FieldOps.Modules.Jobs.Application.Jobs.Commands;
 
 public record CreateJobCommand(string Title, string? Description, JobPriority Priority, Address Address, DateTime Deadline) : IMessage<Guid>;
 
-public sealed class CreateJobCommandHandler(IJobsRepository repository, IJobsUnitOfWork unitOfWork, IOperatorsModuleApi operatorsModuleApi, IContext context, IClock clock) : IMessageHandler<CreateJobCommand, Guid>
+public sealed class CreateJobCommandHandler(IJobsRepository repository, IOutboxMessagesRepository outboxRepository, IJobsUnitOfWork unitOfWork,
+    IOperatorsModuleApi operatorsModuleApi, IJobEventMapper eventMapper, IContext context, IClock clock) : IMessageHandler<CreateJobCommand, Guid>
 {
     public async Task<Guid> HandleAsync(CreateJobCommand message, CancellationToken ct)
     {
@@ -23,7 +25,6 @@ public sealed class CreateJobCommandHandler(IJobsRepository repository, IJobsUni
             throw new UnauthorizedAccessException();
 
         var job = Job.Create(
-            new AggregateId(),
             new(operatorId.Value),
             message.Title,
             message.Description,
@@ -33,7 +34,8 @@ public sealed class CreateJobCommandHandler(IJobsRepository repository, IJobsUni
             clock.UtcNow()
             );
 
-        repository.Add(job);
+        await repository.AddAsync(job);
+        await outboxRepository.AddAsync([.. eventMapper.Map(job.Events)]);
         await unitOfWork.SaveChangesAsync(ct);
 
         return job.Id;

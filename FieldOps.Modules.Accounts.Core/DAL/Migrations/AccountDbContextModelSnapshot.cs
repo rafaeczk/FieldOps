@@ -26,7 +26,6 @@ namespace FieldOps.Modules.Accounts.Core.DAL.Migrations
             modelBuilder.Entity("FieldOps.Modules.Accounts.Core.Entities.Account", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")

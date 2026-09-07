@@ -1,24 +1,24 @@
-﻿using FieldOps.Modules.Reports.Application.Reports.Commands;
+﻿using FieldOps.Modules.Reports.Api.DTOs;
+using FieldOps.Modules.Reports.Application.Reports.Commands;
 using FieldOps.Modules.Reports.Application.Reports.DTOs;
 using FieldOps.Modules.Reports.Application.Reports.Queries;
-using FieldOps.Modules.Reports.Api.DTOs;
+using FieldOps.Shared.Abstractions.Messages;
 using FieldOps.Shared.Abstractions.Pagination;
 using FieldOps.Shared.Infrastructure.Api;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FieldOps.Modules.Reports.Api.Controllers;
 
-internal class ReportsController(ISender sender) : BaseController
+internal class ReportsController(IMessageDispatcher messageDispatcher) : BaseController
 {
-    private readonly ISender sender = sender;
+    private readonly IMessageDispatcher messageDispatcher = messageDispatcher;
 
     [HttpPost]
     [Authorize(Roles = "ADMIN,TECHNICIAN")]
     public async Task<ActionResult<Guid>> CreateAsync(CreateReportDto dto)
     {
-        var reportId = await sender.Send(new CreateReportCommand(dto.JobId, dto.AssetId, dto.Note, dto.Address, dto.FileIds));
+        var reportId = await messageDispatcher.Send(new CreateReportCommand(dto.JobId, dto.AssetId, dto.Note, dto.Address, dto.FileIds));
         return CreatedAtAction(nameof(GetAsync), new { id = reportId }, reportId);
     }
 
@@ -26,7 +26,7 @@ internal class ReportsController(ISender sender) : BaseController
     [Authorize(Roles = "ADMIN,TECHNICIAN")]
     public async Task<ActionResult> EditAsync(Guid id, EditReportCommandDto dto)
     {
-        await sender.Send(new EditReportCommand(id, dto.Note, dto.Address));
+        await messageDispatcher.Send(new EditReportCommand(id, dto.Note, dto.Address));
         return NoContent();
     }
 
@@ -34,21 +34,21 @@ internal class ReportsController(ISender sender) : BaseController
     [Authorize(Roles = "ADMIN,TECHNICIAN,OPERATOR")]
     public async Task<ActionResult<ReportDetailsDto>> GetAsync(Guid id)
     {
-        return this.OkOrNotFound(await sender.Send(new GetReportQuery(id)));
+        return this.OkOrNotFound(await messageDispatcher.Send(new GetReportQuery(id)));
     }
 
     [HttpGet]
     [Authorize(Roles = "ADMIN,TECHNICIAN,OPERATOR")]
     public async Task<ActionResult<PagedResult<ReportListItemDto>>> BrowseAsync([FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
-        return Ok(await sender.Send(new BrowseReportsQuery(new PaginationParams(pageNumber, pageSize))));
+        return Ok(await messageDispatcher.Send(new BrowseReportsQuery(new PaginationParams(pageNumber, pageSize))));
     }
 
     [HttpDelete("{id:guid}")]
     [Authorize(Roles = "ADMIN,TECHNICIAN")]
     public async Task<ActionResult> DeleteAsync(Guid id)
     {
-        await sender.Send(new DeleteReportCommand(id));
+        await messageDispatcher.Send(new DeleteReportCommand(id));
         return NoContent();
     }
 }

@@ -8,5 +8,7 @@ public class JsonWebToken
     public string Id { get; set; } = null!;
     public string Role { get; set; } = null!;
     public string Email { get; set; } = null!;
+    public string FullName { get; set; } = null!;
+    public DateTime CreatedAt { get; set; }
     public IDictionary<string, IEnumerable<string>> Claims { get; set; } = null!;
 }

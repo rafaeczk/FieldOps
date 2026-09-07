@@ -10,7 +10,7 @@ internal class JobConfiguration : IEntityTypeConfiguration<Job>
     public void Configure(EntityTypeBuilder<Job> builder)
     {
         builder.HasKey(j => j.Id);
-        builder.Property(j => j.Id).HasConversion(x => x.Value, x => new AggregateId(x));
+        builder.Property(j => j.Id).HasConversion(x => x.Value, x => new(x));
 
         builder.Property(j => j.Version).IsConcurrencyToken();
 
@@ -62,5 +62,12 @@ internal class JobConfiguration : IEntityTypeConfiguration<Job>
         builder.Property(j => j.CreatedAt).IsRequired();
 
         builder.Property(j => j.UpdatedAt).IsRequired();
+
+        builder.HasMany(j => j.Assignees)
+            .WithOne()
+            .HasForeignKey(a => a.JobId)
+            .OnDelete(DeleteBehavior.Cascade);
+        builder.Navigation(j => j.Assignees)
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }

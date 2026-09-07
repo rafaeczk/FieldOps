@@ -26,7 +26,6 @@ namespace FieldOps.Modules.Files.Core.DAL.Migrations
             modelBuilder.Entity("FieldOps.Modules.Files.Core.Entities.StoredFile", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("ContentType")

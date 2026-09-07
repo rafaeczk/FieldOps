@@ -3,11 +3,9 @@ using MediatR;
 
 namespace FieldOps.Shared.Infrastructure.Events;
 
-internal class MediatRNotificationBridge<Event>(IIntegrationEventHandler<Event> domainHandler) : INotificationHandler<Event>
+internal class MediatRNotificationBridge<Event>(IEnumerable<IIntegrationEventHandler<Event>> handlers) : INotificationHandler<Event>
     where Event : IIntegrationEvent
 {
-    private readonly IIntegrationEventHandler<Event> domainHandler = domainHandler;
-
-    public Task Handle(Event @event, CancellationToken ct)
-        => domainHandler.HandleAsync(@event, ct);
+    public async Task Handle(Event @event, CancellationToken ct)
+        => await Task.WhenAll(handlers.Select(h => h.HandleAsync(@event, ct)));
 }

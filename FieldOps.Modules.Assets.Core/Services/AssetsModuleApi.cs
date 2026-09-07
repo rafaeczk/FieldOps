@@ -1,20 +1,15 @@
 using FieldOps.Modules.Assets.Contracts;
 using FieldOps.Modules.Assets.Core.Features.Queries;
-using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using FieldOps.Shared.Abstractions.Messages;
 
 namespace FieldOps.Modules.Assets.Core.Services
 {
-    internal class AssetsModuleApi(ISender sender) : IAssetsModuleApi
+    internal class AssetsModuleApi(IMessageDispatcher messageDispatcher) : IAssetsModuleApi
     {
-        private readonly ISender sender = sender;
-
         public Task<bool> Exists(Guid assetId, CancellationToken ct = default)
         {
 
-            return sender.Send(new CheckAssetId(assetId), ct);
+            return messageDispatcher.Send(new CheckAssetId(assetId), ct);
         }
     }
 }

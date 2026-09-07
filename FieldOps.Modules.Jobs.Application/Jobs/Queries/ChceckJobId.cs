@@ -1,8 +1,5 @@
 ﻿using FieldOps.Modules.Jobs.Application.Jobs.Repositories;
 using FieldOps.Shared.Abstractions.Messages;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace FieldOps.Modules.Jobs.Application.Jobs.Queries
 {

@@ -1,14 +1,9 @@
 ﻿using FieldOps.Shared.Abstractions.Kernel.Types;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace FieldOps.Shared.Abstractions.Kernel.Ids
+namespace FieldOps.Shared.Abstractions.Kernel.Ids;
+
+public class FileId(Guid value) : TypeId(value)
 {
-    public class FileId : TypeId
-    {
-        public FileId(Guid value) : base(value) { }
-
-        private FileId() : base(Guid.Empty) { }
-    }
+    public static implicit operator FileId(Guid id) => new(id);
+    public static implicit operator Guid(FileId id) => id.Value;
 }

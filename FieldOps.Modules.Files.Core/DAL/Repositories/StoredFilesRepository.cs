@@ -1,5 +1,6 @@
 ﻿using FieldOps.Modules.Files.Core.Entities;
 using FieldOps.Modules.Files.Core.Repositories;
+using FieldOps.Shared.Abstractions.Kernel.Ids;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -14,7 +15,7 @@ internal class StoredFilesRepository(FilesDbContext context) : IStoredFilesRepos
         context.Files.Add(storedFile);
     }
 
-    public Task<StoredFile?> GetAsync(Guid fileId)
+    public Task<StoredFile?> GetAsync(FileId fileId)
     {
         return context.Files.SingleOrDefaultAsync(f => f.Id == fileId);
     }
