@@ -41,7 +41,7 @@ public sealed class Report : AggregateRoot<ReportId>
         {
             foreach (var fileId in fileIds)
             {
-                report.AddAssignee(fileId);
+                report.AddAttachment(fileId);
             }
         }
 
@@ -77,17 +77,17 @@ public sealed class Report : AggregateRoot<ReportId>
         IncrementVersion();
     }
 
-    public void AddAssignee(FileId fileId)
+    public void AddAttachment(FileId fileId)
     {
         if (_attachments.Any(a => a.FileId == fileId))
-            throw new FileAlreadyExists(Id, fileId);
+            throw new AttachmentAlreadyExists(Id, fileId);
 
         var assignee = ReportAttachment.Create(fileId, new(Id));
         _attachments.Add(assignee);
-        AddEvent(new ReportAssigneeAdded(assignee));
+        AddEvent(new ReportAttachmentAdded(assignee));
     }
 
-    public void RemoveAssignee(FileId fileId)
+    public void RemoveAttachment(FileId fileId)
     {
         var assignee = _attachments.SingleOrDefault(a => a.FileId == fileId);
 
@@ -95,6 +95,6 @@ public sealed class Report : AggregateRoot<ReportId>
             throw new FileNotFoundInReportException(Id, fileId);
 
         _attachments.Remove(assignee);
-        AddEvent(new ReportAssigneeRemoved(assignee));
+        AddEvent(new ReportAttachmentRemoved(assignee));
     }
 }

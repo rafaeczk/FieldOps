@@ -1,5 +1,4 @@
-﻿using FieldOps.Modules.Jobs.Contracts;
-using FieldOps.Modules.Reports.Application.Reports.Services;
+﻿using FieldOps.Modules.Reports.Application.Reports.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FieldOps.Modules.Reports.Application;

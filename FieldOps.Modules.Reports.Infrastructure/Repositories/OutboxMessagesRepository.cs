@@ -4,52 +4,49 @@ using FieldOps.Shared.Abstractions.Time;
 using FieldOps.Shared.Infrastructure.Modules;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Text;
 
-namespace FieldOps.Modules.Reports.Infrastructure.Repositories
+namespace FieldOps.Modules.Reports.Infrastructure.Repositories;
+
+internal class OutboxMessagesRepository(ReportsDbContext context, IClock clock, IModuleSerializer serializer) : IOutboxMessagesRepository
 {
-    internal class OutboxMessagesRepository(ReportsDbContext context, IClock clock, IModuleSerializer serializer) : IOutboxMessagesRepository
+    private readonly ReportsDbContext context = context;
+    private readonly IClock clock = clock;
+    private readonly IModuleSerializer serializer = serializer;
+
+    public async Task AddAsync<Event>(Event @event)
+        where Event : INotification
     {
-        private readonly ReportsDbContext context = context;
-        private readonly IClock clock = clock;
-        private readonly IModuleSerializer serializer = serializer;
-
-        public async Task AddAsync<Event>(Event @event)
-            where Event : INotification
+        context.OutboxMessages.Add(new()
         {
-            context.OutboxMessages.Add(new()
-            {
-                Id = Guid.NewGuid(),
-                Type = typeof(Event).Name,
-                Content = Encoding.UTF8.GetString(serializer.Serialize(@event)),
-                CreatedAt = clock.UtcNow(),
-                ProcessedOn = null
-            });
-        }
+            Id = Guid.NewGuid(),
+            Type = typeof(Event).Name,
+            Content = Encoding.UTF8.GetString(serializer.Serialize(@event)),
+            CreatedAt = clock.UtcNow(),
+            ProcessedOn = null
+        });
+    }
 
-        public async Task AddAsync<Event>(params Event[] events)
-            where Event : INotification
-            => events.ToList().ForEach(async e => await AddAsync(e));
+    public async Task AddAsync<Event>(params Event[] events)
+        where Event : INotification
+        => events.ToList().ForEach(async e => await AddAsync(e));
 
-        public async Task<List<IOutboxMessageDto>> BrowseUnprocessedAsync(int batchSize)
-        {
-            var messages = await context.OutboxMessages
-                .Where(m => m.ProcessedOn == null)
-                .OrderBy(m => m.CreatedAt)
-                .Take(batchSize)
-                .ToListAsync();
+    public async Task<List<IOutboxMessageDto>> BrowseUnprocessedAsync(int batchSize)
+    {
+        var messages = await context.OutboxMessages
+            .Where(m => m.ProcessedOn == null)
+            .OrderBy(m => m.CreatedAt)
+            .Take(batchSize)
+            .ToListAsync();
 
-            return [.. messages.Cast<IOutboxMessageDto>()];
-        }
+        return [.. messages.Cast<IOutboxMessageDto>()];
+    }
 
-        public async Task MarkAsProcessedAsync(Guid id)
-        {
-            var message = await context.OutboxMessages.SingleOrDefaultAsync(m => m.Id == id);
-            if (message is null) return;
-            message.ProcessedOn = clock.UtcNow();
-            await context.SaveChangesAsync();
-        }
+    public async Task MarkAsProcessedAsync(Guid id)
+    {
+        var message = await context.OutboxMessages.SingleOrDefaultAsync(m => m.Id == id);
+        if (message is null) return;
+        message.ProcessedOn = clock.UtcNow();
+        await context.SaveChangesAsync();
     }
 }
