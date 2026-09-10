@@ -9,12 +9,12 @@ using FieldOps.Shared.Abstractions.Messages;
 
 namespace FieldOps.Modules.Reports.Application.Reports.Commands;
 
-public record AddReportAssigneeCommand(ReportId ReportId, FileId FileId) : IMessage;
+public record AddReportAttachmentCommand(ReportId ReportId, FileId FileId) : IMessage;
 
-internal sealed class AddReportAssigneeCommandHandler(IReportsReadRepository repository, IOutboxMessagesRepository outboxRepository, IReportsUnitOfWork unitOfWork,
-    IReportEventMapper eventMapper, IFilesModuleApi filesModuleApi) : IMessageHandler<AddReportAssigneeCommand>
+internal sealed class AddReportAttachmentCommandHandler(IReportsReadRepository repository, IOutboxMessagesRepository outboxRepository, IReportsUnitOfWork unitOfWork,
+    IReportEventMapper eventMapper, IFilesModuleApi filesModuleApi) : IMessageHandler<AddReportAttachmentCommand>
 {
-    public async Task HandleAsync(AddReportAssigneeCommand message, CancellationToken ct)
+    public async Task HandleAsync(AddReportAttachmentCommand message, CancellationToken ct)
     {
         var report = await repository.GetByIdAsync(message.ReportId);
 

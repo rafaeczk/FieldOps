@@ -51,6 +51,7 @@
     <Project Path="FieldOps.Modules.Accounts.Tests/FieldOps.Modules.Accounts.Tests.csproj" />
     <Project Path="FieldOps.Modules.Jobs.Tests/FieldOps.Modules.Jobs.Tests.csproj" />
     <Project Path="FieldOps.Modules.Operators.Tests/FieldOps.Modules.Operators.Tests.csproj" />
+    <Project Path="FieldOps.Modules.Reports.Tests/FieldOps.Modules.Reports.Tests.csproj" />
     <Project Path="FieldOps.Modules.Technicians.Tests/FieldOps.Modules.Technicians.Tests.csproj" />
   </Folder>
 </Solution>

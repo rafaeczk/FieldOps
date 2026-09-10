@@ -38,14 +38,14 @@ internal class JobsController(IMessageDispatcher messageDispatcher) : BaseContro
     }
 
     [HttpPost("{id:guid}/assignees")]
-    public async Task<ActionResult> AddAssignee(Guid id, [FromBody] JobAssigneeActionDto dto)
+    public async Task<ActionResult> AddAssignee(Guid id, [FromBody] JobAttachmentActionDto dto)
     {
         await messageDispatcher.Send(new AddJobAssigneeCommand(id, dto.TechnicianId));
         return NoContent();
     }
 
     [HttpDelete("{id:guid}/assignees")]
-    public async Task<ActionResult> RemoveAssignee(Guid id, [FromBody] JobAssigneeActionDto dto)
+    public async Task<ActionResult> RemoveAssignee(Guid id, [FromBody] JobAttachmentActionDto dto)
     {
         await messageDispatcher.Send(new RemoveJobAssigneeCommand(id, dto.TechnicianId));
         return NoContent();

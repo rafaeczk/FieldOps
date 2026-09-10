@@ -82,19 +82,19 @@ public sealed class Report : AggregateRoot<ReportId>
         if (_attachments.Any(a => a.FileId == fileId))
             throw new AttachmentAlreadyExists(Id, fileId);
 
-        var assignee = ReportAttachment.Create(fileId, new(Id));
-        _attachments.Add(assignee);
-        AddEvent(new ReportAttachmentAdded(assignee));
+        var attachment = ReportAttachment.Create(fileId, new(Id));
+        _attachments.Add(attachment);
+        AddEvent(new ReportAttachmentAdded(attachment));
     }
 
     public void RemoveAttachment(FileId fileId)
     {
-        var assignee = _attachments.SingleOrDefault(a => a.FileId == fileId);
+        var attachment = _attachments.SingleOrDefault(a => a.FileId == fileId);
 
-        if (assignee is null)
+        if (attachment is null)
             throw new FileNotFoundInReportException(Id, fileId);
 
-        _attachments.Remove(assignee);
-        AddEvent(new ReportAttachmentRemoved(assignee));
+        _attachments.Remove(attachment);
+        AddEvent(new ReportAttachmentRemoved(attachment));
     }
 }

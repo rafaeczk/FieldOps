@@ -11,8 +11,8 @@ public class JobEventMapper : IJobEventMapper
         {
             JobAdded e => new Contracts.Events.JobAdded(e.Job.Id, e.Job.CreatorId),
             JobStatusChanged e => new Contracts.Events.JobStatusChanged(e.Job.Id, e.Status),
-            JobAssigneeAdded e => new Contracts.Events.JobAssigneeAdded(e.JobAssignee.JobId, e.JobAssignee.TechnicianId),
-            JobAssigneeRemoved e => new Contracts.Events.JobAssigneeRemoved(e.JobAssignee.JobId, e.JobAssignee.TechnicianId),
+            JobAssigneeAdded e => new Contracts.Events.JobAttachmentAdded(e.JobAssignee.JobId, e.JobAssignee.TechnicianId),
+            JobAssigneeRemoved e => new Contracts.Events.JobAttachmentRemoved(e.JobAssignee.JobId, e.JobAssignee.TechnicianId),
             _ => null
         };
 

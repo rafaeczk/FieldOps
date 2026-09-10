@@ -27,7 +27,7 @@ public class EventMapperTests
 
         Assert.Contains(mapped, e => e is Contracts.Events.JobAdded);
         Assert.Contains(mapped, e => e is Contracts.Events.JobStatusChanged);
-        Assert.Contains(mapped, e => e is Contracts.Events.JobAssigneeAdded);
-        Assert.Contains(mapped, e => e is Contracts.Events.JobAssigneeRemoved);
+        Assert.Contains(mapped, e => e is Contracts.Events.JobAttachmentAdded);
+        Assert.Contains(mapped, e => e is Contracts.Events.JobAttachmentRemoved);
     }
 }
