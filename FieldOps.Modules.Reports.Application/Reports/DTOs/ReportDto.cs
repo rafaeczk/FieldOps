@@ -5,6 +5,7 @@ using System.Text;
 namespace FieldOps.Modules.Reports.Application.Reports.DTOs
 {
     public record ReportListItemDto(
+        Guid Id,
         Guid JobId,
         Guid CreatorId,
         Guid? AssetId,

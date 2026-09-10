@@ -6,7 +6,7 @@ using FieldOps.Shared.Abstractions.Kernel.Types;
 
 namespace FieldOps.Modules.Reports.Domain.Reports.Entities;
 
-public sealed class Report : AggregateRoot
+public sealed class Report : AggregateRoot<ReportId>
 {
     public JobId JobId { get; private set; } = null!;
     public TechnicianId CreatorId { get; private set; } = null!;
@@ -17,16 +17,16 @@ public sealed class Report : AggregateRoot
     public DateTime UpdatedAt { get; private set; }
     public bool IsDeleted { get; private set; }
     public DateTime? DeletedAt { get; private set; }
-    private readonly List<FileId> _fileIds = [];
-    public IReadOnlyCollection<FileId> FileIds => _fileIds.AsReadOnly();
+    private readonly List<ReportAttachment> _attachments = [];
+    public IReadOnlyCollection<ReportAttachment> Attachments => _attachments.AsReadOnly();
 
     private Report() { }
 
-    public static Report Create(AggregateId id, JobId jobId,  TechnicianId creatorId, AssetId assetId, string note, Address address, IEnumerable<FileId>? fileIds, DateTime createdAt)
+    public static Report Create(JobId jobId,  TechnicianId creatorId, AssetId assetId, string note, Address address, IEnumerable<FileId>? fileIds, DateTime createdAt)
     {
         var report = new Report
         {
-            Id = id,
+            Id = Guid.NewGuid(),
             JobId = jobId,
             CreatorId = creatorId,
             AssetId = assetId,
@@ -41,7 +41,7 @@ public sealed class Report : AggregateRoot
         {
             foreach (var fileId in fileIds)
             {
-                report.AddAttachment(fileId);
+                report.AddAssignee(fileId);
             }
         }
 
@@ -50,22 +50,6 @@ public sealed class Report : AggregateRoot
         report.AddEvent(new ReportAdded(report));
 
         return report;
-    }
-    public void AddAttachment(FileId fileId)
-    {
-        if (!_fileIds.Contains(fileId))
-        {
-            _fileIds.Add(fileId);
-            IncrementVersion();
-        }
-    }
-
-    public void RemoveAttachment(FileId fileId)
-    {
-        if (_fileIds.Remove(fileId))
-        {
-            IncrementVersion();
-        }
     }
 
     public void ChangeNote(string note)
@@ -91,5 +75,26 @@ public sealed class Report : AggregateRoot
         DeletedAt = DateTime.UtcNow;
         UpdatedAt = DateTime.UtcNow;
         IncrementVersion();
+    }
+
+    public void AddAssignee(FileId fileId)
+    {
+        if (_attachments.Any(a => a.FileId == fileId))
+            throw new FileAlreadyExists(Id, fileId);
+
+        var assignee = ReportAttachment.Create(fileId, new(Id));
+        _attachments.Add(assignee);
+        AddEvent(new ReportAssigneeAdded(assignee));
+    }
+
+    public void RemoveAssignee(FileId fileId)
+    {
+        var assignee = _attachments.SingleOrDefault(a => a.FileId == fileId);
+
+        if (assignee is null)
+            throw new FileNotFoundInReportException(Id, fileId);
+
+        _attachments.Remove(assignee);
+        AddEvent(new ReportAssigneeRemoved(assignee));
     }
 }

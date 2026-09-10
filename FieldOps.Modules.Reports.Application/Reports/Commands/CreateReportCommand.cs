@@ -53,7 +53,6 @@ namespace FieldOps.Modules.Reports.Application.Reports.Commands
             var fileIds = rawFileIds.Select(id => new FileId(id)).ToList();
 
             var report = Report.Create(
-                new AggregateId(),
                 new(message.JobId),
                 new(operatorId.Value),
                 new(message.AssetId),

@@ -31,4 +31,10 @@ internal class StoredFilesRepository(FilesDbContext context) : IStoredFilesRepos
             .Where(predicate)
             .CountAsync(ct);
     }
+
+    public Task<bool> ExistsAsync(FileId fileId, CancellationToken ct = default)
+    {
+        return context.Files
+            .AnyAsync(f => f.Id == fileId, ct); 
+    }
 }

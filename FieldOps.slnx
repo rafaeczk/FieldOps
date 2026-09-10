@@ -34,6 +34,7 @@
   <Folder Name="/Src/Modules/Reports/">
     <Project Path="FieldOps.Modules.Reports.Api/FieldOps.Modules.Reports.Api.csproj" Id="752f8b87-67fc-4b85-906f-3d1a30e0972d" />
     <Project Path="FieldOps.Modules.Reports.Application/FieldOps.Modules.Reports.Application.csproj" Id="a1082d99-7f3f-4853-b53f-c6f7f2486120" />
+    <Project Path="FieldOps.Modules.Reports.Contracts/FieldOps.Modules.Reports.Contracts.csproj" Id="8ce94406-36eb-43e0-87a8-eda4d9e1d0c0" />
     <Project Path="FieldOps.Modules.Reports.Domain/FieldOps.Modules.Reports.Domain.csproj" Id="88933382-7905-41a8-9ff6-f1ea00e359fd" />
     <Project Path="FieldOps.Modules.Reports.Infrastructure/FieldOps.Modules.Reports.Infrastructure.csproj" Id="1a7b2f31-b77d-4693-b25d-3cef51820bcd" />
   </Folder>

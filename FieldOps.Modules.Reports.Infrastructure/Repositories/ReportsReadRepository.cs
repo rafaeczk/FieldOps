@@ -21,7 +21,7 @@ internal class ReportsReadRepository(ReportsDbContext context) : IReportsReadRep
             .Where(r => !r.IsDeleted)
             .OrderByDescending(r => r.CreatedAt)
             .Paginate(pagination)
-            .Select(r => new ReportListItemDto(r.JobId, r.CreatorId, r.AssetId, r.Address.City, r.CreatedAt, r.FileIds.Count))
+            .Select(r => new ReportListItemDto(r.Id, r.JobId, r.CreatorId, r.AssetId, r.Address.City, r.CreatedAt, r.Attachments.Count))
             .ToListAsync();
 
         return new(items, totalItems, pagination);
@@ -30,14 +30,14 @@ internal class ReportsReadRepository(ReportsDbContext context) : IReportsReadRep
     public async Task<ReportDetailsDto?> GetAsync(Guid reportId)
     {
         var report = await context.Reports
-            .Include(r => r.FileIds)
+            .Include(r => r.Attachments)
             .SingleOrDefaultAsync(r => (Guid)r.Id == reportId && !r.IsDeleted);
 
         if (report is null) return null;
 
-        var fileIds = report.FileIds.Select(f => f.Value).ToList();
+        var fileIds = report.Attachments.Select(a => a.FileId.Value).ToList();
 
-        return new(report.JobId, report.CreatorId, report.AssetId, report.Note, report.Address, report.CreatedAt, report.UpdatedAt, fileIds);
+        return new(report.Id, report.JobId, report.CreatorId, report.AssetId, report.Note, report.Address, report.CreatedAt, report.UpdatedAt, fileIds);
     }
 
     public Task<Report?> GetByIdAsync(Guid reportId)

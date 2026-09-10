@@ -3,6 +3,7 @@
 namespace FieldOps.Modules.Reports.Application.Reports.DTOs
 {
     public record ReportDetailsDto(
+        Guid Id,
         Guid JobId,
         Guid CreatorId,
         Guid? AssetId,

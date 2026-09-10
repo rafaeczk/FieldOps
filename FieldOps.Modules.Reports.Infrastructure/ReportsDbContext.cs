@@ -1,4 +1,5 @@
-﻿using FieldOps.Modules.Reports.Domain.Reports.Entities;
+﻿using FieldOps.Modules.Reports.Domain.Outbox;
+using FieldOps.Modules.Reports.Domain.Reports.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace FieldOps.Modules.Reports.Infrastructure;
@@ -6,6 +7,7 @@ namespace FieldOps.Modules.Reports.Infrastructure;
 internal class ReportsDbContext(DbContextOptions<ReportsDbContext> options) : DbContext(options)
 {
     public DbSet<Report> Reports { get; set; }
+    public DbSet<OutboxMessage> OutboxMessages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -51,4 +51,17 @@ internal class ReportsController(IMessageDispatcher messageDispatcher) : BaseCon
         await messageDispatcher.Send(new DeleteReportCommand(id));
         return NoContent();
     }
+
+    [HttpPost("{id:guid}/assignees")]
+    public async Task<ActionResult> AddAssignee(Guid id, [FromBody] ReportAssigneeActionDto dto)
+    {
+        await messageDispatcher.Send(new AddReportAssigneeCommand(id, dto.FileId));
+        return NoContent();
+    }
+    [HttpDelete("{id:guid}/assignees")]
+    public async Task<ActionResult> RemoveAssignee(Guid id, [FromBody] ReportAssigneeActionDto dto)
+    {
+        await messageDispatcher.Send(new RemoveReportAssigneeCommand(id, dto.FileId));
+        return NoContent();
+    }
 }

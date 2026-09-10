@@ -3,6 +3,7 @@ using System;
 using FieldOps.Modules.Reports.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FieldOps.Modules.Reports.Infrastructure.Migrations
 {
     [DbContext(typeof(ReportsDbContext))]
-    partial class ReportsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260909230651_Reportsq")]
+    partial class Reportsq
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -88,25 +91,21 @@ namespace FieldOps.Modules.Reports.Infrastructure.Migrations
                     b.ToTable("Reports", "reports");
                 });
 
+            modelBuilder.Entity("FieldOps.Modules.Reports.Domain.Reports.Entities.ReportAttachment", b =>
+                {
+                    b.Property<Guid>("ReportId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("FileId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ReportId", "FileId");
+
+                    b.ToTable("ReportAttachments", "reports");
+                });
+
             modelBuilder.Entity("FieldOps.Modules.Reports.Domain.Reports.Entities.Report", b =>
                 {
-                    b.OwnsMany("FieldOps.Modules.Reports.Domain.Reports.Entities.ReportAttachment", "Attachments", b1 =>
-                        {
-                            b1.Property<Guid>("ReportId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<Guid>("FileId")
-                                .HasColumnType("uuid")
-                                .HasColumnName("FileId");
-
-                            b1.HasKey("ReportId", "FileId");
-
-                            b1.ToTable("ReportAttachments", "reports");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ReportId");
-                        });
-
                     b.OwnsOne("FieldOps.Shared.Abstractions.Kernel.ValueObjects.Address", "Address", b1 =>
                         {
                             b1.Property<Guid>("ReportId")
@@ -157,7 +156,19 @@ namespace FieldOps.Modules.Reports.Infrastructure.Migrations
 
                     b.Navigation("Address")
                         .IsRequired();
+                });
 
+            modelBuilder.Entity("FieldOps.Modules.Reports.Domain.Reports.Entities.ReportAttachment", b =>
+                {
+                    b.HasOne("FieldOps.Modules.Reports.Domain.Reports.Entities.Report", null)
+                        .WithMany("Attachments")
+                        .HasForeignKey("ReportId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FieldOps.Modules.Reports.Domain.Reports.Entities.Report", b =>
+                {
                     b.Navigation("Attachments");
                 });
 #pragma warning restore 612, 618

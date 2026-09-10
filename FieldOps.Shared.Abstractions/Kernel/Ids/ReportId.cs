@@ -7,5 +7,7 @@ namespace FieldOps.Shared.Abstractions.Kernel.Ids
 {
     public class ReportId(Guid value) : TypeId(value)
     {
+        public static implicit operator ReportId(Guid id) => new(id);
+        public static implicit operator Guid(ReportId id) => id.Value;
     }
 }

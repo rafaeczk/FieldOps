@@ -10,5 +10,10 @@ namespace FieldOps.Modules.Files.Core.Services
         {
             return messageDispatcher.Send(new CheckFileIds(fileIds), ct);
         }
+
+        public Task<bool> GetFileExists(Guid fileId, CancellationToken ct = default)
+        {
+            return messageDispatcher.Send(new CheckFileId(fileId), ct);
+        }
     }
 }
