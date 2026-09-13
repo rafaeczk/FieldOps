@@ -11,7 +11,7 @@ using FieldOps.Shared.Abstractions.Messages;
 
 namespace FieldOps.Modules.Jobs.Application.Jobs.Commands;
 
-public record EditJobCommand(Guid JobId, string Title, string? Description, JobPriority Priority, Address Address, DateTime Deadline) : IMessage;
+public record EditJobCommand(Guid JobId, int Version, string Title, string? Description, JobPriority Priority, Address Address, DateTime Deadline) : IMessage;
 
 internal sealed class EditJobCommandHandler(IJobsRepository repository, IOutboxMessagesRepository outboxRepository, IJobsUnitOfWork unitOfWork,
     IOperatorsModuleApi operatorsModuleApi, IJobEventMapper eventMapper, IContext context) : IMessageHandler<EditJobCommand>
@@ -36,7 +36,7 @@ internal sealed class EditJobCommandHandler(IJobsRepository repository, IOutboxM
         job.ChangeAddress(message.Address);
         job.ChangeDeadline(message.Deadline);
 
-        await repository.UpdateAsync(job);
+        await repository.UpdateAsync(job, message.Version);
         await outboxRepository.AddAsync([.. eventMapper.Map(job.Events)]);
         await unitOfWork.SaveChangesAsync(ct);
     }

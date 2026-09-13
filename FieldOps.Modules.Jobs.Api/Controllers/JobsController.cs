@@ -26,7 +26,7 @@ internal class JobsController(IMessageDispatcher messageDispatcher) : BaseContro
     [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<ActionResult> EditAsync(Guid id, EditJobDto dto)
     {
-        await messageDispatcher.Send(new EditJobCommand(id, dto.Title, dto.Description, new(dto.Priority), dto.Address, dto.Deadline));
+        await messageDispatcher.Send(new EditJobCommand(id, dto.Version, dto.Title, dto.Description, new(dto.Priority), dto.Address, dto.Deadline));
         return NoContent();
     }
 

@@ -22,9 +22,10 @@ internal sealed class JobsRepository(JobsDbContext context, IDomainEventDispatch
         return context.Jobs.Include(j => j.Assignees).SingleOrDefaultAsync(j => j.Id.Equals(id));
     }
 
-    public async Task UpdateAsync(Job job)
+    public async Task UpdateAsync(Job job, int version)
     {
         context.Jobs.Update(job);
+        context.Entry(job).Property(x => x.Version).OriginalValue = version;
         await domainEventDispatcher.DispatchAsync([.. job.Events]);
     }
 }
