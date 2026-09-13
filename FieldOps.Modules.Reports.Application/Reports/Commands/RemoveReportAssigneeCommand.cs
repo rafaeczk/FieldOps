@@ -8,12 +8,12 @@ using FieldOps.Shared.Abstractions.Messages;
 
 namespace FieldOps.Modules.Reports.Application.Reports.Commands;
 
-public record RemoveReportAssigneeCommand(ReportId ReportId, FileId FileId) : IMessage;
+public record RemoveReportAttachmentCommand(ReportId ReportId, FileId FileId) : IMessage;
 
-internal sealed class RemoveReportAssigneeCommandHandler(IReportsReadRepository repository, IOutboxMessagesRepository outboxRepository, 
-    IReportsUnitOfWork unitOfWork, IReportEventMapper eventMapper) : IMessageHandler<RemoveReportAssigneeCommand>
+internal sealed class RemoveReportAttachmentCommandHandler(IReportsReadRepository repository, IOutboxMessagesRepository outboxRepository, 
+    IReportsUnitOfWork unitOfWork, IReportEventMapper eventMapper) : IMessageHandler<RemoveReportAttachmentCommand>
 {
-    public async Task HandleAsync(RemoveReportAssigneeCommand message, CancellationToken ct)
+    public async Task HandleAsync(RemoveReportAttachmentCommand message, CancellationToken ct)
     {
         var report = await repository.GetByIdAsync(message.ReportId);
 

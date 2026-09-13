@@ -32,12 +32,12 @@ public static class Extensions
         services.AddHostedService(sp
             => new OutboxProcessorWorker<IOutboxMessagesRepository>(
                 scopeFactory: sp.GetRequiredService<IServiceScopeFactory>(),
-                moduleName: "Reports",
-                typeMapping: new()
-                {
+                    moduleName: "Reports",
+                    typeMapping: new()
+                    {
                     { "ReportAdded", typeof(ReportAdded) },
-                    { "ReportAssigneeAdded", typeof(ReportAssigneeAdded) },
-                    { "ReportAssigneeRemoved", typeof(ReportAssigneeRemoved) },
+                    { "ReportAttachmentAdded", typeof(ReportAttachmentAdded) },
+                    { "ReportAttachmentRemoved", typeof(ReportAttachmentRemoved) },
                 },
                 logger: sp.GetRequiredService<ILogger<OutboxProcessorWorker<IOutboxMessagesRepository>>>()));
 

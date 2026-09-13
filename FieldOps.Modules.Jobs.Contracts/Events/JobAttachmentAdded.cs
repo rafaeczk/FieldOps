@@ -3,4 +3,4 @@ using FieldOps.Shared.Abstractions.Kernel.Ids;
 
 namespace FieldOps.Modules.Jobs.Contracts.Events;
 
-public record JobAssigneeAdded(JobId JobId, TechnicianId TechnicianId) : IIntegrationEvent;
+public record JobAttachmentAdded(JobId JobId, TechnicianId TechnicianId) : IIntegrationEvent;

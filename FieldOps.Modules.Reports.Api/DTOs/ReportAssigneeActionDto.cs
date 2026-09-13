@@ -4,5 +4,5 @@ using System.Text;
 
 namespace FieldOps.Modules.Reports.Api.DTOs
 {
-    public record ReportAssigneeActionDto(Guid FileId);
+    public record ReportAttachmentActionDto(Guid FileId);
 }
