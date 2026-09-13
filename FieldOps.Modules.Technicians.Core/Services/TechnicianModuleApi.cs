@@ -14,7 +14,7 @@ internal class TechnicianModuleApi(IMessageDispatcher messageDispatcher) : ITech
         return messageDispatcher.Send(new GetTechnicianExistsQuery(technicianId));
     }
 
-    public Task<Guid?> GetTechnicianIdByAccountId(AccountId accountId)
+    public Task<TechnicianId?> GetTechnicianIdByAccountId(AccountId accountId)
     {
         return messageDispatcher.Send(new GetTechnicianIdByAccountIdQuery(accountId));
     }

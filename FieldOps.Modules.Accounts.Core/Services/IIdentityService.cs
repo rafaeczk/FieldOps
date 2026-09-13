@@ -1,7 +1,7 @@
 ﻿using FieldOps.Modules.Accounts.Core.DTOs;
-using FieldOps.Modules.Accounts.Core.ValueObjects;
 using FieldOps.Shared.Abstractions.Auth;
 using FieldOps.Shared.Abstractions.Kernel.Ids;
+using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 
 namespace FieldOps.Modules.Accounts.Core.Services;
 
