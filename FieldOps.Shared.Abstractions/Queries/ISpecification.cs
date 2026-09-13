@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace FieldOps.Shared.Abstractions.Specification;
+namespace FieldOps.Shared.Abstractions.Queries;
 
 public interface ISpecification<T>
 {

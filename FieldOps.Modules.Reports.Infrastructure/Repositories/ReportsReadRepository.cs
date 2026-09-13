@@ -3,7 +3,7 @@ using FieldOps.Modules.Reports.Application.Reports.Repositories;
 using FieldOps.Modules.Reports.Application.Reports.Specifications;
 using FieldOps.Modules.Reports.Domain.Reports.Entities;
 using FieldOps.Shared.Abstractions.Pagination;
-using FieldOps.Shared.Infrastructure.Specification;
+using FieldOps.Shared.Infrastructure.Queries;
 using Microsoft.EntityFrameworkCore;
 
 namespace FieldOps.Modules.Reports.Infrastructure.EF.Repositories;

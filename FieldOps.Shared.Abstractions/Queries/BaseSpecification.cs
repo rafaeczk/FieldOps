@@ -1,8 +1,7 @@
 ﻿using FieldOps.Shared.Abstractions.Pagination;
-using FieldOps.Shared.Abstractions.Specification;
 using System.Linq.Expressions;
 
-namespace FieldOps.Shared.Infrastructure.Specification;
+namespace FieldOps.Shared.Abstractions.Queries;
 
 public abstract class BaseSpecification<T> : ISpecification<T>
 {

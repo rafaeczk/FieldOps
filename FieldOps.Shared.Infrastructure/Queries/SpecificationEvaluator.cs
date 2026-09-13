@@ -1,7 +1,7 @@
-﻿using FieldOps.Shared.Abstractions.Specification;
+﻿using FieldOps.Shared.Abstractions.Queries;
 using Microsoft.EntityFrameworkCore;
 
-namespace FieldOps.Shared.Infrastructure.Specification;
+namespace FieldOps.Shared.Infrastructure.Queries;
 
 public static class SpecificationEvaluator
 {

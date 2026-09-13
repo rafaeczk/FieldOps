@@ -2,7 +2,7 @@
 using FieldOps.Modules.Reports.Domain.Reports.Entities;
 using FieldOps.Shared.Abstractions.Kernel.Ids;
 using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
-using FieldOps.Shared.Infrastructure.Specification;
+using FieldOps.Shared.Abstractions.Queries;
 
 namespace FieldOps.Modules.Reports.Application.Reports.Specifications;
 
