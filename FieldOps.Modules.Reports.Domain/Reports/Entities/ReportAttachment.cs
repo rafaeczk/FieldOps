@@ -18,6 +18,4 @@ namespace FieldOps.Modules.Reports.Domain.Reports.Entities
             };
         }
     }
-
-
 }

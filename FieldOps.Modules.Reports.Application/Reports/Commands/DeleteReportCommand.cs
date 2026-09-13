@@ -6,7 +6,7 @@ using FieldOps.Modules.Reports.Domain.Reports.Exceptions;
 
 namespace FieldOps.Modules.Reports.Application.Reports.Commands;
 
-public record DeleteReportCommand(Guid ReportId) : IMessage;
+public record DeleteReportCommand(Guid ReportId, int Version) : IMessage;
 
 internal sealed class DeleteReportCommandHandler(IReportsReadRepository readRepository, IReportsWriteRepository writeRepository, IReportsUnitOfWork unitOfWork) : IMessageHandler<DeleteReportCommand>
 {
@@ -18,7 +18,7 @@ internal sealed class DeleteReportCommandHandler(IReportsReadRepository readRepo
 
         report.SoftDelete();
 
-        writeRepository.Update(report);
+        writeRepository.Update(report, message.Version);
         await unitOfWork.SaveChangesAsync(ct);
     }
 }

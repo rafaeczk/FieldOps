@@ -19,14 +19,14 @@ internal class ReportsController(IMessageDispatcher messageDispatcher) : BaseCon
     public async Task<ActionResult<Guid>> CreateAsync(CreateReportDto dto)
     {
         var reportId = await messageDispatcher.Send(new CreateReportCommand(dto.JobId, dto.AssetId, dto.Note, dto.Address, dto.FileIds));
-        return CreatedAtAction(nameof(GetAsync), new { id = reportId }, reportId);
+        return Ok(reportId);
     }
 
     [HttpPut("{id:guid}")]
     [Authorize(Roles = "ADMIN,TECHNICIAN")]
     public async Task<ActionResult> EditAsync(Guid id, EditReportCommandDto dto)
     {
-        await messageDispatcher.Send(new EditReportCommand(id, dto.Note, dto.Address));
+        await messageDispatcher.Send(new EditReportCommand(id, dto.Version, dto.Note, dto.Address));
         return NoContent();
     }
 
@@ -46,9 +46,9 @@ internal class ReportsController(IMessageDispatcher messageDispatcher) : BaseCon
 
     [HttpDelete("{id:guid}")]
     [Authorize(Roles = "ADMIN,TECHNICIAN")]
-    public async Task<ActionResult> DeleteAsync(Guid id)
+    public async Task<ActionResult> DeleteAsync(Guid id, DeleteReportDto dto)
     {
-        await messageDispatcher.Send(new DeleteReportCommand(id));
+        await messageDispatcher.Send(new DeleteReportCommand(id, dto.Version));
         return NoContent();
     }
 

@@ -7,7 +7,7 @@ using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 
 namespace FieldOps.Modules.Reports.Application.Reports.Commands;
 
-public record EditReportCommand(Guid ReportId, string Note, Address Address) : IMessage;
+public record EditReportCommand(Guid ReportId, int Version, string Note, Address Address) : IMessage;
 
 internal sealed class EditReportCommandHandler(IReportsReadRepository readRepository, IReportsWriteRepository writeRepository, IReportsUnitOfWork unitOfWork) : IMessageHandler<EditReportCommand>
 {
@@ -21,7 +21,7 @@ internal sealed class EditReportCommandHandler(IReportsReadRepository readReposi
         report.ChangeNote(message.Note);
         report.ChangeAddress(message.Address);
 
-        writeRepository.Update(report);
+        writeRepository.Update(report, message.Version);
         await unitOfWork.SaveChangesAsync(ct);
     }
 }

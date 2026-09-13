@@ -12,8 +12,9 @@ internal sealed class ReportsWriteRepository(ReportsDbContext context) : IReport
         context.Reports.Add(report);
     }
 
-    public void Update(Report report)
+    public void Update(Report report, int version)
     {
         context.Reports.Update(report);
+        context.Entry(report).Property(x => x.Version).OriginalValue = version;
     }
 }

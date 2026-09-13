@@ -2,4 +2,4 @@ using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 
 namespace FieldOps.Modules.Reports.Api.DTOs;
 
-public record EditReportCommandDto(string Note, Address Address);
+public record EditReportCommandDto(int Version, string Note, Address Address);

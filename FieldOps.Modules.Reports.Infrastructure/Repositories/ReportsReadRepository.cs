@@ -37,7 +37,7 @@ internal class ReportsReadRepository(ReportsDbContext context) : IReportsReadRep
 
         var fileIds = report.Attachments.Select(a => a.FileId.Value).ToList();
 
-        return new(report.Id, report.JobId, report.CreatorId, report.AssetId, report.Note, report.Address, report.CreatedAt, report.UpdatedAt, fileIds);
+        return new(report.Id, report.Version, report.JobId, report.CreatorId, report.AssetId, report.Note, report.Address, report.CreatedAt, report.UpdatedAt, fileIds);
     }
 
     public Task<Report?> GetByIdAsync(Guid reportId)

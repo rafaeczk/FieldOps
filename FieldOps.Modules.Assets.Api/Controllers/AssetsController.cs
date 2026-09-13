@@ -1,7 +1,6 @@
 using FieldOps.Modules.Assets.Core.DTOs;
 using FieldOps.Modules.Assets.Core.Services;
 using FieldOps.Shared.Infrastructure.Api;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
