@@ -3,9 +3,9 @@ using FieldOps.Modules.Accounts.Core.DTOs;
 using FieldOps.Modules.Accounts.Core.Entities;
 using FieldOps.Modules.Accounts.Core.Exceptions;
 using FieldOps.Modules.Accounts.Core.Repositories;
-using FieldOps.Modules.Accounts.Core.ValueObjects;
 using FieldOps.Shared.Abstractions.Auth;
 using FieldOps.Shared.Abstractions.Kernel.Ids;
+using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 using FieldOps.Shared.Abstractions.Time;
 using Microsoft.AspNetCore.Identity;
 

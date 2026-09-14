@@ -2,13 +2,13 @@
 using FieldOps.Shared.Abstractions.Time;
 using FieldOps.Shared.Infrastructure.Api;
 using FieldOps.Shared.Infrastructure.Auth;
-using FieldOps.Shared.Infrastructure.S3;
 using FieldOps.Shared.Infrastructure.Contexts;
 using FieldOps.Shared.Infrastructure.Errors;
 using FieldOps.Shared.Infrastructure.Events;
 using FieldOps.Shared.Infrastructure.Kernel;
 using FieldOps.Shared.Infrastructure.Messages;
 using FieldOps.Shared.Infrastructure.Modules;
+using FieldOps.Shared.Infrastructure.S3;
 using FieldOps.Shared.Infrastructure.Services;
 using FieldOps.Shared.Infrastructure.Time;
 using MediatR;
@@ -40,6 +40,11 @@ internal static class Extensions
                 null => Context.Empty,
                 not null => new Context(httpContext)
             };
+        });
+
+        services.AddRouting(options =>
+        {
+            options.LowercaseUrls = true; 
         });
 
         services.AddTransient(typeof(IRequestHandler<,>), typeof(MediatRMessageBridge<,>));

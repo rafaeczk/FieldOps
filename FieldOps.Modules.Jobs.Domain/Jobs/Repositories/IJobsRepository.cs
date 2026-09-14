@@ -7,5 +7,5 @@ public interface IJobsRepository
 {
     Task<Job?> GetAsync(JobId id);
     Task AddAsync(Job job);
-    Task UpdateAsync(Job job);
+    Task UpdateAsync(Job job, int version);
 }

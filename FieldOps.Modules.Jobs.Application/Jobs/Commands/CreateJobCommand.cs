@@ -6,6 +6,7 @@ using FieldOps.Modules.Jobs.Domain.Jobs.ValueObjects;
 using FieldOps.Modules.Jobs.Domain.Outbox;
 using FieldOps.Modules.Operators.Contracts;
 using FieldOps.Shared.Abstractions.Contexts;
+using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 using FieldOps.Shared.Abstractions.Messages;
 using FieldOps.Shared.Abstractions.Time;
 

@@ -1,5 +1,5 @@
 ﻿using FieldOps.Modules.Accounts.Core.Entities;
-using FieldOps.Modules.Accounts.Core.ValueObjects;
+using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 using FieldOps.Shared.Abstractions.Time;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;

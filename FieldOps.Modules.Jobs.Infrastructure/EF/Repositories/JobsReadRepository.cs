@@ -1,7 +1,8 @@
 ﻿using FieldOps.Modules.Jobs.Application.Jobs.DTOs;
 using FieldOps.Modules.Jobs.Application.Jobs.Repositories;
+using FieldOps.Modules.Jobs.Application.Jobs.Specifications;
 using FieldOps.Shared.Abstractions.Pagination;
-using FieldOps.Shared.Infrastructure.Pagination;
+using FieldOps.Shared.Infrastructure.Queries;
 using Microsoft.EntityFrameworkCore;
 
 namespace FieldOps.Modules.Jobs.Infrastructure.EF.Repositories;
@@ -10,18 +11,22 @@ internal class JobsReadRepository(JobsDbContext context) : IJobsReadRepository
 {
     private readonly JobsDbContext context = context;
 
-    public async Task<PagedResult<JobListItemDto>> BrowseAsync(PaginationParams pagination)
+    public async Task<PagedResult<JobListItemDto>> BrowseAsync(BrowseJobsSpecification spec)
     {
-        var totalItems = await context.Jobs.CountAsync();
+        var query = SpecificationEvaluator.GetQuery(context.Jobs.AsNoTracking(), spec);
 
-        var jobs = await context.Jobs
-            .AsNoTracking()
-            .OrderByDescending(j => j.CreatedAt)
-            .Paginate(pagination)
+        var totalItems = await SpecificationEvaluator.GetCountQuery(context.Jobs.AsNoTracking(), spec).CountAsync();
+
+        var jobs = await query
             .Select(j => new JobListItemDto(j.Id, j.Title, j.Status.Value, j.Priority.Value, j.Deadline))
             .ToListAsync();
 
-        return new(jobs, totalItems, pagination);
+        return new(jobs, totalItems, spec.PaginationParams!);
+    }
+
+    public Task<bool> ExistsAsync(Guid id, CancellationToken ct = default)
+    {
+        return context.Jobs.AnyAsync(j => j.Id == id, ct);  
     }
 
     public async Task<JobDto?> GetAsync(Guid jobId)
@@ -30,7 +35,7 @@ internal class JobsReadRepository(JobsDbContext context) : IJobsReadRepository
 
         if (job is null) return null;
 
-        return new(job.Id, job.Title, job.Description, job.Status, job.Priority,
+        return new(job.Id, job.Version, job.Title, job.Description, job.Status, job.Priority,
             job.Address, job.Deadline, job.CreatedAt, job.UpdatedAt, [.. job.Assignees.Select(a => a.TechnicianId.Value)]);
     }
 }

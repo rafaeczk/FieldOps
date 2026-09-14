@@ -1,0 +1,31 @@
+﻿using FieldOps.Modules.Files.Contracts;
+using FieldOps.Modules.Reports.Application.Common;
+using FieldOps.Modules.Reports.Application.Reports.Repositories;
+using FieldOps.Modules.Reports.Application.Reports.Services;
+using FieldOps.Modules.Reports.Domain.Outbox;
+using FieldOps.Modules.Reports.Domain.Reports.Exceptions;
+using FieldOps.Shared.Abstractions.Kernel.Ids;
+using FieldOps.Shared.Abstractions.Messages;
+
+namespace FieldOps.Modules.Reports.Application.Reports.Commands;
+
+public record AddReportAttachmentCommand(ReportId ReportId, FileId FileId) : IMessage;
+
+internal sealed class AddReportAttachmentCommandHandler(IReportsReadRepository repository, IOutboxMessagesRepository outboxRepository, IReportsUnitOfWork unitOfWork,
+    IReportEventMapper eventMapper, IFilesModuleApi filesModuleApi) : IMessageHandler<AddReportAttachmentCommand>
+{
+    public async Task HandleAsync(AddReportAttachmentCommand message, CancellationToken ct)
+    {
+        var report = await repository.GetByIdAsync(message.ReportId);
+
+        if (report is null)
+            throw new ReportNotFoundException(message.ReportId);
+
+        if (!await filesModuleApi.GetFileExists(message.FileId, ct))
+            throw new AttachmentDoesNotExistException(message.FileId);
+
+        report.AddAttachment(message.FileId);
+        await outboxRepository.AddAsync([.. eventMapper.Map(report.Events)]);
+        await unitOfWork.SaveChangesAsync(ct);
+    }
+}

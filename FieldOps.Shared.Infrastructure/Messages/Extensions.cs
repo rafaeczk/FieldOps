@@ -48,6 +48,8 @@ public static class Extensions
             }
         }
 
+        services.AddScoped<IMessageDispatcher, MessageDispatcher>();
+
         return services;
     }
 }

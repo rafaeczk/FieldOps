@@ -2,7 +2,7 @@
 
 namespace FieldOps.Modules.Jobs.Domain.Jobs.Exceptions;
 
-internal class InvalidJobStatusException : BaseException
+public class InvalidJobStatusException : BaseException
 {
     public Guid? JobId { get; }
     public string Status { get; }

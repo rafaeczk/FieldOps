@@ -3,19 +3,20 @@ using FieldOps.Modules.Accounts.Core.Services;
 using FieldOps.Modules.Operators.Contracts.Commands;
 using FieldOps.Modules.Technicians.Contracts.Commands;
 using FieldOps.Shared.Abstractions.Contexts;
+using FieldOps.Shared.Abstractions.Messages;
 using FieldOps.Shared.Infrastructure.Api;
 using FieldOps.Shared.Infrastructure.Auth;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FieldOps.Modules.Accounts.Api.Controllers;
 
-internal class AccountController(IIdentityService identityService, IContext context, AuthOptions authOptions, ISender sender) : BaseController
+internal class AccountController(IIdentityService identityService, IContext context, AuthOptions authOptions, IMessageDispatcher messageDispatcher) : BaseController
 {
     private readonly IIdentityService identityService = identityService;
     private readonly IContext context = context;
+    private readonly IMessageDispatcher messageDispatcher = messageDispatcher;
 
     [HttpPost("sign-in")]
     public async Task<ActionResult<SignInResponseDto>> SignIn([FromBody] SignInDto dto)
@@ -93,11 +94,11 @@ internal class AccountController(IIdentityService identityService, IContext cont
 
         if (role == "TECHNICIAN")
         {
-            var technicianId = await sender.Send(new CreateTechnicianCommand(dto.FullName, dto.Email, dto.Password));
+            var technicianId = await messageDispatcher.Send(new CreateTechnicianCommand(dto.FullName, dto.Email, dto.Password));
             return Ok(new { id = technicianId });
         }
 
-        var operatorId = await sender.Send(new CreateOperatorCommand(dto.FullName, dto.Email, dto.Password));
+        var operatorId = await messageDispatcher.Send(new CreateOperatorCommand(dto.FullName, dto.Email, dto.Password));
         return Ok(new { id = operatorId });
     }
 
@@ -114,9 +115,9 @@ internal class AccountController(IIdentityService identityService, IContext cont
             return NotFound();
 
         if (account.Role == "TECHNICIAN")
-            await sender.Send(new DeleteTechnicianByAccountCommand(id));
+            await messageDispatcher.Send(new DeleteTechnicianByAccountCommand(id));
         else if (account.Role == "OPERATOR")
-            await sender.Send(new DeleteOperatorByAccountCommand(id));
+            await messageDispatcher.Send(new DeleteOperatorByAccountCommand(id));
         else
             await identityService.DeleteAccountAsync(id);
 

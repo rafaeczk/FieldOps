@@ -1,5 +1,5 @@
-﻿using FieldOps.Modules.Jobs.Domain.Jobs.ValueObjects;
+﻿using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 
 namespace FieldOps.Modules.Jobs.Application.Jobs.DTOs;
 
-public record JobDto(Guid Id, string Title, string? Description, string Status, string Priority, Address Address, DateTime Deadline, DateTime CreatedAt, DateTime UpdatedAt, List<Guid> Assignees);
+public record JobDto(Guid Id, int Version, string Title, string? Description, string Status, string Priority, Address Address, DateTime Deadline, DateTime CreatedAt, DateTime UpdatedAt, List<Guid> Assignees);

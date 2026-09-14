@@ -1,6 +1,6 @@
 ﻿using FieldOps.Modules.Accounts.Core.Entities;
-using FieldOps.Modules.Accounts.Core.ValueObjects;
 using FieldOps.Shared.Abstractions.Kernel.Ids;
+using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 
 namespace FieldOps.Modules.Accounts.Core.Repositories;
 

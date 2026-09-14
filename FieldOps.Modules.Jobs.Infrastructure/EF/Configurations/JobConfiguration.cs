@@ -1,5 +1,4 @@
 ﻿using FieldOps.Modules.Jobs.Domain.Jobs.Entities;
-using FieldOps.Shared.Abstractions.Kernel.Types;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

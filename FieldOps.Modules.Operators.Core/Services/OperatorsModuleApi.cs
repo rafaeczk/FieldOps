@@ -1,16 +1,16 @@
 ﻿using FieldOps.Modules.Operators.Contracts;
 using FieldOps.Modules.Operators.Core.Features.Queries;
 using FieldOps.Shared.Abstractions.Kernel.Ids;
-using MediatR;
+using FieldOps.Shared.Abstractions.Messages;
 
 namespace FieldOps.Modules.Operators.Core.Services;
 
-internal class OperatorsModuleApi(ISender sender) : IOperatorsModuleApi
+internal class OperatorsModuleApi(IMessageDispatcher messageDispatcher) : IOperatorsModuleApi
 {
-    private readonly ISender sender = sender;
+    private readonly IMessageDispatcher messageDispatcher = messageDispatcher;
 
     public Task<OperatorId?> GetOperatorIdByAccountId(AccountId accountId)
     {
-        return sender.Send(new GetOperatorIdByAccountIdQuery(accountId));
+        return messageDispatcher.Send(new GetOperatorIdByAccountIdQuery(accountId));
     }
 }

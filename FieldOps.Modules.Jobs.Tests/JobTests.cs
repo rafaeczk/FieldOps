@@ -2,6 +2,7 @@ using FieldOps.Modules.Jobs.Domain.Jobs.Entities;
 using FieldOps.Modules.Jobs.Domain.Jobs.Exceptions;
 using FieldOps.Modules.Jobs.Domain.Jobs.ValueObjects;
 using FieldOps.Shared.Abstractions.Kernel.Ids;
+using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 
 namespace FieldOps.Modules.Jobs.Tests;
 
