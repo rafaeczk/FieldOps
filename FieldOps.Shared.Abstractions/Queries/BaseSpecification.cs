@@ -9,8 +9,7 @@ public abstract class BaseSpecification<T> : ISpecification<T>
     public List<Expression<Func<T, object>>> Includes { get; } = [];
     public Expression<Func<T, object>>? OrderBy { get; private set; }
     public Expression<Func<T, object>>? OrderByDescending { get; private set; }
-    public int Take { get; private set; }
-    public int Skip { get; private set; }
+    public PaginationParams? PaginationParams { get; private set; }
     public bool IsPagingEnabled { get; private set; }
 
     protected void AddCriteria(Expression<Func<T, bool>> criteria)
@@ -35,8 +34,7 @@ public abstract class BaseSpecification<T> : ISpecification<T>
 
     protected void ApplyPaging(PaginationParams pagination)
     {
-        Skip = (pagination.PageNumber - 1) * pagination.PageSize;
-        Take = pagination.PageSize;
+        PaginationParams = pagination;
         IsPagingEnabled = true;
     }
 

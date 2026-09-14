@@ -20,7 +20,19 @@ public static class SpecificationEvaluator
             query = query.OrderByDescending(spec.OrderByDescending);
 
         if (spec.IsPagingEnabled)
-            query = query.Skip(spec.Skip).Take(spec.Take);
+            query = query
+                .Skip((spec.PaginationParams!.PageNumber - 1) * spec.PaginationParams!.PageSize)
+                .Take(spec.PaginationParams!.PageSize);
+
+        return query;
+    }
+
+    public static IQueryable<T> GetCountQuery<T>(IQueryable<T> inputQuery, ISpecification<T> spec) where T : class
+    {
+        var query = inputQuery;
+
+        if (spec.Criteria != null)
+            query = query.Where(spec.Criteria);
 
         return query;
     }

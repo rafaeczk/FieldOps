@@ -23,6 +23,6 @@ internal sealed class BrowseReportsQueryHandler(IReportsReadRepository repositor
             message.JobId,
             message.Pagination);
 
-        return await repository.BrowseAsync(message.Pagination, spec);
+        return await repository.BrowseAsync(spec);
     }
 }

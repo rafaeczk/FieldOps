@@ -12,9 +12,9 @@ internal class ReportsReadRepository(ReportsDbContext context) : IReportsReadRep
 {
     private readonly ReportsDbContext context = context;
 
-    public async Task<PagedResult<ReportListItemDto>> BrowseAsync(PaginationParams pagination, BrowseReportsSpecification spec)
+    public async Task<PagedResult<ReportListItemDto>> BrowseAsync(BrowseReportsSpecification spec)
     {
-        var query = SpecificationEvaluator.GetQuery(context.Reports.AsQueryable(), spec);
+        var query = SpecificationEvaluator.GetQuery(context.Reports.AsNoTracking(), spec);
 
         var totalItems = await query.CountAsync();
 
@@ -22,12 +22,12 @@ internal class ReportsReadRepository(ReportsDbContext context) : IReportsReadRep
             .Select(r => new ReportListItemDto(r.Id, r.JobId, r.CreatorId, r.AssetId, r.Address.City, r.CreatedAt, r.Attachments.Count))
             .ToListAsync();
 
-        return new(items, totalItems, pagination);
+        return new(items, totalItems, spec.PaginationParams!);
     }
 
     public async Task<ReportDetailsDto?> GetAsync(GetReportSpecification spec)
     {
-        var report = await SpecificationEvaluator.GetQuery(context.Reports.AsQueryable(), spec).SingleOrDefaultAsync();
+        var report = await SpecificationEvaluator.GetQuery(context.Reports.AsNoTracking(), spec).SingleOrDefaultAsync();
 
         if (report is null) return null;
 
