@@ -9,6 +9,7 @@ public class JsonWebToken
     public string Role { get; set; } = null!;
     public string Email { get; set; } = null!;
     public string FullName { get; set; } = null!;
+    public bool MustChangePassword { get; set; }
     public DateTime CreatedAt { get; set; }
     public IDictionary<string, IEnumerable<string>> Claims { get; set; } = null!;
 }
