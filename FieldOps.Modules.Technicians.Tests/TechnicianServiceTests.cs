@@ -1,11 +1,11 @@
 using FieldOps.Modules.Accounts.Contracts;
+using FieldOps.Modules.Technicians.Contracts.Events;
 using FieldOps.Modules.Technicians.Core.DTOs;
 using FieldOps.Modules.Technicians.Core.Entities;
-using FieldOps.Modules.Technicians.Core.Events;
 using FieldOps.Modules.Technicians.Core.Exceptions;
 using FieldOps.Modules.Technicians.Core.Repositories;
 using FieldOps.Modules.Technicians.Core.Services;
-using FieldOps.Shared.Abstractions.Messaging;
+using FieldOps.Shared.Abstractions.Kernel.Ids;
 using FieldOps.Shared.Abstractions.Time;
 using MediatR;
 using Moq;
@@ -15,20 +15,20 @@ namespace FieldOps.Modules.Technicians.Tests;
 public class TechnicianServiceTests
 {
     private readonly Mock<ITechnicianRepository> _repositoryMock = new();
+    private readonly Mock<IOutboxMessagesRepository> _outboxRepositoryMock = new();
     private readonly Mock<ITechnicianUnitOfWork> _unitOfWorkMock = new();
-    private readonly Mock<IMessageClient> _messageClientMock = new();
     private readonly Mock<IClock> _clockMock = new();
-    private readonly Mock<ISender> _senderMock = new();
+    private readonly Mock<IAccountsModuleApi> _accountsModuleApiMock = new();
     private readonly TechnicianService _sut;
 
     public TechnicianServiceTests()
     {
         _sut = new TechnicianService(
             _repositoryMock.Object,
+            _outboxRepositoryMock.Object,
             _unitOfWorkMock.Object,
-            _messageClientMock.Object,
             _clockMock.Object,
-            _senderMock.Object);
+            _accountsModuleApiMock.Object);
     }
 
     [Fact]
@@ -38,8 +38,8 @@ public class TechnicianServiceTests
         var fixedTime = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         _clockMock.Setup(x => x.UtcNow()).Returns(fixedTime);
-        _senderMock
-            .Setup(x => x.Send(It.IsAny<CheckAccountEmailTakenQuery>(), It.IsAny<CancellationToken>()))
+        _accountsModuleApiMock
+            .Setup(x => x.CheckAccountEmailIsTaken(dto.RequestedEmail))
             .ReturnsAsync(false);
 
         var result = await _sut.CreateAsync(dto);
@@ -48,7 +48,7 @@ public class TechnicianServiceTests
         _repositoryMock.Verify(x => x.CreateAsync(It.Is<Technician>(t =>
             t.FullName == dto.FullName)), Times.Once);
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(), Times.Once);
-        _messageClientMock.Verify(x => x.PublishAsync(It.IsAny<TechnicianCreatedEvent>()), Times.Once);
+        _outboxRepositoryMock.Verify(x => x.CreateAsync(It.IsAny<TechnicianCreated>()), Times.Once);
     }
 
     [Fact]
@@ -56,8 +56,8 @@ public class TechnicianServiceTests
     {
         var dto = new CreateTechnicianDto("John Smith", "existing@test.com", "password123");
 
-        _senderMock
-            .Setup(x => x.Send(It.IsAny<CheckAccountEmailTakenQuery>(), It.IsAny<CancellationToken>()))
+        _accountsModuleApiMock
+            .Setup(x => x.CheckAccountEmailIsTaken(dto.RequestedEmail))
             .ReturnsAsync(true);
 
         await Assert.ThrowsAsync<EmailInUseException>(() => _sut.CreateAsync(dto));
@@ -77,14 +77,14 @@ public class TechnicianServiceTests
 
         Assert.NotNull(result);
         Assert.Equal(technician.FullName, result.FullName);
-        Assert.Equal(technician.Id, result.Id);
+        Assert.Equal(technician.Id.Value, result.Id);
     }
 
     [Fact]
     public async Task GetByAsync_NonExistingTechnician_ReturnsNull()
     {
         _repositoryMock
-            .Setup(x => x.GetAsync(It.IsAny<Guid>()))
+            .Setup(x => x.GetAsync(It.IsAny<TechnicianId>()))
             .ReturnsAsync((Technician?)null);
 
         var result = await _sut.GetByAsync(Guid.NewGuid());
@@ -124,14 +124,14 @@ public class TechnicianServiceTests
 
         _repositoryMock.Verify(x => x.DeleteAsync(technician), Times.Once);
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(), Times.Once);
-        _messageClientMock.Verify(x => x.PublishAsync(It.IsAny<TechnicianDeletedEvent>()), Times.Once);
+        _outboxRepositoryMock.Verify(x => x.CreateAsync(It.IsAny<TechnicianDeleted>()), Times.Once);
     }
 
     [Fact]
     public async Task DeleteAsync_NonExistingTechnician_ThrowsTechnicianNotFoundException()
     {
         _repositoryMock
-            .Setup(x => x.GetAsync(It.IsAny<Guid>()))
+            .Setup(x => x.GetAsync(It.IsAny<TechnicianId>()))
             .ReturnsAsync((Technician?)null);
 
         await Assert.ThrowsAsync<TechnicianNotFoundException>(() => _sut.DeleteAsync(Guid.NewGuid()));

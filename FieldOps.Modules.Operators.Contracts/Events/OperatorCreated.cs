@@ -1,4 +1,4 @@
-﻿using MediatR;
+﻿using FieldOps.Shared.Abstractions.Events;
 
 namespace FieldOps.Modules.Operators.Contracts.Events;
 
@@ -8,4 +8,4 @@ public record OperatorCreated(
     DateTime CreatedAt,
     Guid RequestedAccountId,
     string RequestedEmail,
-    string RequestedPassword) : INotification;
+    string RequestedPassword) : IIntegrationEvent;

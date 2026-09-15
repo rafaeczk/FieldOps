@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\FieldOps.Modules.Reports.Domain\FieldOps.Modules.Reports.Domain.csproj" />
+		<ProjectReference Include="..\FieldOps.Modules.Technicians.Contracts\FieldOps.Modules.Technicians.Contracts.csproj" />
+		<ProjectReference Include="..\FieldOps.Modules.Files.Contracts\FieldOps.Modules.Files.Contracts.csproj" />
+		<ProjectReference Include="..\FieldOps.Modules.Assets.Contracts\FieldOps.Modules.Assets.Contracts.csproj" />
+		<ProjectReference Include="..\FieldOps.Modules.Reports.Contracts\FieldOps.Modules.Reports.Contracts.csproj" />
+		<ProjectReference Include="..\FieldOps.Modules.Jobs.Contracts\FieldOps.Modules.Jobs.Contracts.csproj" />
+
+
+	</ItemGroup>
+
+</Project>

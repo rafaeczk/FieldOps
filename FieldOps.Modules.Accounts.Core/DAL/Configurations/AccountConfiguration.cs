@@ -1,5 +1,5 @@
 ﻿using FieldOps.Modules.Accounts.Core.Entities;
-using FieldOps.Modules.Accounts.Core.ValueObjects;
+using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,6 +10,7 @@ internal class AccountConfiguration : IEntityTypeConfiguration<Account>
     public void Configure(EntityTypeBuilder<Account> builder)
     {
         builder.HasKey(a => a.Id);
+        builder.Property(a => a.Id).HasConversion(x => x.Value, x => new(x));
 
         builder.HasIndex(a => a.Email).IsUnique();
 

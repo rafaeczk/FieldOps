@@ -10,15 +10,18 @@ internal class ExceptionToResponseMapper : IExceptionToResponseMapper
         {
             BaseException e => new ErrorResponse(
                 new ErrorList(
-                    new Error(e.Message,
-                    null)),
-                HttpStatusCode.BadRequest),
+                    new Error(e.Message, null)),
+                    e.StatusCode),
+
+            ConcurrencyException e => new ErrorResponse(
+                new ErrorList(
+                    new Error("Entity version conflict.", null)),
+                    e.StatusCode),
 
             _ => new ErrorResponse(
                 new ErrorList(
-                    new Error("Internal server error.",
-                    null)),
-                HttpStatusCode.InternalServerError)
+                    new Error("Internal server error.", null)),
+                    HttpStatusCode.InternalServerError)
         };
 
     private record Error(string Message, string? Path);

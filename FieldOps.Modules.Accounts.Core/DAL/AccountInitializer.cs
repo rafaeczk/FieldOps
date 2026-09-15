@@ -1,5 +1,5 @@
 ﻿using FieldOps.Modules.Accounts.Core.Entities;
-using FieldOps.Modules.Accounts.Core.ValueObjects;
+using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 using FieldOps.Shared.Abstractions.Time;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -51,7 +51,7 @@ internal class AccountInitializer(
         dbContext.Accounts.Add(admin);
         await dbContext.SaveChangesAsync(ct);
 
-        logger.LogInformation("The admin has been created {email} {password}", email, password);
+        logger.LogInformation("The admin has been created {email}", email);
     }
 
     public Task StopAsync(CancellationToken ct) => Task.CompletedTask;

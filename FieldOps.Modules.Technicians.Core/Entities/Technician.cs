@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using FieldOps.Shared.Abstractions.Kernel.Ids;
 
 namespace FieldOps.Modules.Technicians.Core.Entities
 {
     internal class Technician
     {
-        public Guid Id { get; private set; }
+        public TechnicianId Id { get; private set; } = null!;
         public Guid AccountId { get; private set; }
         public string FullName { get; private set; } = null!;
         public DateTime CreatedAt { get; private set; }

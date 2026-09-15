@@ -1,12 +1,12 @@
 ﻿using FieldOps.Modules.Accounts.Core.Services;
 using FieldOps.Modules.Technicians.Contracts.Events;
-using MediatR;
+using FieldOps.Shared.Abstractions.Events;
 
 namespace FieldOps.Modules.Accounts.Core.Features.Events;
 
-internal class TechnicianDeletedHandler(IIdentityService identity) : INotificationHandler<TechnicianDeleted>
+internal class TechnicianDeletedHandler(IIdentityService identity) : IIntegrationEventHandler<TechnicianDeleted>
 {
-    public async Task Handle(TechnicianDeleted @event, CancellationToken cancellationToken)
+    public async Task HandleAsync(TechnicianDeleted @event, CancellationToken cancellationToken)
     {
         await identity.DeleteAccountAsync(@event.AccountId);
     }

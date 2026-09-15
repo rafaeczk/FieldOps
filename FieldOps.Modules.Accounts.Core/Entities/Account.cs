@@ -1,10 +1,11 @@
-﻿using FieldOps.Modules.Accounts.Core.ValueObjects;
+﻿using FieldOps.Shared.Abstractions.Kernel.Ids;
+using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 
 namespace FieldOps.Modules.Accounts.Core.Entities;
 
 internal class Account
 {
-    public Guid Id { get; private set; }
+    public AccountId Id { get; private set; } = null!;
     public string Email { get; private set; } = null!;
     public string Hash { get; private set; } = null!;
     public AccountRole Role { get; private set; } = null!;
@@ -36,5 +37,17 @@ internal class Account
             CreatedAt = createdAt,
             UpdatedAt = createdAt
         };
+    }
+
+    public void UpdateProfile(string email, DateTime updatedAt)
+    {
+        Email = email;
+        UpdatedAt = updatedAt;
+    }
+
+    public void ChangePassword(string hash, DateTime updatedAt)
+    {
+        Hash = hash;
+        UpdatedAt = updatedAt;
     }
 }

@@ -26,7 +26,6 @@ namespace FieldOps.Modules.Operators.Core.DAL.Migrations
             modelBuilder.Entity("FieldOps.Modules.Operators.Core.Entities.Operator", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("AccountId")

@@ -1,4 +1,4 @@
-﻿using FieldOps.Shared.Infrastructure.Events;
+﻿using FieldOps.Shared.Abstractions.Events;
 
 namespace FieldOps.Modules.Operators.Core.Entities;
 

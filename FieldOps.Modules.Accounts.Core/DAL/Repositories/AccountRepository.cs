@@ -1,5 +1,7 @@
 ﻿using FieldOps.Modules.Accounts.Core.Entities;
 using FieldOps.Modules.Accounts.Core.Repositories;
+using FieldOps.Shared.Abstractions.Kernel.Ids;
+using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace FieldOps.Modules.Accounts.Core.DAL.Repositories;
@@ -18,7 +20,7 @@ internal class AccountRepository(AccountDbContext context) : IAccountRepository
         context.Accounts.Remove(account);
     }
 
-    public async Task<Account?> GetAsync(Guid id)
+    public async Task<Account?> GetAsync(AccountId id)
     {
         return await context.Accounts.SingleOrDefaultAsync(a => a.Id == id);
     }
@@ -26,6 +28,21 @@ internal class AccountRepository(AccountDbContext context) : IAccountRepository
     public async Task<Account?> GetAsync(string email)
     {
         return await context.Accounts.SingleOrDefaultAsync(a => a.Email == email);
+    }
+
+    public async Task<IReadOnlyList<Account>> GetAllAsync()
+    {
+        return await context.Accounts
+            .OrderBy(a => a.Email)
+            .ToListAsync();
+    }
+
+    public async Task<IReadOnlyList<Account>> GetByRoleAsync(AccountRole role)
+    {
+        return await context.Accounts
+            .Where(a => a.Role == role)
+            .OrderBy(a => a.Email)
+            .ToListAsync();
     }
 
     public async Task UpdateAsync(Account account)
