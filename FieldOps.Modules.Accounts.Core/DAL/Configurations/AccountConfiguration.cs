@@ -16,6 +16,8 @@ internal class AccountConfiguration : IEntityTypeConfiguration<Account>
 
         builder.Property(a => a.Hash).IsRequired();
 
+        builder.Property(a => a.FullName).HasMaxLength(255).IsRequired();
+
         builder.Property(a => a.Role)
             .HasConversion(
                 role => role.Value,
@@ -23,6 +25,8 @@ internal class AccountConfiguration : IEntityTypeConfiguration<Account>
             )
             .HasColumnName("Role")
             .IsRequired();
+
+        builder.Property(a => a.MustChangePassword).HasDefaultValue(true);
 
         builder.Property(a => a.CreatedAt).IsRequired();
 
