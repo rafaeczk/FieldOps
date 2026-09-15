@@ -1,0 +1,16 @@
+**/.git
+**/.vs
+**/.vscode
+**/.idea
+**/bin
+**/obj
+**/node_modules
+**/.github
+**/.gitignore
+**/docker-compose*.yml
+**/Dockerfile
+**/.dockerignore
+**/README.md
+**/*.md
+**/*.designer.cs
+**/appsettings.Development.json
