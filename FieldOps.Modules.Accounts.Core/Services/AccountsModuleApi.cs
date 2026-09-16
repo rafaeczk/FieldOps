@@ -11,4 +11,9 @@ internal class AccountsModuleApi(IMessageDispatcher messageDispatcher) : IAccoun
     {
         return await messageDispatcher.Send(new CheckAccountEmailIsTakenQuery(email));
     }
+
+    public async Task<string?> GetEmailByAccountId(Guid accountId)
+    {
+        return await messageDispatcher.Send(new GetEmailByAccountIdQuery(accountId));
+    }
 }
