@@ -48,7 +48,7 @@ public class TechnicianServiceTests
         _repositoryMock.Verify(x => x.CreateAsync(It.Is<Technician>(t =>
             t.FullName == dto.FullName)), Times.Once);
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(), Times.Once);
-        _outboxRepositoryMock.Verify(x => x.CreateAsync(It.IsAny<TechnicianCreated>()), Times.Once);
+        _outboxRepositoryMock.Verify(x => x.AddAsync(It.IsAny<TechnicianCreated>()), Times.Once);
     }
 
     [Fact]
@@ -124,7 +124,7 @@ public class TechnicianServiceTests
 
         _repositoryMock.Verify(x => x.DeleteAsync(technician), Times.Once);
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(), Times.Once);
-        _outboxRepositoryMock.Verify(x => x.CreateAsync(It.IsAny<TechnicianDeleted>()), Times.Once);
+        _outboxRepositoryMock.Verify(x => x.AddAsync(It.IsAny<TechnicianDeleted>()), Times.Once);
     }
 
     [Fact]
