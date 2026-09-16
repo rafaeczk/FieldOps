@@ -9,6 +9,6 @@ internal class TechnicianCreatedHandler(IIdentityService identity) : IIntegratio
 {
     public async Task HandleAsync(TechnicianCreated @event, CancellationToken ct)
     {
-        await identity.CreateAccountAsync(new(@event.RequestedAccountId, @event.RequestedEmail, @event.RequestedPassword, new(AccountRole.Technician)));
+        await identity.CreateAccountAsync(new(@event.RequestedAccountId, @event.RequestedEmail, @event.FullName, @event.RequestedPassword, new(AccountRole.Technician)));
     }
 }
