@@ -19,8 +19,8 @@ public interface IIdentityService
 
 public record SignInCommand(string Email, string Password);
 
-public record CreateAccountCommand(AccountId Id, string Email, string Password, AccountRole Role);
+public record CreateAccountCommand(AccountId Id, string Email, string FullName, string Password, AccountRole Role);
 
-public record UpdateProfileCommand(string Email);
+public record UpdateProfileCommand(string Email, string FullName);
 
-public record ChangePasswordCommand(string CurrentPassword, string NewPassword);
+public record ChangePasswordCommand(string? CurrentPassword, string NewPassword);

@@ -33,19 +33,19 @@ internal class IdentityService(
         if (account is null)
             return null;
 
-        return new(account.Id, account.Email, account.Role, account.CreatedAt);
+        return new(account.Id, account.Email, account.FullName, account.Role, account.CreatedAt, account.MustChangePassword);
     }
 
     public async Task<IReadOnlyList<AccountDto>> GetAllAsync()
     {
         var accounts = await accountRepository.GetAllAsync();
-        return [.. accounts.Select(a => new AccountDto(a.Id, a.Email, a.Role, a.CreatedAt))];
+        return [.. accounts.Select(a => new AccountDto(a.Id, a.Email, a.FullName, a.Role, a.CreatedAt, a.MustChangePassword))];
     }
 
     public async Task<IReadOnlyList<AccountDto>> GetTechniciansAsync()
     {
         var accounts = await accountRepository.GetByRoleAsync(new AccountRole(AccountRole.Technician));
-        return [.. accounts.Select(a => new AccountDto(a.Id, a.Email, a.Role, a.CreatedAt))];
+        return [.. accounts.Select(a => new AccountDto(a.Id, a.Email, a.FullName, a.Role, a.CreatedAt, a.MustChangePassword))];
     }
 
     public async Task<JsonWebToken> SignInAsync(SignInCommand command)
@@ -61,7 +61,9 @@ internal class IdentityService(
 
         var jwt = authManager.CreateToken(account.Id.Value.ToString(), account.Role);
         jwt.Email = account.Email;
+        jwt.FullName = account.FullName;
         jwt.CreatedAt = account.CreatedAt;
+        jwt.MustChangePassword = account.MustChangePassword;
 
         return jwt;
     }
@@ -77,10 +79,10 @@ internal class IdentityService(
 
         var hash = passwordHasher.HashPassword(default!, command.Password);
 
-        var account = Account.Create(command.Id, email, hash, command.Role, clock.UtcNow());
+        var account = Account.Create(command.Id, email, command.FullName, hash, command.Role, clock.UtcNow());
 
         await accountRepository.CreateAsync(account);
-        await outboxRepository.CreateAsync(new AccountCreated(account.Id, account.Email, account.Role));
+        await outboxRepository.AddAsync(new AccountCreated(account.Id, account.Email, account.Role));
 
         await unitOfWork.SaveChangesAsync();
     }
@@ -112,7 +114,7 @@ internal class IdentityService(
                 throw new EmailInUseException();
         }
 
-        account.UpdateProfile(email, clock.UtcNow());
+        account.UpdateProfile(email, command.FullName, clock.UtcNow());
 
         try
         {
@@ -123,7 +125,7 @@ internal class IdentityService(
             throw new EmailInUseException();
         }
 
-        return new AccountDto(account.Id, account.Email, account.Role, account.CreatedAt);
+        return new AccountDto(account.Id, account.Email, account.FullName, account.Role, account.CreatedAt, account.MustChangePassword);
     }
 
     public async Task ChangePasswordAsync(AccountId id, ChangePasswordCommand command)
@@ -139,8 +141,14 @@ internal class IdentityService(
         if (account is null)
             throw new AccountNotFoundException();
 
-        if (passwordHasher.VerifyHashedPassword(default!, account.Hash, command.CurrentPassword) == PasswordVerificationResult.Failed)
-            throw new InvalidCredentialsException();
+        if (!account.MustChangePassword)
+        {
+            if (string.IsNullOrEmpty(command.CurrentPassword))
+                throw new InvalidPasswordException("Current password is required");
+
+            if (passwordHasher.VerifyHashedPassword(default!, account.Hash, command.CurrentPassword) == PasswordVerificationResult.Failed)
+                throw new InvalidCredentialsException();
+        }
 
         var hash = passwordHasher.HashPassword(default!, command.NewPassword);
         account.ChangePassword(hash, clock.UtcNow());

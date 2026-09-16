@@ -1,4 +1,4 @@
-﻿using FieldOps.Modules.Accounts.Core.DTOs;
+using FieldOps.Modules.Accounts.Core.DTOs;
 using FieldOps.Modules.Accounts.Core.Services;
 using FieldOps.Modules.Operators.Contracts.Commands;
 using FieldOps.Modules.Technicians.Contracts.Commands;
@@ -10,13 +10,21 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
+using FieldOps.Modules.Technicians.Contracts;
+
 namespace FieldOps.Modules.Accounts.Api.Controllers;
 
-internal class AccountController(IIdentityService identityService, IContext context, AuthOptions authOptions, IMessageDispatcher messageDispatcher) : BaseController
+internal class AccountController(
+    IIdentityService identityService,
+    IContext context,
+    AuthOptions authOptions,
+    IMessageDispatcher messageDispatcher,
+    ITechnicianModuleApi technicianModuleApi) : BaseController
 {
     private readonly IIdentityService identityService = identityService;
     private readonly IContext context = context;
     private readonly IMessageDispatcher messageDispatcher = messageDispatcher;
+    private readonly ITechnicianModuleApi technicianModuleApi = technicianModuleApi;
 
     [HttpPost("sign-in")]
     public async Task<ActionResult<SignInResponseDto>> SignIn([FromBody] SignInDto dto)
@@ -33,9 +41,16 @@ internal class AccountController(IIdentityService identityService, IContext cont
 
         Response.Cookies.Append(authOptions.Challenge, jwt.AccessToken, cookieOptions);
 
+        Guid? technicianId = null;
+        if (jwt.Role == "TECHNICIAN")
+        {
+            var tech = await technicianModuleApi.GetTechnicianIdByAccountId(Guid.Parse(jwt.Id));
+            technicianId = tech?.Value;
+        }
+
         var response = new SignInResponseDto(
             jwt.AccessToken,
-            new SignInUserDto(Guid.Parse(jwt.Id), jwt.Email, jwt.FullName, jwt.Role, jwt.CreatedAt));
+            new SignInUserDto(Guid.Parse(jwt.Id), jwt.Email, jwt.FullName, jwt.Role, jwt.CreatedAt, jwt.MustChangePassword, technicianId));
 
         return Ok(response);
     }
@@ -60,7 +75,7 @@ internal class AccountController(IIdentityService identityService, IContext cont
     {
         var result = await identityService.UpdateProfileAsync(
             context.Identity.Id,
-            new UpdateProfileCommand(dto.Email));
+            new UpdateProfileCommand(dto.Email, dto.FullName));
 
         return Ok(result);
     }
