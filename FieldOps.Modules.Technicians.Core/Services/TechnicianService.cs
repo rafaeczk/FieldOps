@@ -21,7 +21,14 @@ internal class TechnicianService(ITechnicianRepository repository, IOutboxMessag
     public async Task<IReadOnlyList<TechnicianDto>> BrowseAsync()
     {
         var technicians = await repository.BrowseAsync();
-        return [.. technicians.Select(Map<TechnicianDto>)];
+        var dtos = new List<TechnicianDto>();
+        foreach (var technician in technicians)
+        {
+            var dto = Map<TechnicianDto>(technician);
+            dto = dto with { Email = await accountsModuleApi.GetEmailByAccountId(technician.AccountId) ?? string.Empty };
+            dtos.Add(dto);
+        }
+        return dtos;
     }
 
     public async Task<Guid> CreateAsync(CreateTechnicianDto dto)
@@ -36,7 +43,7 @@ internal class TechnicianService(ITechnicianRepository repository, IOutboxMessag
 
         await repository.CreateAsync(technician);
 
-        await outboxRepository.CreateAsync(new TechnicianCreated(
+        await outboxRepository.AddAsync(new TechnicianCreated(
             technician.Id,
             technician.FullName,
             technician.CreatedAt,
@@ -58,7 +65,7 @@ internal class TechnicianService(ITechnicianRepository repository, IOutboxMessag
 
         await repository.DeleteAsync(technician);
 
-        await outboxRepository.CreateAsync(new TechnicianDeleted(technician.AccountId));
+        await outboxRepository.AddAsync(new TechnicianDeleted(technician.AccountId));
 
         await unitOfWork.SaveChangesAsync();
     }
@@ -72,7 +79,7 @@ internal class TechnicianService(ITechnicianRepository repository, IOutboxMessag
 
         await repository.DeleteAsync(technician);
 
-        await outboxRepository.CreateAsync(new TechnicianDeleted(technician.AccountId));
+        await outboxRepository.AddAsync(new TechnicianDeleted(technician.AccountId));
 
         await unitOfWork.SaveChangesAsync();
     }
@@ -86,6 +93,7 @@ internal class TechnicianService(ITechnicianRepository repository, IOutboxMessag
         }
 
         var dto = Map<TechnicianDto>(technician);
+        dto = dto with { Email = await accountsModuleApi.GetEmailByAccountId(technician.AccountId) ?? string.Empty };
 
         return dto;
     }

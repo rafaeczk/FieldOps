@@ -9,6 +9,6 @@ internal class OperatorCreatedHandler(IIdentityService identity) : IIntegrationE
 {
     public async Task HandleAsync(OperatorCreated @event, CancellationToken ct)
     {
-        await identity.CreateAccountAsync(new(@event.RequestedAccountId, @event.RequestedEmail, @event.RequestedPassword, new(AccountRole.Operator)));
+        await identity.CreateAccountAsync(new(@event.RequestedAccountId, @event.RequestedEmail, @event.FullName, @event.RequestedPassword, new(AccountRole.Operator)));
     }
 }

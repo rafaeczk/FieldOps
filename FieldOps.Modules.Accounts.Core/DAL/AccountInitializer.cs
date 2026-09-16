@@ -1,7 +1,6 @@
 ﻿using FieldOps.Modules.Accounts.Core.Entities;
 using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 using FieldOps.Shared.Abstractions.Time;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,22 +11,17 @@ namespace FieldOps.Modules.Accounts.Core.DAL;
 
 internal class AccountInitializer(
     IServiceScopeFactory scopeFactory,
-    IWebHostEnvironment env,
     ILogger<AccountInitializer> logger,
     IPasswordHasher<Account> hasher,
     IClock clock) : IHostedService
 {
     private readonly IServiceScopeFactory scopeFactory = scopeFactory;
-    private readonly IWebHostEnvironment env = env;
     private readonly ILogger<AccountInitializer> logger = logger;
     private readonly IPasswordHasher<Account> hasher = hasher;
     private readonly IClock clock = clock;
 
     public async Task StartAsync(CancellationToken ct)
     {
-        if (!env.IsDevelopment())
-            return;
-
         using var scope = scopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<AccountDbContext>();
 
@@ -44,6 +38,7 @@ internal class AccountInitializer(
 
         var admin = Account.Create(
             email,
+            "Administrator",
             hasher.HashPassword(default!, password),
             adminRole,
             clock.UtcNow());

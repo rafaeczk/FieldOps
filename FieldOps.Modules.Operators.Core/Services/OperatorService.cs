@@ -30,7 +30,7 @@ internal class OperatorService(IOperatorRepository repository, IOutboxMessagesRe
 
         await repository.CreateAsync(@operator);
 
-        await outboxRepository.CreateAsync(new OperatorCreated(
+        await outboxRepository.AddAsync(new OperatorCreated(
             @operator.Id,
             @operator.FullName,
             @operator.CreatedAt,
@@ -69,7 +69,7 @@ internal class OperatorService(IOperatorRepository repository, IOutboxMessagesRe
             throw new OperatorNotFoundException(id);
 
         await repository.DeleteAsync(@operator);
-        await outboxRepository.CreateAsync(new OperatorDeleted(@operator.AccountId));
+        await outboxRepository.AddAsync(new OperatorDeleted(@operator.AccountId));
 
         await unitOfWork.SaveChangesAsync();
     }
@@ -82,7 +82,7 @@ internal class OperatorService(IOperatorRepository repository, IOutboxMessagesRe
             return;
 
         await repository.DeleteAsync(@operator);
-        await outboxRepository.CreateAsync(new OperatorDeleted(@operator.AccountId));
+        await outboxRepository.AddAsync(new OperatorDeleted(@operator.AccountId));
 
         await unitOfWork.SaveChangesAsync();
     }

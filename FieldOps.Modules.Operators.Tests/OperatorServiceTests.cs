@@ -47,7 +47,7 @@ public class OperatorServiceTests
         _repositoryMock.Verify(x => x.CreateAsync(It.Is<Operator>(o =>
             o.FullName == dto.FullName)), Times.Once);
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(), Times.Once);
-        _outboxRepositoryMock.Verify(x => x.CreateAsync(It.IsAny<OperatorCreated>()), Times.Once);
+        _outboxRepositoryMock.Verify(x => x.AddAsync(It.IsAny<OperatorCreated>()), Times.Once);
     }
 
     [Fact]
@@ -123,7 +123,7 @@ public class OperatorServiceTests
 
         _repositoryMock.Verify(x => x.DeleteAsync(@operator), Times.Once);
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(), Times.Once);
-        _outboxRepositoryMock.Verify(x => x.CreateAsync(It.IsAny<OperatorDeleted>()), Times.Once);
+        _outboxRepositoryMock.Verify(x => x.AddAsync(It.IsAny<OperatorDeleted>()), Times.Once);
     }
 
     [Fact]
