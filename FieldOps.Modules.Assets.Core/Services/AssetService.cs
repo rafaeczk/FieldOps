@@ -1,4 +1,4 @@
-﻿using FieldOps.Modules.Assets.Core.DTOs;
+using FieldOps.Modules.Assets.Core.DTOs;
 using FieldOps.Modules.Assets.Core.Entities;
 using FieldOps.Modules.Assets.Core.Exceptions;
 using FieldOps.Modules.Assets.Core.Repositories;
@@ -17,7 +17,12 @@ internal class AssetService(IAssetRepository repository, IAssetUnitOfWork unitOf
     {
         var createdAt = clock.UtcNow();
 
-        var asset = Asset.Create(dto.Name, dto.SerialNumber, dto.Model, dto.Manufacturer, dto.PurchaseDate, dto.WarrantyExpires, createdAt);
+        var asset = Asset.Create(dto.Name, dto.SerialNumber, dto.Model, dto.Manufacturer, dto.PurchaseDate, dto.WarrantyExpires, dto.LastServiceDate, createdAt);
+
+        if (Enum.TryParse<AssetStatus>(dto.Status, true, out var status))
+        {
+            asset.Status = status;
+        }
 
         await repository.CreateAsync(asset);
         await unitOfWork.SaveChangesAsync();
@@ -36,7 +41,7 @@ internal class AssetService(IAssetRepository repository, IAssetUnitOfWork unitOf
     public async Task<IReadOnlyList<AssetDto>> BrowseAsync()
     {
         var list = await repository.BrowseAsync();
-        return list.Select(a => new AssetDto(a.Id, a.Name, a.Manufacturer, a.SerialNumber)).ToList();
+        return list.Select(a => new AssetDto(a.Id, a.Name, a.Manufacturer, a.SerialNumber, a.Status.ToString())).ToList();
     }
 
     public async Task UpdateAsync(Guid id, EditAssetDto dto)
@@ -45,7 +50,12 @@ internal class AssetService(IAssetRepository repository, IAssetUnitOfWork unitOf
         if (asset is null)
             throw new AssetNotFoundException(id);
 
-        asset.UpdateDetails(dto.Name, dto.SerialNumber, dto.Model, dto.Manufacturer, dto.PurchaseDate, dto.WarrantyExpires, dto.Notes, clock.UtcNow());
+        var status = Enum.TryParse<AssetStatus>(dto.Status, true, out var parsed)
+            ? parsed
+            : AssetStatus.Active;
+
+        asset.UpdateDetails(dto.Name, dto.SerialNumber, dto.Model, dto.Manufacturer,
+            dto.PurchaseDate, dto.WarrantyExpires, dto.LastServiceDate, status, dto.Notes ?? string.Empty, clock.UtcNow());
 
         await repository.UpdateAsync(asset);
         await unitOfWork.SaveChangesAsync();
