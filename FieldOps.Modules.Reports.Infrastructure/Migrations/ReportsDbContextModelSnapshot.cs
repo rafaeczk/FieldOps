@@ -53,9 +53,6 @@ namespace FieldOps.Modules.Reports.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AssetId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -71,10 +68,19 @@ namespace FieldOps.Modules.Reports.Infrastructure.Migrations
                     b.Property<Guid>("JobId")
                         .HasColumnType("uuid");
 
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("double precision");
+
                     b.Property<string>("Note")
                         .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
+
+                    b.Property<Guid?>("SignatureFileId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -102,6 +108,23 @@ namespace FieldOps.Modules.Reports.Infrastructure.Migrations
                             b1.HasKey("ReportId", "FileId");
 
                             b1.ToTable("ReportAttachments", "reports");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ReportId");
+                        });
+
+                    b.OwnsMany("FieldOps.Modules.Reports.Domain.Reports.Entities.ReportAsset", "ReportAssets", b1 =>
+                        {
+                            b1.Property<Guid>("ReportId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<Guid>("AssetId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("AssetId");
+
+                            b1.HasKey("ReportId", "AssetId");
+
+                            b1.ToTable("ReportAssets", "reports");
 
                             b1.WithOwner()
                                 .HasForeignKey("ReportId");
@@ -159,6 +182,8 @@ namespace FieldOps.Modules.Reports.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Attachments");
+
+                    b.Navigation("ReportAssets");
                 });
 #pragma warning restore 612, 618
         }

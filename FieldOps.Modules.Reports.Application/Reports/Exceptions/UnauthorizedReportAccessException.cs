@@ -9,7 +9,7 @@ public class UnauthorizedReportAccessException : BaseException
 
     public Guid? ReportId { get; }
 
-    public UnauthorizedReportAccessException() : base("Unauthorized report access.") 
+    public UnauthorizedReportAccessException() : base("Unauthorized report access.")
     {
     }
 
