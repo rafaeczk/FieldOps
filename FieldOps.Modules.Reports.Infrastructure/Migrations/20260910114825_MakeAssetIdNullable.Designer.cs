@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FieldOps.Modules.Reports.Infrastructure.Migrations
 {
     [DbContext(typeof(ReportsDbContext))]
-    [Migration("20260909235239_Reports1")]
-    partial class Reports1
+    [Migration("20260910114825_MakeAssetIdNullable")]
+    partial class MakeAssetIdNullable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -56,7 +56,7 @@ namespace FieldOps.Modules.Reports.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AssetId")
+                    b.Property<Guid?>("AssetId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
