@@ -3,18 +3,30 @@ using FieldOps.Modules.Assets.Core.Entities;
 using FieldOps.Modules.Assets.Core.Exceptions;
 using FieldOps.Modules.Assets.Core.Repositories;
 using FieldOps.Shared.Abstractions.Time;
+using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 
 namespace FieldOps.Modules.Assets.Core.Services;
 
-internal class AssetService(IAssetRepository repository, IAssetUnitOfWork unitOfWork, IClock clock) : IAssetService
+internal class AssetService(IAssetRepository repository, IAssetUnitOfWork unitOfWork, IClock clock, IServiceProvider serviceProvider) : IAssetService
 {
     private readonly IAssetRepository repository = repository;
     private readonly IAssetUnitOfWork unitOfWork = unitOfWork;
     private readonly IClock clock = clock;
+    private async Task ValidateAsync<T>(T dto, CancellationToken ct = default)
+    {
+        var validator = serviceProvider.GetService<IValidator<T>>();
+        if (validator is not null)
+        {
+            await validator.ValidateAndThrowAsync(dto, ct);
+        }
+    }
 
     public async Task<Guid> CreateAsync(CreateAssetDto dto)
     {
+        await ValidateAsync(dto);
+
         var createdAt = clock.UtcNow();
 
         var asset = Asset.Create(dto.Name, dto.SerialNumber, dto.Model, dto.Manufacturer, dto.PurchaseDate, dto.WarrantyExpires, createdAt);
@@ -41,6 +53,8 @@ internal class AssetService(IAssetRepository repository, IAssetUnitOfWork unitOf
 
     public async Task UpdateAsync(Guid id, EditAssetDto dto)
     {
+        await ValidateAsync(dto);
+
         var asset = await repository.GetAsync(id);
         if (asset is null)
             throw new AssetNotFoundException(id);

@@ -1,5 +1,6 @@
 ﻿using FieldOps.Modules.Jobs.Application.Jobs.Services;
 using FieldOps.Modules.Jobs.Contracts;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FieldOps.Modules.Jobs.Application;
@@ -10,7 +11,10 @@ public static class Extensions
     {
         services.AddSingleton<IJobEventMapper, JobEventMapper>();
         services.AddScoped<IJobsModuleApi, JobsModuleApi>();
+        services.AddValidatorsFromAssemblyContaining<ModuleMarker>();
 
         return services;
     }
 }
+
+internal class ModuleMarker { }

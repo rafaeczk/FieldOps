@@ -7,6 +7,7 @@ using FieldOps.Modules.Technicians.Core.Services;
 using FieldOps.Shared.Infrastructure.Events;
 using FieldOps.Shared.Infrastructure.Messages;
 using FieldOps.Shared.Infrastructure.Postgres;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -25,7 +26,9 @@ public static class Extensions
         services.AddScoped<ITechnicianRepository, TechnicianRepository>();
         services.AddScoped<IOutboxMessagesRepository, OutboxMessagesRepository>();
 
+
         services.AddMediatR(config => config.RegisterServicesFromAssemblyContaining<ModuleMarker>());
+        services.AddValidatorsFromAssemblyContaining<ModuleMarker>();
 
         services.AddHostedService(sp
             => new OutboxProcessorWorker<IOutboxMessagesRepository>(
