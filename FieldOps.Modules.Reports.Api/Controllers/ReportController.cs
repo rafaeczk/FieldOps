@@ -1,4 +1,4 @@
-﻿using FieldOps.Modules.Reports.Api.DTOs;
+using FieldOps.Modules.Reports.Api.DTOs;
 using FieldOps.Modules.Reports.Application.Reports.Commands;
 using FieldOps.Modules.Reports.Application.Reports.DTOs;
 using FieldOps.Modules.Reports.Application.Reports.Queries;
@@ -18,7 +18,7 @@ internal class ReportsController(IMessageDispatcher messageDispatcher) : BaseCon
     [Authorize(Roles = "ADMIN,TECHNICIAN")]
     public async Task<ActionResult<Guid>> CreateAsync(CreateReportDto dto)
     {
-        var reportId = await messageDispatcher.Send(new CreateReportCommand(dto.JobId, dto.AssetId, dto.Note, dto.Address, dto.FileIds));
+        var reportId = await messageDispatcher.Send(new CreateReportCommand(dto.JobId, dto.Address, dto.Note, dto.AssetIds, dto.FileIds, dto.Latitude, dto.Longitude, dto.SignatureFileId));
         return Ok(reportId);
     }
 
@@ -41,7 +41,7 @@ internal class ReportsController(IMessageDispatcher messageDispatcher) : BaseCon
     [Authorize(Roles = "ADMIN,TECHNICIAN,OPERATOR")]
     public async Task<ActionResult<PagedResult<ReportListItemDto>>> BrowseAsync(
         [FromQuery] Guid? jobId,
-        [FromQuery] int? pageNumber, 
+        [FromQuery] int? pageNumber,
         [FromQuery] int? pageSize)
     {
         return Ok(await messageDispatcher.Send(new BrowseReportsQuery(jobId, new(pageNumber, pageSize))));

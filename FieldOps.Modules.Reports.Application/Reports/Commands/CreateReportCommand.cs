@@ -16,19 +16,22 @@ namespace FieldOps.Modules.Reports.Application.Reports.Commands;
 
 public record CreateReportCommand(
     Guid JobId,
-    Guid AssetId,
-    string Note,
     Address Address,
-    List<Guid>? FileIds = null) : IMessage<Guid>;
+    string Note = "",
+    List<Guid>? AssetIds = null,
+    List<Guid>? FileIds = null,
+    double? Latitude = null,
+    double? Longitude = null,
+    Guid? SignatureFileId = null) : IMessage<Guid>;
 
-public sealed class CreateReportCommandHandler(IReportsWriteRepository repository, IReportsUnitOfWork unitOfWork, ITechnicianModuleApi technicianModuleApi, IFilesModuleApi filesModuleApi, IAssetsModuleApi assetsModuleApi,IJobsModuleApi jobsModuleApi, IContext context, IClock clock) : IMessageHandler<CreateReportCommand, Guid>
+public sealed class CreateReportCommandHandler(IReportsWriteRepository repository, IReportsUnitOfWork unitOfWork, ITechnicianModuleApi technicianModuleApi, IFilesModuleApi filesModuleApi, IAssetsModuleApi assetsModuleApi, IJobsModuleApi jobsModuleApi, IContext context, IClock clock) : IMessageHandler<CreateReportCommand, Guid>
 {
     public async Task<Guid> HandleAsync(CreateReportCommand message, CancellationToken ct)
     {
         var operatorId = await technicianModuleApi.GetTechnicianIdByAccountId(context.Identity.Id);
 
         if (operatorId is null)
-            throw new UnauthorizedAccessException();
+            throw new TechnicianNotFoundException(context.Identity.Id);
 
         var jobExists = await jobsModuleApi.Exists(message.JobId, ct);
         if (!jobExists)
@@ -36,10 +39,16 @@ public sealed class CreateReportCommandHandler(IReportsWriteRepository repositor
             throw new JobNotFoundException(message.JobId);
         }
 
-        var assetExists = await assetsModuleApi.Exists(message.AssetId, ct);
-        if (!assetExists)
+        List<AssetId>? assetIds = null;
+        if (message.AssetIds is { Count: > 0 })
         {
-            throw new AssetNotFoundException(message.AssetId);
+            var validAssetIds = await assetsModuleApi.ExistsMany(message.AssetIds, ct);
+            if (validAssetIds.Count != message.AssetIds.Count)
+            {
+                var invalidIds = message.AssetIds.Except(validAssetIds);
+                throw new AssetNotFoundException(invalidIds.First());
+            }
+            assetIds = validAssetIds.Select(id => new AssetId(id)).ToList();
         }
 
         var rawFileIds = message.FileIds?.Distinct().ToList() ?? [];
@@ -50,13 +59,18 @@ public sealed class CreateReportCommandHandler(IReportsWriteRepository repositor
 
         var fileIds = rawFileIds.Select(id => new FileId(id)).ToList();
 
+        var signatureFileId = message.SignatureFileId.HasValue ? new FileId(message.SignatureFileId.Value) : null;
+
         var report = Report.Create(
             new(message.JobId),
             new(operatorId.Value),
-            new(message.AssetId),
+            assetIds,
             message.Note,
             message.Address,
             fileIds,
+            message.Latitude,
+            message.Longitude,
+            signatureFileId,
             clock.UtcNow()
             );
 
