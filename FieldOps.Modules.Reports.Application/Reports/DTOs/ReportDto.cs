@@ -8,9 +8,12 @@ namespace FieldOps.Modules.Reports.Application.Reports.DTOs
         Guid Id,
         Guid JobId,
         Guid CreatorId,
-        Guid? AssetId,
-        string City,      
+        List<Guid> AssetIds,
+        string Note,
+        string City,
         DateTime CreatedAt,
-        int FilesCount   
+        int FilesCount,
+        double? Latitude,
+        double? Longitude
     );
 }

@@ -16,10 +16,20 @@ internal class ReportsReadRepository(ReportsDbContext context) : IReportsReadRep
     {
         var query = SpecificationEvaluator.GetQuery(context.Reports.AsNoTracking(), spec);
 
-        var totalItems = await query.CountAsync();
+        var totalItems = await SpecificationEvaluator.GetCountQuery(context.Reports.AsNoTracking(), spec).CountAsync();
 
         var items = await query
-            .Select(r => new ReportListItemDto(r.Id, r.JobId, r.CreatorId, r.AssetId, r.Address.City, r.CreatedAt, r.Attachments.Count))
+            .Select(r => new ReportListItemDto(
+                r.Id,
+                r.JobId,
+                r.CreatorId,
+                r.ReportAssets.Select(a => a.AssetId.Value).ToList(),
+                r.Note,
+                r.Address.City,
+                r.CreatedAt,
+                r.Attachments.Count,
+                r.Latitude,
+                r.Longitude))
             .ToListAsync();
 
         return new(items, totalItems, spec.PaginationParams!);
@@ -27,13 +37,27 @@ internal class ReportsReadRepository(ReportsDbContext context) : IReportsReadRep
 
     public async Task<ReportDetailsDto?> GetAsync(GetReportSpecification spec)
     {
-        var report = await SpecificationEvaluator.GetQuery(context.Reports.AsNoTracking(), spec).SingleOrDefaultAsync();
+        var report = await SpecificationEvaluator.GetQuery(context.Reports.Include(r => r.Attachments).AsNoTracking(), spec).SingleOrDefaultAsync();
 
         if (report is null) return null;
 
         var fileIds = report.Attachments.Select(a => a.FileId.Value).ToList();
+        var assetIds = report.ReportAssets.Select(a => a.AssetId.Value).ToList();
 
-        return new(report.Id, report.Version, report.JobId, report.CreatorId, report.AssetId, report.Note, report.Address, report.CreatedAt, report.UpdatedAt, fileIds);
+        return new(
+            report.Id,
+            report.Version,
+            report.JobId,
+            report.CreatorId,
+            assetIds,
+            report.Note,
+            report.Address,
+            report.Latitude,
+            report.Longitude,
+            report.SignatureFileId?.Value,
+            report.CreatedAt,
+            report.UpdatedAt,
+            fileIds);
     }
 
     public Task<Report?> GetByIdAsync(Guid reportId)
