@@ -9,5 +9,6 @@ public class GetReportSpecification : ReportsBaseSpecification
         AddCriteria(r => r.Id == reportId);
 
         AddInclude(r => r.Attachments);
+        AddInclude(r => r.ReportAssets);
     }
 }
