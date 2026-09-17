@@ -6,6 +6,7 @@ using FieldOps.Modules.Assets.Core.Services;
 using FieldOps.Shared.Infrastructure.Events;
 using FieldOps.Shared.Infrastructure.Messages;
 using FieldOps.Shared.Infrastructure.Postgres;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,7 @@ namespace FieldOps.Modules.Assets.Core
 
             services.AddScoped<IAssetUnitOfWork, AssetUnitOfWork>();
 
+            services.AddValidatorsFromAssemblyContaining<ModuleMarker>();
 
             return services;
         }
