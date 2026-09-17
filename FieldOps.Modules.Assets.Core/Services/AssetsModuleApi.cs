@@ -8,8 +8,12 @@ namespace FieldOps.Modules.Assets.Core.Services
     {
         public Task<bool> Exists(Guid assetId, CancellationToken ct = default)
         {
-
             return messageDispatcher.Send(new CheckAssetId(assetId), ct);
+        }
+
+        public async Task<List<Guid>> ExistsMany(IEnumerable<Guid> assetIds, CancellationToken ct = default)
+        {
+            return await messageDispatcher.Send(new CheckAssetIds(assetIds), ct);
         }
     }
 }

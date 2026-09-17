@@ -7,9 +7,12 @@ namespace FieldOps.Modules.Reports.Application.Reports.DTOs
         int Version,
         Guid JobId,
         Guid CreatorId,
-        Guid? AssetId,
+        List<Guid> AssetIds,
         string Note,
         Address Address,
+        double? Latitude,
+        double? Longitude,
+        Guid? SignatureFileId,
         DateTime CreatedAt,
         DateTime UpdatedAt,
         IReadOnlyCollection<Guid> FileIds

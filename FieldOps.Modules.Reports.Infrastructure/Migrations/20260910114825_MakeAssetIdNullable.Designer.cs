@@ -3,6 +3,7 @@ using System;
 using FieldOps.Modules.Reports.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FieldOps.Modules.Reports.Infrastructure.Migrations
 {
     [DbContext(typeof(ReportsDbContext))]
-    partial class ReportsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260910114825_MakeAssetIdNullable")]
+    partial class MakeAssetIdNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,6 +54,9 @@ namespace FieldOps.Modules.Reports.Infrastructure.Migrations
             modelBuilder.Entity("FieldOps.Modules.Reports.Domain.Reports.Entities.Report", b =>
                 {
                     b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("AssetId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
@@ -113,23 +119,6 @@ namespace FieldOps.Modules.Reports.Infrastructure.Migrations
                                 .HasForeignKey("ReportId");
                         });
 
-                    b.OwnsMany("FieldOps.Modules.Reports.Domain.Reports.Entities.ReportAsset", "ReportAssets", b1 =>
-                        {
-                            b1.Property<Guid>("ReportId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<Guid>("AssetId")
-                                .HasColumnType("uuid")
-                                .HasColumnName("AssetId");
-
-                            b1.HasKey("ReportId", "AssetId");
-
-                            b1.ToTable("ReportAssets", "reports");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ReportId");
-                        });
-
                     b.OwnsOne("FieldOps.Shared.Abstractions.Kernel.ValueObjects.Address", "Address", b1 =>
                         {
                             b1.Property<Guid>("ReportId")
@@ -182,8 +171,6 @@ namespace FieldOps.Modules.Reports.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Attachments");
-
-                    b.Navigation("ReportAssets");
                 });
 #pragma warning restore 612, 618
         }

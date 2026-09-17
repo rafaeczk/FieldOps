@@ -24,10 +24,6 @@ internal sealed class ReportConfiguration : IEntityTypeConfiguration<Report>
             .HasConversion(id => id.Value, value => new(value))
             .IsRequired();
 
-        builder.Property(r => r.AssetId)
-            .HasConversion(id => id.Value, value => new(value))
-            .IsRequired();
-
         builder.OwnsOne(r => r.Address, addressBuilder =>
         {
             addressBuilder.Property(a => a.CountryCode).HasColumnName("CountryCode").HasMaxLength(10);
@@ -41,6 +37,16 @@ internal sealed class ReportConfiguration : IEntityTypeConfiguration<Report>
         builder.Property(r => r.Note)
             .IsRequired()
             .HasMaxLength(1000);
+
+        builder.Property(r => r.Latitude)
+            .IsRequired(false);
+
+        builder.Property(r => r.Longitude)
+            .IsRequired(false);
+
+        builder.Property(r => r.SignatureFileId)
+            .HasConversion(id => id != null ? (Guid)id : (Guid?)null, value => value.HasValue ? new FileId(value.Value) : null)
+            .IsRequired(false);
 
         builder.Property(r => r.Version).IsConcurrencyToken();
 
@@ -59,6 +65,24 @@ internal sealed class ReportConfiguration : IEntityTypeConfiguration<Report>
         });
 
         builder.Navigation(r => r.Attachments)
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .AutoInclude();
+
+        builder.OwnsMany(r => r.ReportAssets, ra =>
+        {
+            ra.ToTable("ReportAssets");
+
+            ra.WithOwner().HasForeignKey("ReportId");
+
+            ra.Property(a => a.AssetId)
+                .HasConversion(id => id.Value, value => new AssetId(value))
+                .HasColumnName("AssetId")
+                .IsRequired();
+
+            ra.HasKey("ReportId", "AssetId");
+        });
+
+        builder.Navigation(r => r.ReportAssets)
             .UsePropertyAccessMode(PropertyAccessMode.Field)
             .AutoInclude();
     }

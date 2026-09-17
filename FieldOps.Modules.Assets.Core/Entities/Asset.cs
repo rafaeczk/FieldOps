@@ -23,7 +23,7 @@ namespace FieldOps.Modules.Assets.Core.Entities
 
         private Asset() { }
 
-        public static Asset Create(string name, string serialNumber, string model, string manufacturer, DateTime? purchaseDate, DateTime? warrantyExpires, DateTime createdAt)
+        public static Asset Create(string name, string serialNumber, string model, string manufacturer, DateTime? purchaseDate, DateTime? warrantyExpires, DateTime? lastServiceDate, DateTime createdAt)
         {
             return new Asset
             {
@@ -32,21 +32,24 @@ namespace FieldOps.Modules.Assets.Core.Entities
                 SerialNumber = serialNumber,
                 Model = model,
                 Manufacturer = manufacturer,
-                PurchaseDate = purchaseDate,
-                WarrantyExpires = warrantyExpires,
+                PurchaseDate = purchaseDate.HasValue ? DateTime.SpecifyKind(purchaseDate.Value, DateTimeKind.Utc) : null,
+                WarrantyExpires = warrantyExpires.HasValue ? DateTime.SpecifyKind(warrantyExpires.Value, DateTimeKind.Utc) : null,
+                LastServiceDate = lastServiceDate.HasValue ? DateTime.SpecifyKind(lastServiceDate.Value, DateTimeKind.Utc) : null,
                 CreatedAt = createdAt,
                 UpdatedAt = createdAt
             };
         }
 
-        public void UpdateDetails(string name, string serialNumber, string model, string manufacturer, DateTime? purchaseDate, DateTime? warrantyExpires, string notes, DateTime updatedAt)
+        public void UpdateDetails(string name, string serialNumber, string? model, string? manufacturer, DateTime? purchaseDate, DateTime? warrantyExpires, DateTime? lastServiceDate, AssetStatus status, string notes, DateTime updatedAt)
         {
             Name = name;
             SerialNumber = serialNumber;
-            Model = model;
-            Manufacturer = manufacturer;
-            PurchaseDate = purchaseDate;
-            WarrantyExpires = warrantyExpires;
+            Model = model ?? string.Empty;
+            Manufacturer = manufacturer ?? string.Empty;
+            PurchaseDate = purchaseDate.HasValue ? DateTime.SpecifyKind(purchaseDate.Value, DateTimeKind.Utc) : null;
+            WarrantyExpires = warrantyExpires.HasValue ? DateTime.SpecifyKind(warrantyExpires.Value, DateTimeKind.Utc) : null;
+            LastServiceDate = lastServiceDate.HasValue ? DateTime.SpecifyKind(lastServiceDate.Value, DateTimeKind.Utc) : null;
+            Status = status;
             Notes = notes;
             UpdatedAt = updatedAt;
         }
