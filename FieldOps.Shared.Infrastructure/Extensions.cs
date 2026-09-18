@@ -14,9 +14,11 @@ using FieldOps.Shared.Infrastructure.Time;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("FieldOps.Bootstrapper")]
@@ -44,7 +46,7 @@ internal static class Extensions
 
         services.AddRouting(options =>
         {
-            options.LowercaseUrls = true; 
+            options.LowercaseUrls = true;
         });
 
         services.AddTransient(typeof(IRequestHandler<,>), typeof(MediatRMessageBridge<,>));
@@ -102,12 +104,17 @@ internal static class Extensions
     public static T GetOptions<T>(this IServiceCollection services, string sectionName)
         where T : new()
     {
-        using var provider = services.BuildServiceProvider();
-        var configuration = provider.GetRequiredService<IConfiguration>();
-
-        var options = new T();
-        configuration.GetSection(sectionName).Bind(options);
-
-        return options;
+        var provider = services.BuildServiceProvider();
+        try
+        {
+            var configuration = provider.GetRequiredService<IConfiguration>();
+            var options = new T();
+            configuration.GetSection(sectionName).Bind(options);
+            return options;
+        }
+        finally
+        {
+            (provider as IDisposable)?.Dispose();
+        }
     }
 }
