@@ -28,4 +28,10 @@ internal sealed class JobsRepository(JobsDbContext context, IDomainEventDispatch
         context.Entry(job).Property(x => x.Version).OriginalValue = version;
         await domainEventDispatcher.DispatchAsync([.. job.Events]);
     }
+
+    public async Task DeleteAsync(Job job)
+    {
+        context.Jobs.Remove(job);
+        await domainEventDispatcher.DispatchAsync([.. job.Events]);
+    }
 }

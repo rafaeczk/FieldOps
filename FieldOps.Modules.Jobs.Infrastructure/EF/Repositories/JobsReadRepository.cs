@@ -1,9 +1,10 @@
-﻿using FieldOps.Modules.Jobs.Application.Jobs.DTOs;
+using FieldOps.Modules.Jobs.Application.Jobs.DTOs;
 using FieldOps.Modules.Jobs.Application.Jobs.Repositories;
 using FieldOps.Modules.Jobs.Application.Jobs.Specifications;
 using FieldOps.Shared.Abstractions.Pagination;
 using FieldOps.Shared.Infrastructure.Queries;
 using Microsoft.EntityFrameworkCore;
+using MicrosoftEF = Microsoft.EntityFrameworkCore;
 
 namespace FieldOps.Modules.Jobs.Infrastructure.EF.Repositories;
 
@@ -26,7 +27,7 @@ internal class JobsReadRepository(JobsDbContext context) : IJobsReadRepository
 
     public Task<bool> ExistsAsync(Guid id, CancellationToken ct = default)
     {
-        return context.Jobs.AnyAsync(j => j.Id == id, ct);  
+        return context.Jobs.AnyAsync(j => j.Id == id, ct);
     }
 
     public async Task<JobDto?> GetAsync(Guid jobId)
