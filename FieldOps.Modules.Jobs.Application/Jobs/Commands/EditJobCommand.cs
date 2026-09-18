@@ -23,12 +23,15 @@ internal sealed class EditJobCommandHandler(IJobsRepository repository, IOutboxM
         if (job is null)
             throw new JobNotFoundException(message.JobId);
 
-        var operatorId = await operatorsModuleApi.GetOperatorIdByAccountId(context.Identity.Id);
+        if (context.Identity.Role != "ADMIN")
+        {
+            var operatorId = await operatorsModuleApi.GetOperatorIdByAccountId(context.Identity.Id);
 
-        if (operatorId is null)
-            throw new UnauthorizedAccessException();
+            if (operatorId is null)
+                throw new UnauthorizedAccessException();
 
-        job.EnsureCanBeEdited(operatorId);
+            job.EnsureCanBeEdited(operatorId);
+        }
 
         job.ChangeTitle(message.Title);
         job.ChangeDescription(message.Description);

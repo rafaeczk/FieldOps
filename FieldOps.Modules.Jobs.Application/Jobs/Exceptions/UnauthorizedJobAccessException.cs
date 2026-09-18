@@ -9,7 +9,7 @@ public class UnauthorizedJobAccessException : BaseException
 
     public Guid? JobId { get; }
 
-    public UnauthorizedJobAccessException() : base("Unauthorized job access.") 
+    public UnauthorizedJobAccessException() : base("Unauthorized job access.")
     {
     }
 

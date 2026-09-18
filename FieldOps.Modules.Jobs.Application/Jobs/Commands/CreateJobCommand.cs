@@ -19,13 +19,15 @@ public sealed class CreateJobCommandHandler(IJobsRepository repository, IOutboxM
 {
     public async Task<Guid> HandleAsync(CreateJobCommand message, CancellationToken ct)
     {
-        var operatorId = await operatorsModuleApi.GetOperatorIdByAccountId(context.Identity.Id);
+        var operatorId = context.Identity.Role == "ADMIN"
+            ? null
+            : await operatorsModuleApi.GetOperatorIdByAccountId(context.Identity.Id);
 
-        if (operatorId is null)
+        if (operatorId is null && context.Identity.Role != "ADMIN")
             throw new UnauthorizedAccessException();
 
         var job = Job.Create(
-            new(operatorId.Value),
+            new(operatorId?.Value ?? context.Identity.Id),
             message.Title,
             message.Description,
             message.Priority,
