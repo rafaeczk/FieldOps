@@ -5,6 +5,6 @@ namespace FieldOps.Modules.Accounts.Core.Repositories;
 
 internal interface IOutboxMessagesRepository : IModuleOutboxRepository
 {
-    Task CreateAsync<Event>(Event @event)
+    Task AddAsync<Event>(Event @event)
         where Event : INotification;
 }

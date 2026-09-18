@@ -14,7 +14,7 @@ internal class OutboxMessagesRepository(TechnicianDbContext context, IClock cloc
     private readonly IClock clock = clock;
     private readonly IModuleSerializer serializer = serializer;
 
-    public async Task CreateAsync<Event>(Event @event)
+    public async Task AddAsync<Event>(Event @event)
         where Event : INotification
     {
         await context.OutboxMessages.AddAsync(new()
