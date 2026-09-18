@@ -1,4 +1,4 @@
-﻿
+
 using FieldOps.Modules.Jobs.Application.Jobs.DTOs;
 using FieldOps.Modules.Jobs.Application.Jobs.Specifications;
 using FieldOps.Shared.Abstractions.Pagination;
