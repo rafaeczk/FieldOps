@@ -1,4 +1,4 @@
-﻿using FieldOps.Modules.Jobs.Api.DTOs.Jobs;
+using FieldOps.Modules.Jobs.Api.DTOs.Jobs;
 using FieldOps.Modules.Jobs.Application.Jobs.Commands;
 using FieldOps.Modules.Jobs.Application.Jobs.DTOs;
 using FieldOps.Modules.Jobs.Application.Jobs.Queries;
@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FieldOps.Modules.Jobs.Api.Controllers;
 
-[Authorize(Roles = "OPERATOR")]
 internal class JobsController(IMessageDispatcher messageDispatcher) : BaseController
 {
     private readonly IMessageDispatcher messageDispatcher = messageDispatcher;
@@ -30,6 +29,22 @@ internal class JobsController(IMessageDispatcher messageDispatcher) : BaseContro
         return NoContent();
     }
 
+    [HttpPatch("{id:guid}/status")]
+    [Authorize(Roles = "ADMIN,OPERATOR,TECHNICIAN")]
+    public async Task<ActionResult> ChangeStatus(Guid id, ChangeJobStatusDto dto)
+    {
+        await messageDispatcher.Send(new ChangeJobStatusCommand(id, dto.Status));
+        return NoContent();
+    }
+
+    [HttpDelete("{id:guid}")]
+    [Authorize(Roles = "ADMIN,OPERATOR")]
+    public async Task<ActionResult> DeleteAsync(Guid id)
+    {
+        await messageDispatcher.Send(new DeleteJobCommand(id));
+        return NoContent();
+    }
+
     [HttpGet("{id:guid}")]
     [AllowAnonymous]
     public async Task<ActionResult<JobDto>> GetAsync(Guid id)
@@ -38,14 +53,16 @@ internal class JobsController(IMessageDispatcher messageDispatcher) : BaseContro
     }
 
     [HttpPost("{id:guid}/assignees")]
-    public async Task<ActionResult> AddAssignee(Guid id, [FromBody] JobAttachmentActionDto dto)
+    [Authorize(Roles = "ADMIN,OPERATOR")]
+    public async Task<ActionResult> AddAssignee(Guid id, [FromBody] JobAssigneeActionDto dto)
     {
         await messageDispatcher.Send(new AddJobAssigneeCommand(id, dto.TechnicianId));
         return NoContent();
     }
 
     [HttpDelete("{id:guid}/assignees")]
-    public async Task<ActionResult> RemoveAssignee(Guid id, [FromBody] JobAttachmentActionDto dto)
+    [Authorize(Roles = "ADMIN,OPERATOR")]
+    public async Task<ActionResult> RemoveAssignee(Guid id, [FromBody] JobAssigneeActionDto dto)
     {
         await messageDispatcher.Send(new RemoveJobAssigneeCommand(id, dto.TechnicianId));
         return NoContent();
@@ -55,8 +72,9 @@ internal class JobsController(IMessageDispatcher messageDispatcher) : BaseContro
     [AllowAnonymous]
     public async Task<ActionResult<JobDto>> BrowseAsync(
         [FromQuery] int? pageNumber,
-        [FromQuery] int? pageSize)
+        [FromQuery] int? pageSize,
+        [FromQuery] Guid? assigneeId)
     {
-        return Ok(await messageDispatcher.Send(new BrowseJobsQuery(new(pageNumber, pageSize))));
+        return Ok(await messageDispatcher.Send(new BrowseJobsQuery(new(pageNumber, pageSize), assigneeId)));
     }
 }
