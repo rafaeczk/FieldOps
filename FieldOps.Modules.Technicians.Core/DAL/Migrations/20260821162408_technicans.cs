@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #pragma warning disable CS8981
 
-namespace FieldOps.Modules.Technicians.Core.Migrations
+namespace FieldOps.Modules.Technicians.Core.DAL.Migrations
 {
     /// <inheritdoc />
     public partial class technicans : Migration

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace FieldOps.Modules.Assets.Core.Migrations
+namespace FieldOps.Modules.Assets.Core.DAL.Migrations
 {
     /// <inheritdoc />
     public partial class Assets : Migration

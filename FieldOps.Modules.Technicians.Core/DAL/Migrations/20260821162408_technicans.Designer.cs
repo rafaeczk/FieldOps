@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #pragma warning disable CS8981
 
-namespace FieldOps.Modules.Technicians.Core.Migrations
+namespace FieldOps.Modules.Technicians.Core.DAL.Migrations
 {
     [DbContext(typeof(TechnicianDbContext))]
     [Migration("20260821162408_technicans")]
