@@ -12,7 +12,7 @@ namespace FieldOps.Modules.Accounts.Core.Validators
         public ChangePasswordCommandValidator()
         {
             RuleFor(x => x.CurrentPassword)
-                .NotEmpty().WithMessage("Current password is required.");   
+                .NotEmpty().WithMessage("Current password is required.");
 
             RuleFor(x => x.NewPassword)
                 .NotEmpty().WithMessage("New password is required.")

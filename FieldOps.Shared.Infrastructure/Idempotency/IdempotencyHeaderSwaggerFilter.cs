@@ -26,7 +26,7 @@ namespace FieldOps.Shared.Infrastructure.Idempotency
                 {
                     Name = "IdempotencyKey",
                     In = ParameterLocation.Header,
-                    Required = false, 
+                    Required = false,
                     Schema = new OpenApiSchema
                     {
                         Type = JsonSchemaType.String,

@@ -29,7 +29,7 @@ namespace FieldOps.Modules.Reports.Application.Validators
 
                 RuleFor(x => x.Address.Street)
                     .NotEmpty().WithMessage("Street is required.");
-    
+
                 RuleFor(x => x.Address.BuildingNumber)
                     .NotEmpty().WithMessage("Building number is required.");
             });

@@ -11,7 +11,7 @@ public class BrowseReportsSpecification : ReportsBaseSpecification
     {
         switch (role)
         {
-            case AccountRole.Admin: 
+            case AccountRole.Admin:
             case AccountRole.Operator:
                 break;
             case AccountRole.Technician:

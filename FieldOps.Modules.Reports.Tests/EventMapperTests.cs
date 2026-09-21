@@ -24,7 +24,7 @@ public class EventMapperTests
         var attachmentAdded = new ReportAttachmentAdded(attachment);
         var attachmentRemoved = new ReportAttachmentRemoved(attachment);
 
-        var mapped = mapper.Map([ added, attachmentAdded, attachmentRemoved ]).ToList();
+        var mapped = mapper.Map([added, attachmentAdded, attachmentRemoved]).ToList();
 
         Assert.Contains(mapped, e => e is FieldOps.Modules.Reports.Contracts.Events.ReportAdded);
         Assert.Contains(mapped, e => e is FieldOps.Modules.Reports.Contracts.Events.ReportAttachmentAdded);

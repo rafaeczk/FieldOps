@@ -60,7 +60,7 @@ internal static class Extensions
 
         services.AddRouting(options =>
         {
-            options.LowercaseUrls = true; 
+            options.LowercaseUrls = true;
         });
 
         services.AddTransient(typeof(IRequestHandler<,>), typeof(MediatRMessageBridge<,>));
@@ -86,7 +86,7 @@ internal static class Extensions
         services.AddSwaggerGen(swagger =>
         {
             swagger.CustomSchemaIds(x => x.FullName);
-            swagger.OperationFilter<IdempotencyHeaderSwaggerFilter>(); 
+            swagger.OperationFilter<IdempotencyHeaderSwaggerFilter>();
         });
 
         services.AddDistributedMemoryCache();

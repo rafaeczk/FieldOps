@@ -22,7 +22,7 @@ public sealed class Report : AggregateRoot<ReportId>
 
     private Report() { }
 
-    public static Report Create(JobId jobId,  TechnicianId creatorId, AssetId assetId, string note, Address address, IEnumerable<FileId>? fileIds, DateTime createdAt)
+    public static Report Create(JobId jobId, TechnicianId creatorId, AssetId assetId, string note, Address address, IEnumerable<FileId>? fileIds, DateTime createdAt)
     {
         var report = new Report
         {

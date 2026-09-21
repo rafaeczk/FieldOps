@@ -26,7 +26,7 @@ internal class JobsReadRepository(JobsDbContext context) : IJobsReadRepository
 
     public Task<bool> ExistsAsync(Guid id, CancellationToken ct = default)
     {
-        return context.Jobs.AnyAsync(j => j.Id == id, ct);  
+        return context.Jobs.AnyAsync(j => j.Id == id, ct);
     }
 
     public async Task<JobDto?> GetAsync(Guid jobId)

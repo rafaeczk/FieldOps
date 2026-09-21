@@ -35,6 +35,6 @@ internal class StoredFilesRepository(FilesDbContext context) : IStoredFilesRepos
     public Task<bool> ExistsAsync(FileId fileId, CancellationToken ct = default)
     {
         return context.Files
-            .AnyAsync(f => f.Id == fileId, ct); 
+            .AnyAsync(f => f.Id == fileId, ct);
     }
 }

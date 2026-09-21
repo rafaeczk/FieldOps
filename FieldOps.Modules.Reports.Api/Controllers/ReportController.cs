@@ -43,7 +43,7 @@ internal class ReportsController(IMessageDispatcher messageDispatcher) : BaseCon
     [Authorize(Roles = "ADMIN,TECHNICIAN,OPERATOR")]
     public async Task<ActionResult<PagedResult<ReportListItemDto>>> BrowseAsync(
         [FromQuery] Guid? jobId,
-        [FromQuery] int? pageNumber, 
+        [FromQuery] int? pageNumber,
         [FromQuery] int? pageSize)
     {
         return Ok(await messageDispatcher.Send(new BrowseReportsQuery(jobId, new(pageNumber, pageSize))));

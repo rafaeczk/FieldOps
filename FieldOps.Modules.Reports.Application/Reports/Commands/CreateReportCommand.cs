@@ -21,7 +21,7 @@ public record CreateReportCommand(
     Address Address,
     List<Guid>? FileIds = null) : IMessage<Guid>;
 
-public sealed class CreateReportCommandHandler(IReportsWriteRepository repository, IReportsUnitOfWork unitOfWork, ITechnicianModuleApi technicianModuleApi, IFilesModuleApi filesModuleApi, IAssetsModuleApi assetsModuleApi,IJobsModuleApi jobsModuleApi, IContext context, IClock clock) : IMessageHandler<CreateReportCommand, Guid>
+public sealed class CreateReportCommandHandler(IReportsWriteRepository repository, IReportsUnitOfWork unitOfWork, ITechnicianModuleApi technicianModuleApi, IFilesModuleApi filesModuleApi, IAssetsModuleApi assetsModuleApi, IJobsModuleApi jobsModuleApi, IContext context, IClock clock) : IMessageHandler<CreateReportCommand, Guid>
 {
     public async Task<Guid> HandleAsync(CreateReportCommand message, CancellationToken ct)
     {

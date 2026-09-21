@@ -10,7 +10,7 @@ namespace FieldOps.Modules.Reports.Application.Reports.Commands;
 
 public record RemoveReportAttachmentCommand(ReportId ReportId, FileId FileId) : IMessage;
 
-internal sealed class RemoveReportAttachmentCommandHandler(IReportsReadRepository repository, IOutboxMessagesRepository outboxRepository, 
+internal sealed class RemoveReportAttachmentCommandHandler(IReportsReadRepository repository, IOutboxMessagesRepository outboxRepository,
     IReportsUnitOfWork unitOfWork, IReportEventMapper eventMapper) : IMessageHandler<RemoveReportAttachmentCommand>
 {
     public async Task HandleAsync(RemoveReportAttachmentCommand message, CancellationToken ct)
