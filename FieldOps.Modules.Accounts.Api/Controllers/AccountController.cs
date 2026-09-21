@@ -6,6 +6,7 @@ using FieldOps.Shared.Abstractions.Contexts;
 using FieldOps.Shared.Abstractions.Messages;
 using FieldOps.Shared.Infrastructure.Api;
 using FieldOps.Shared.Infrastructure.Auth;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

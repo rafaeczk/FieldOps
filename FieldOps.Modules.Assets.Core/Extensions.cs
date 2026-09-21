@@ -22,6 +22,8 @@ namespace FieldOps.Modules.Assets.Core
             services.AddScoped<IAssetRepository, AssetRepository>();
 
             services.AddMediatRNotificationHandlers(typeof(ModuleMarker));
+            services.AddValidatorsFromAssemblyContaining<ModuleMarker>();
+
             services.AddMediatRRequestHandlers(typeof(ModuleMarker));
 
             services.AddScoped<IAssetService, AssetService>();

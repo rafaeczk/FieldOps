@@ -6,17 +6,19 @@ using FieldOps.Modules.Technicians.Core.Exceptions;
 using FieldOps.Modules.Technicians.Core.Repositories;
 using FieldOps.Shared.Abstractions.Kernel.Ids;
 using FieldOps.Shared.Abstractions.Time;
+using FluentValidation;
 
 namespace FieldOps.Modules.Technicians.Core.Services;
 
 internal class TechnicianService(ITechnicianRepository repository, IOutboxMessagesRepository outboxRepository, ITechnicianUnitOfWork unitOfWork,
-    IClock clock, IAccountsModuleApi accountsModuleApi) : ITechnicianService
+    IClock clock, IAccountsModuleApi accountsModuleApi, IValidator<CreateTechnicianDto> validator) : ITechnicianService
 {
     private readonly ITechnicianRepository repository = repository;
     private readonly IOutboxMessagesRepository outboxRepository = outboxRepository;
     private readonly ITechnicianUnitOfWork unitOfWork = unitOfWork;
     private readonly IClock clock = clock;
     private readonly IAccountsModuleApi accountsModuleApi = accountsModuleApi;
+    private readonly IValidator<CreateTechnicianDto> _validator = validator;
 
     public async Task<IReadOnlyList<TechnicianDto>> BrowseAsync()
     {
@@ -33,6 +35,8 @@ internal class TechnicianService(ITechnicianRepository repository, IOutboxMessag
 
     public async Task<Guid> CreateAsync(CreateTechnicianDto dto)
     {
+        await _validator.ValidateAndThrowAsync(dto);
+
         if (await accountsModuleApi.CheckAccountEmailIsTaken(dto.RequestedEmail))
             throw new EmailInUseException();
 

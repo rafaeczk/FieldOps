@@ -1,4 +1,5 @@
 ﻿using FieldOps.Shared.Abstractions.Contexts;
+using FieldOps.Shared.Abstractions.Messages;
 using FieldOps.Shared.Abstractions.Time;
 using FieldOps.Shared.Infrastructure.Api;
 using FieldOps.Shared.Infrastructure.Auth;
@@ -11,6 +12,8 @@ using FieldOps.Shared.Infrastructure.Modules;
 using FieldOps.Shared.Infrastructure.S3;
 using FieldOps.Shared.Infrastructure.Services;
 using FieldOps.Shared.Infrastructure.Time;
+using FieldOps.Shared.Infrastructure.Validation;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -28,6 +31,16 @@ internal static class Extensions
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
+
+        services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
+
+        services.AddMediatR(cfg =>
+        {
+            cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
+            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+        });
+        services.AddTransient<IMessageDispatcher, MessageDispatcher>();
+
         services.AddErrorHandling();
         services.AddSingleton<IClock, Clock>();
         services.AddHostedService<AppInitializer>();
@@ -73,6 +86,7 @@ internal static class Extensions
         {
             swagger.CustomSchemaIds(x => x.FullName);
         });
+
 
         return services;
     }
