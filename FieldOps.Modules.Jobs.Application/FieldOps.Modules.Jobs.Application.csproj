@@ -12,6 +12,7 @@
     <ProjectReference Include="..\FieldOps.Modules.Operators.Contracts\FieldOps.Modules.Operators.Contracts.csproj" />
     <ProjectReference Include="..\FieldOps.Modules.Technicians.Contracts\FieldOps.Modules.Technicians.Contracts.csproj" />
 	  <ProjectReference Include="..\FieldOps.Shared.Infrastructure\FieldOps.Shared.Infrastructure.csproj" />
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
   </ItemGroup>
 
 </Project>

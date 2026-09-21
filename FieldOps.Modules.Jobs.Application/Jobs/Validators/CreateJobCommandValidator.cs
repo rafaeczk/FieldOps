@@ -18,7 +18,8 @@ namespace FieldOps.Modules.Jobs.Application.Jobs.Validators
 
             RuleFor(x => x.Priority)
                 .NotEmpty().WithMessage("Priority is required.")
-                .IsInEnum().WithMessage("Invalid priority value.");
+                .Must(p => JobPriority.AcceptedValues.Contains(p.Value))
+                .WithMessage("Invalid priority value.");
 
             RuleFor(x => x.Address)
                 .NotNull().WithMessage("Address is required.");
