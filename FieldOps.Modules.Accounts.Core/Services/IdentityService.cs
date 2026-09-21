@@ -19,7 +19,8 @@ internal class IdentityService(
     IAccountUnitOfWork unitOfWork,
     IPasswordHasher<Account> passwordHasher,
     IAuthManager authManager,
-    IClock clock,IServiceProvider serviceProvider) : IIdentityService
+    IClock clock,
+    IServiceProvider serviceProvider) : IIdentityService
 {
     private readonly IAccountRepository accountRepository = accountRepository;
     private readonly IOutboxMessagesRepository outboxRepository = outboxRepository;

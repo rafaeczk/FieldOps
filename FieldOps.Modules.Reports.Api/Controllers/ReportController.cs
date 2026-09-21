@@ -5,6 +5,7 @@ using FieldOps.Modules.Reports.Application.Reports.Queries;
 using FieldOps.Shared.Abstractions.Messages;
 using FieldOps.Shared.Abstractions.Pagination;
 using FieldOps.Shared.Infrastructure.Api;
+using IdempotentAPI.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,6 +16,7 @@ internal class ReportsController(IMessageDispatcher messageDispatcher) : BaseCon
     private readonly IMessageDispatcher messageDispatcher = messageDispatcher;
 
     [HttpPost]
+    [Idempotent(ExpiresInMilliseconds = 86400000, IsIdempotencyOptional = true)]
     [Authorize(Roles = "ADMIN,TECHNICIAN")]
     public async Task<ActionResult<Guid>> CreateAsync(CreateReportDto dto)
     {

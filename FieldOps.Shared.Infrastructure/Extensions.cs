@@ -6,6 +6,7 @@ using FieldOps.Shared.Infrastructure.Auth;
 using FieldOps.Shared.Infrastructure.Contexts;
 using FieldOps.Shared.Infrastructure.Errors;
 using FieldOps.Shared.Infrastructure.Events;
+using FieldOps.Shared.Infrastructure.Idempotency;
 using FieldOps.Shared.Infrastructure.Kernel;
 using FieldOps.Shared.Infrastructure.Messages;
 using FieldOps.Shared.Infrastructure.Modules;
@@ -14,6 +15,8 @@ using FieldOps.Shared.Infrastructure.Services;
 using FieldOps.Shared.Infrastructure.Time;
 using FieldOps.Shared.Infrastructure.Validation;
 using FluentValidation;
+using IdempotentAPI.Cache.DistributedCache.Extensions.DependencyInjection;
+using IdempotentAPI.Extensions.DependencyInjection;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -83,8 +86,12 @@ internal static class Extensions
         services.AddSwaggerGen(swagger =>
         {
             swagger.CustomSchemaIds(x => x.FullName);
+            swagger.OperationFilter<IdempotencyHeaderSwaggerFilter>(); 
         });
 
+        services.AddDistributedMemoryCache();
+        services.AddIdempotentAPIUsingDistributedCache();
+        services.AddIdempotentAPI();
 
         return services;
     }

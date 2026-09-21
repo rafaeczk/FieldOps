@@ -1,6 +1,7 @@
 ﻿using FieldOps.Modules.Technicians.Core.DTOs;
 using FieldOps.Modules.Technicians.Core.Services;
 using FieldOps.Shared.Infrastructure.Api;
+using IdempotentAPI.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +12,7 @@ internal class TechniciansController(ITechnicianService service) : BaseControlle
     private readonly ITechnicianService service = service;
 
     [HttpPost]
+    [Idempotent(ExpiresInMilliseconds = 86400000, IsIdempotencyOptional = true)]
     [Authorize(Roles = "ADMIN")]
     public async Task<ActionResult<Guid>> CreateTechnician([FromBody] CreateTechnicianDto dto)
     {

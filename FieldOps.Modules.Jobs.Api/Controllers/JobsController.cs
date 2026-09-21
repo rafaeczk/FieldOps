@@ -4,6 +4,7 @@ using FieldOps.Modules.Jobs.Application.Jobs.DTOs;
 using FieldOps.Modules.Jobs.Application.Jobs.Queries;
 using FieldOps.Shared.Abstractions.Messages;
 using FieldOps.Shared.Infrastructure.Api;
+using IdempotentAPI.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,6 +16,7 @@ internal class JobsController(IMessageDispatcher messageDispatcher) : BaseContro
     private readonly IMessageDispatcher messageDispatcher = messageDispatcher;
 
     [HttpPost]
+    [Idempotent(ExpiresInMilliseconds = 86400000, IsIdempotencyOptional = true)]
     [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<ActionResult<Guid>> CreateAsync(CreateJobDto dto)
     {

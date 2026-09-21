@@ -2,6 +2,7 @@
 using FieldOps.Modules.Files.Core.Exceptions;
 using FieldOps.Modules.Files.Core.Services;
 using FieldOps.Shared.Infrastructure.Api;
+using IdempotentAPI.Filters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,7 @@ internal class FilesController(IFileService service) : BaseController
     }
 
     [HttpPost("upload")]
+    [Idempotent(ExpiresInMilliseconds = 86400000, IsIdempotencyOptional = true)]
     public async Task<ActionResult<Guid>> UploadFile(IFormFile file)
     {
         if (file is null || file.Length is 0)

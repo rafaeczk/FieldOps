@@ -1,6 +1,7 @@
 using FieldOps.Modules.Assets.Core.DTOs;
 using FieldOps.Modules.Assets.Core.Services;
 using FieldOps.Shared.Infrastructure.Api;
+using IdempotentAPI.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +12,7 @@ internal class AssetsController(IAssetService service) : BaseController
     private readonly IAssetService service = service;
 
     [HttpPost]
+    [Idempotent(ExpiresInMilliseconds = 86400000, IsIdempotencyOptional = true)]
     [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<ActionResult<Guid>> CreateAsset([FromBody] CreateAssetDto dto)
     {

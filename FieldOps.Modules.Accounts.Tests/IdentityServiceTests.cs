@@ -21,6 +21,8 @@ public class IdentityServiceTests
     private readonly Mock<IAuthManager> _authManagerMock = new();
     private readonly Mock<IClock> _clockMock = new();
     private readonly IdentityService _sut;
+    private readonly Mock<IServiceProvider> _serviceProvider = new();
+
 
     public IdentityServiceTests()
     {
@@ -30,7 +32,8 @@ public class IdentityServiceTests
             _unitOfWorkMock.Object,
             _passwordHasherMock.Object,
             _authManagerMock.Object,
-            _clockMock.Object);
+            _clockMock.Object,
+            _serviceProvider.Object);
     }
 
     [Fact]
