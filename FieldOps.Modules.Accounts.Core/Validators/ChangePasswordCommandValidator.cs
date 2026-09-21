@@ -12,7 +12,7 @@ namespace FieldOps.Modules.Accounts.Core.Validators
         public ChangePasswordCommandValidator()
         {
             RuleFor(x => x.CurrentPassword)
-                .NotEmpty().WithMessage("Current password is required.");   
+                .NotEmpty().WithMessage("Current password is required.");
 
             RuleFor(x => x.NewPassword)
                 .NotEmpty().WithMessage("New password is required.")
@@ -21,7 +21,7 @@ namespace FieldOps.Modules.Accounts.Core.Validators
                 .Matches(@"[A-Z]").WithMessage("New password must contain at least one uppercase letter.")
                 .Matches(@"[a-z]").WithMessage("New password must contain at least one lowercase letter.")
                 .Matches(@"[0-9]").WithMessage("New password must contain at least one number.")
-                .Matches(@"[\!\?\*\.\@\#\$\%\^\&\+\=\_\-]").WithMessage("New password must contain at least one special character (!?*.@#$%^&+=_-).");
+                .Matches(@"[!?*.\-@#$%^&+=_]").WithMessage("New password must contain at least one special character (!?*.@#$%^&+=_-).");
         }
     }
 }

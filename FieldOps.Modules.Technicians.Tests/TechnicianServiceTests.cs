@@ -7,6 +7,7 @@ using FieldOps.Modules.Technicians.Core.Repositories;
 using FieldOps.Modules.Technicians.Core.Services;
 using FieldOps.Shared.Abstractions.Kernel.Ids;
 using FieldOps.Shared.Abstractions.Time;
+using FluentValidation;
 using MediatR;
 using Moq;
 
@@ -19,6 +20,7 @@ public class TechnicianServiceTests
     private readonly Mock<ITechnicianUnitOfWork> _unitOfWorkMock = new();
     private readonly Mock<IClock> _clockMock = new();
     private readonly Mock<IAccountsModuleApi> _accountsModuleApiMock = new();
+    private readonly Mock<IValidator<CreateTechnicianDto>> _validatorMock = new();
     private readonly TechnicianService _sut;
 
     public TechnicianServiceTests()
@@ -28,7 +30,8 @@ public class TechnicianServiceTests
             _outboxRepositoryMock.Object,
             _unitOfWorkMock.Object,
             _clockMock.Object,
-            _accountsModuleApiMock.Object);
+            _accountsModuleApiMock.Object,
+            _validatorMock.Object);
     }
 
     [Fact]

@@ -30,7 +30,8 @@ public class IdentityServiceTests
             _unitOfWorkMock.Object,
             _passwordHasherMock.Object,
             _authManagerMock.Object,
-            _clockMock.Object);
+            _clockMock.Object,
+            new Mock<IServiceProvider>().Object);
     }
 
     [Fact]

@@ -7,6 +7,7 @@ using FieldOps.Modules.Operators.Core.Repositories;
 using FieldOps.Modules.Operators.Core.Services;
 using FieldOps.Shared.Abstractions.Kernel.Ids;
 using FieldOps.Shared.Abstractions.Time;
+using FluentValidation;
 using Moq;
 
 namespace FieldOps.Modules.Operators.Tests;
@@ -18,6 +19,7 @@ public class OperatorServiceTests
     private readonly Mock<IOperatorUnitOfWork> _unitOfWorkMock = new();
     private readonly Mock<IClock> _clockMock = new();
     private readonly Mock<IAccountsModuleApi> _accountsModuleApiMock = new();
+    private readonly Mock<IValidator<CreateOperatorDto>> _validatorMock = new();
     private readonly OperatorService _sut;
 
     public OperatorServiceTests()
@@ -27,7 +29,8 @@ public class OperatorServiceTests
             _outboxRepositoryMock.Object,
             _unitOfWorkMock.Object,
             _clockMock.Object,
-            _accountsModuleApiMock.Object);
+            _accountsModuleApiMock.Object,
+            _validatorMock.Object);
     }
 
     [Fact]
