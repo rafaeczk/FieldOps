@@ -26,7 +26,7 @@ public sealed class CreateAssetDtoValidator : AbstractValidator<CreateAssetDto>
 
         RuleFor(x => x.Status)
             .NotEmpty().WithMessage("Status is required.");
-           
+
 
         RuleFor(x => x.Notes)
             .MaximumLength(500).WithMessage("Notes cannot exceed 500 characters.")

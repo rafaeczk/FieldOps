@@ -7,7 +7,6 @@ namespace FieldOps.Modules.Reports.Application.Validators
     {
         public UpdateReportCommandValidator()
         {
-
             RuleFor(x => x.Note)
                 .NotEmpty().WithMessage("Note is required.")
                 .MaximumLength(1000).WithMessage("Note cannot exceed 1000 characters.");
@@ -29,11 +28,10 @@ namespace FieldOps.Modules.Reports.Application.Validators
 
                 RuleFor(x => x.Address.Street)
                     .NotEmpty().WithMessage("Street is required.");
-    
+
                 RuleFor(x => x.Address.BuildingNumber)
                     .NotEmpty().WithMessage("Building number is required.");
             });
-
         }
     }
 }

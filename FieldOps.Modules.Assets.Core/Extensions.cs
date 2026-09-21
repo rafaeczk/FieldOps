@@ -31,8 +31,6 @@ namespace FieldOps.Modules.Assets.Core
 
             services.AddScoped<IAssetUnitOfWork, AssetUnitOfWork>();
 
-            services.AddValidatorsFromAssemblyContaining<ModuleMarker>();
-
             return services;
         }
     }
