@@ -17,6 +17,7 @@ internal class FilesController(IFileService service) : BaseController
     }
 
     [HttpPost("upload")]
+    [Produces("application/json")]
     [Idempotent(ExpiresInMilliseconds = 86400000, IsIdempotencyOptional = true)]
     public async Task<ActionResult<Guid>> UploadFile(IFormFile file)
     {

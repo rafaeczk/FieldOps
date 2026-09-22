@@ -13,6 +13,7 @@ internal class OperatorsController(IOperatorService service) : BaseController
 
     [HttpPost]
     [Idempotent(ExpiresInMilliseconds = 86400000, IsIdempotencyOptional = true)]
+    [Produces("application/json")]
     [Authorize(Roles = "ADMIN")]
     public async Task<ActionResult<Guid>> CreateOperator([FromBody] CreateOperatorDto dto)
     {

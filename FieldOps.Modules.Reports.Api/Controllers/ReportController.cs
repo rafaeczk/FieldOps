@@ -17,6 +17,7 @@ internal class ReportsController(IMessageDispatcher messageDispatcher) : BaseCon
 
     [HttpPost]
     [Idempotent(ExpiresInMilliseconds = 86400000, IsIdempotencyOptional = true)]
+    [Produces("application/json")]
     [Authorize(Roles = "ADMIN,TECHNICIAN")]
     public async Task<ActionResult<Guid>> CreateAsync(CreateReportDto dto)
     {

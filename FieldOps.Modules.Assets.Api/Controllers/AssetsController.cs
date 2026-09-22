@@ -13,6 +13,7 @@ internal class AssetsController(IAssetService service) : BaseController
 
     [HttpPost]
     [Idempotent(ExpiresInMilliseconds = 86400000, IsIdempotencyOptional = true)]
+    [Produces("application/json")]
     [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<ActionResult<Guid>> CreateAsset([FromBody] CreateAssetDto dto)
     {
