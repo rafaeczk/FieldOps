@@ -1,5 +1,6 @@
 ﻿using FieldOps.Modules.Files.Core.Entities;
 using FieldOps.Shared.Abstractions.Kernel.Ids;
+using System.Linq.Expressions;
 
 namespace FieldOps.Modules.Files.Core.Repositories;
 
@@ -8,4 +9,6 @@ internal interface IStoredFilesRepository
     void Add(StoredFile storedFile);
     Task<StoredFile?> GetAsync(FileId fileId);
     void Delete(StoredFile storedFile);
+    Task<bool> ExistsAsync(FileId fileId, CancellationToken ct = default);
+    Task<int> CountAsync(Expression<Func<StoredFile, bool>> predicate, CancellationToken ct = default);
 }

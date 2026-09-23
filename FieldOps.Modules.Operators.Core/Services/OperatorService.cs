@@ -6,20 +6,24 @@ using FieldOps.Modules.Operators.Core.Exceptions;
 using FieldOps.Modules.Operators.Core.Repositories;
 using FieldOps.Shared.Abstractions.Kernel.Ids;
 using FieldOps.Shared.Abstractions.Time;
+using FluentValidation;
 
 namespace FieldOps.Modules.Operators.Core.Services;
 
 internal class OperatorService(IOperatorRepository repository, IOutboxMessagesRepository outboxRepository, IOperatorUnitOfWork unitOfWork,
-    IClock clock, IAccountsModuleApi accountsModuleApi) : IOperatorService
+    IClock clock, IAccountsModuleApi accountsModuleApi, IValidator<CreateOperatorDto> validator) : IOperatorService
 {
     private readonly IOperatorRepository repository = repository;
     private readonly IOutboxMessagesRepository outboxRepository = outboxRepository;
     private readonly IOperatorUnitOfWork unitOfWork = unitOfWork;
     private readonly IClock clock = clock;
     private readonly IAccountsModuleApi accountsModuleApi = accountsModuleApi;
+    private readonly IValidator<CreateOperatorDto> validator = validator;
 
     public async Task<Guid> CreateAsync(CreateOperatorDto dto)
     {
+        await validator.ValidateAndThrowAsync(dto);
+
         if (await accountsModuleApi.CheckAccountEmailIsTaken(dto.RequestedEmail))
             throw new EmailInUseException();
 

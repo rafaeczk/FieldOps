@@ -1,7 +1,7 @@
 ﻿using FieldOps.Modules.Accounts.Core.Services;
-using FieldOps.Modules.Accounts.Core.ValueObjects;
 using FieldOps.Modules.Operators.Contracts.Events;
 using FieldOps.Shared.Abstractions.Events;
+using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 
 namespace FieldOps.Modules.Accounts.Core.Features.Events;
 

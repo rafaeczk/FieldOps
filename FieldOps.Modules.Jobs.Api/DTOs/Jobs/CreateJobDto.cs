@@ -1,4 +1,4 @@
-﻿using FieldOps.Modules.Jobs.Domain.Jobs.ValueObjects;
+﻿using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 
 namespace FieldOps.Modules.Jobs.Api.DTOs.Jobs;
 

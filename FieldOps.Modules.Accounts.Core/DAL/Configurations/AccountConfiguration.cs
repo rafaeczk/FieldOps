@@ -1,5 +1,5 @@
 ﻿using FieldOps.Modules.Accounts.Core.Entities;
-using FieldOps.Modules.Accounts.Core.ValueObjects;
+using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

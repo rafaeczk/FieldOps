@@ -1,6 +1,7 @@
 ﻿using FieldOps.Modules.Operators.Core.DTOs;
 using FieldOps.Modules.Operators.Core.Services;
 using FieldOps.Shared.Infrastructure.Api;
+using IdempotentAPI.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +12,8 @@ internal class OperatorsController(IOperatorService service) : BaseController
     private readonly IOperatorService service = service;
 
     [HttpPost]
+    [Idempotent(ExpiresInMilliseconds = 86400000, IsIdempotencyOptional = true)]
+    [Produces("application/json")]
     [Authorize(Roles = "ADMIN")]
     public async Task<ActionResult<Guid>> CreateOperator([FromBody] CreateOperatorDto dto)
     {

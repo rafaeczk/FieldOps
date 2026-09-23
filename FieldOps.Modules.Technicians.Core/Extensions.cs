@@ -7,46 +7,45 @@ using FieldOps.Modules.Technicians.Core.Services;
 using FieldOps.Shared.Infrastructure.Events;
 using FieldOps.Shared.Infrastructure.Messages;
 using FieldOps.Shared.Infrastructure.Postgres;
-using MediatR;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace FieldOps.Modules.Technicians.Core
+namespace FieldOps.Modules.Technicians.Core;
+
+public static class Extensions
 {
-    public static class Extensions
+    public static IServiceCollection AddCore(this IServiceCollection services)
     {
-        public static IServiceCollection AddCore(this IServiceCollection services)
-        {
-            services.AddPostgres<TechnicianDbContext>();
-            services.AddScoped<ITechnicianUnitOfWork, TechnicianUnitOfWork>();
+        services.AddPostgres<TechnicianDbContext>();
+        services.AddScoped<ITechnicianUnitOfWork, TechnicianUnitOfWork>();
 
-            services.AddMediatRNotificationHandlers(typeof(ModuleMarker));
-            services.AddMediatRRequestHandlers(typeof(ModuleMarker));
+        services.AddMediatRNotificationHandlers(typeof(ModuleMarker));
+        services.AddMediatRRequestHandlers(typeof(ModuleMarker));
 
-            services.AddScoped<ITechnicianRepository, TechnicianRepository>();
-            services.AddScoped<IOutboxMessagesRepository, OutboxMessagesRepository>();
+        services.AddScoped<ITechnicianRepository, TechnicianRepository>();
+        services.AddScoped<IOutboxMessagesRepository, OutboxMessagesRepository>();
 
-            services.AddMediatR(config => config.RegisterServicesFromAssemblyContaining<ModuleMarker>());
 
-            services.AddHostedService(sp
-                => new OutboxProcessorWorker<IOutboxMessagesRepository>(
-                    scopeFactory: sp.GetRequiredService<IServiceScopeFactory>(),
-                    moduleName: "Technicians",
-                    typeMapping: new()
-                    {
-                        { "TechnicianCreated", typeof(TechnicianCreated) },
-                        { "TechnicianDeleted", typeof(TechnicianDeleted) }
-                    },
-                    logger: sp.GetRequiredService<ILogger<OutboxProcessorWorker<IOutboxMessagesRepository>>>()));
+        services.AddMediatR(config => config.RegisterServicesFromAssemblyContaining<ModuleMarker>());
+        services.AddValidatorsFromAssemblyContaining<ModuleMarker>();
 
-            services.AddScoped<ITechnicianService, TechnicianService>();
-            services.AddScoped<ITechnicianModuleApi, TechnicianModuleApi>();
+        services.AddHostedService(sp
+            => new OutboxProcessorWorker<IOutboxMessagesRepository>(
+                scopeFactory: sp.GetRequiredService<IServiceScopeFactory>(),
+                moduleName: "Technicians",
+                typeMapping: new()
+                {
+                    { "TechnicianCreated", typeof(TechnicianCreated) },
+                    { "TechnicianDeleted", typeof(TechnicianDeleted) }
+                },
+                logger: sp.GetRequiredService<ILogger<OutboxProcessorWorker<IOutboxMessagesRepository>>>()));
 
-            return services;
-        }
+        services.AddScoped<ITechnicianService, TechnicianService>();
+        services.AddScoped<ITechnicianModuleApi, TechnicianModuleApi>();
+
+        return services;
     }
-
-    internal class ModuleMarker { }
 }
 
 internal class ModuleMarker { }

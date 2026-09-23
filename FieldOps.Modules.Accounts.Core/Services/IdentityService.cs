@@ -3,11 +3,13 @@ using FieldOps.Modules.Accounts.Core.DTOs;
 using FieldOps.Modules.Accounts.Core.Entities;
 using FieldOps.Modules.Accounts.Core.Exceptions;
 using FieldOps.Modules.Accounts.Core.Repositories;
-using FieldOps.Modules.Accounts.Core.ValueObjects;
 using FieldOps.Shared.Abstractions.Auth;
 using FieldOps.Shared.Abstractions.Kernel.Ids;
+using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 using FieldOps.Shared.Abstractions.Time;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FieldOps.Modules.Accounts.Core.Services;
 
@@ -17,7 +19,8 @@ internal class IdentityService(
     IAccountUnitOfWork unitOfWork,
     IPasswordHasher<Account> passwordHasher,
     IAuthManager authManager,
-    IClock clock) : IIdentityService
+    IClock clock,
+    IServiceProvider serviceProvider) : IIdentityService
 {
     private readonly IAccountRepository accountRepository = accountRepository;
     private readonly IOutboxMessagesRepository outboxRepository = outboxRepository;
@@ -25,6 +28,14 @@ internal class IdentityService(
     private readonly IPasswordHasher<Account> passwordHasher = passwordHasher;
     private readonly IAuthManager authManager = authManager;
     private readonly IClock clock = clock;
+    private async Task ValidateAsync<T>(T dto, CancellationToken ct = default)
+    {
+        var validator = serviceProvider.GetService<IValidator<T>>();
+        if (validator is not null)
+        {
+            await validator.ValidateAndThrowAsync(dto, ct);
+        }
+    }
 
     public async Task<AccountDto?> GetAsync(AccountId id)
     {
@@ -98,6 +109,8 @@ internal class IdentityService(
 
     public async Task<AccountDto?> UpdateProfileAsync(AccountId id, UpdateProfileCommand command)
     {
+        await ValidateAsync(command);
+
         var account = await accountRepository.GetAsync(id);
 
         if (account is null)
@@ -128,6 +141,8 @@ internal class IdentityService(
 
     public async Task ChangePasswordAsync(AccountId id, ChangePasswordCommand command)
     {
+        await ValidateAsync(command);
+
         if (command.NewPassword.Length < 6)
             throw new InvalidPasswordException("Password must be at least 6 characters");
 

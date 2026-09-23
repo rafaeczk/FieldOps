@@ -1,8 +1,8 @@
-using MediatR;
+using FieldOps.Shared.Abstractions.Messages;
 
 namespace FieldOps.Modules.Operators.Contracts.Commands;
 
 public record CreateOperatorCommand(
     string FullName,
     string Email,
-    string Password) : IRequest<Guid>;
+    string Password) : IMessage<Guid>;

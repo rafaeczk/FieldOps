@@ -1,16 +1,22 @@
 ﻿using FieldOps.Shared.Abstractions.Contexts;
+using FieldOps.Shared.Abstractions.Messages;
 using FieldOps.Shared.Abstractions.Time;
 using FieldOps.Shared.Infrastructure.Api;
 using FieldOps.Shared.Infrastructure.Auth;
-using FieldOps.Shared.Infrastructure.S3;
 using FieldOps.Shared.Infrastructure.Contexts;
 using FieldOps.Shared.Infrastructure.Errors;
 using FieldOps.Shared.Infrastructure.Events;
+using FieldOps.Shared.Infrastructure.Idempotency;
 using FieldOps.Shared.Infrastructure.Kernel;
 using FieldOps.Shared.Infrastructure.Messages;
 using FieldOps.Shared.Infrastructure.Modules;
+using FieldOps.Shared.Infrastructure.S3;
 using FieldOps.Shared.Infrastructure.Services;
 using FieldOps.Shared.Infrastructure.Time;
+using FieldOps.Shared.Infrastructure.Validation;
+using FluentValidation;
+using IdempotentAPI.Cache.DistributedCache.Extensions.DependencyInjection;
+using IdempotentAPI.Extensions.DependencyInjection;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -26,6 +32,16 @@ internal static class Extensions
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
+
+        services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
+
+        services.AddMediatR(cfg =>
+        {
+            cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
+            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+        });
+        services.AddTransient<IMessageDispatcher, MessageDispatcher>();
+
         services.AddErrorHandling();
         services.AddSingleton<IClock, Clock>();
         services.AddHostedService<AppInitializer>();
@@ -40,6 +56,11 @@ internal static class Extensions
                 null => Context.Empty,
                 not null => new Context(httpContext)
             };
+        });
+
+        services.AddRouting(options =>
+        {
+            options.LowercaseUrls = true;
         });
 
         services.AddTransient(typeof(IRequestHandler<,>), typeof(MediatRMessageBridge<,>));
@@ -65,7 +86,12 @@ internal static class Extensions
         services.AddSwaggerGen(swagger =>
         {
             swagger.CustomSchemaIds(x => x.FullName);
+            swagger.OperationFilter<IdempotencyHeaderSwaggerFilter>();
         });
+
+        services.AddDistributedMemoryCache();
+        services.AddIdempotentAPIUsingDistributedCache();
+        services.AddIdempotentAPI();
 
         return services;
     }

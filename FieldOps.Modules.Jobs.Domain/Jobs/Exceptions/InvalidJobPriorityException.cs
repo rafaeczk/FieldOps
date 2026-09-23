@@ -2,7 +2,7 @@
 
 namespace FieldOps.Modules.Jobs.Domain.Jobs.Exceptions;
 
-internal class InvalidJobPriorityException : BaseException
+public class InvalidJobPriorityException : BaseException
 {
     public Guid? JobId { get; }
     public string Priority { get; }

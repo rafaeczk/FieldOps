@@ -3,9 +3,9 @@ using FieldOps.Modules.Accounts.Core.Entities;
 using FieldOps.Modules.Accounts.Core.Exceptions;
 using FieldOps.Modules.Accounts.Core.Repositories;
 using FieldOps.Modules.Accounts.Core.Services;
-using FieldOps.Modules.Accounts.Core.ValueObjects;
 using FieldOps.Shared.Abstractions.Auth;
 using FieldOps.Shared.Abstractions.Kernel.Ids;
+using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
 using FieldOps.Shared.Abstractions.Time;
 using Microsoft.AspNetCore.Identity;
 using Moq;
@@ -21,6 +21,8 @@ public class IdentityServiceTests
     private readonly Mock<IAuthManager> _authManagerMock = new();
     private readonly Mock<IClock> _clockMock = new();
     private readonly IdentityService _sut;
+    private readonly Mock<IServiceProvider> _serviceProvider = new();
+
 
     public IdentityServiceTests()
     {
@@ -30,7 +32,8 @@ public class IdentityServiceTests
             _unitOfWorkMock.Object,
             _passwordHasherMock.Object,
             _authManagerMock.Object,
-            _clockMock.Object);
+            _clockMock.Object,
+            _serviceProvider.Object);
     }
 
     [Fact]

@@ -3,6 +3,8 @@ using FieldOps.Modules.Jobs.Domain.Jobs.Exceptions;
 using FieldOps.Modules.Jobs.Domain.Jobs.ValueObjects;
 using FieldOps.Shared.Abstractions.Kernel.Ids;
 using FieldOps.Shared.Abstractions.Kernel.Types;
+using FieldOps.Shared.Abstractions.Kernel.ValueObjects;
+using System.Net;
 
 namespace FieldOps.Modules.Jobs.Domain.Jobs.Entities;
 
@@ -96,30 +98,40 @@ public sealed class Job : AggregateRoot<JobId>
     {
         if (string.IsNullOrWhiteSpace(title))
             throw new EmptyJobTitleException(Id);
+        if (Title == title)
+            return;
         Title = title;
         IncrementVersion();
     }
 
     public void ChangeDescription(string? description)
     {
+        if (Description == description)
+            return;
         Description = description;
         IncrementVersion();
     }
 
     public void ChangePriority(JobPriority priority)
     {
+        if (Priority == priority)
+            return;
         Priority = priority;
         IncrementVersion();
     }
 
     public void ChangeAddress(Address address)
     {
+        if (Address == address)
+            return;
         Address = address;
         IncrementVersion();
     }
 
     public void ChangeDeadline(DateTime deadline)
     {
+        if (Deadline == deadline)
+            return;
         Deadline = deadline;
         IncrementVersion();
     }
